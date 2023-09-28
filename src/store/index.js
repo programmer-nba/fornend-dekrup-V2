@@ -7,8 +7,11 @@ export default createStore({
     logedIn : false,
     passcode : false,
     user : {},
-    token : '',
-    
+    token : localStorage.getItem("token"),
+    name: "",
+    position: "",
+    id: "",
+
   },
   getters: {
     isFooter : (state)=>state.isFooter,
@@ -22,7 +25,10 @@ export default createStore({
       }
       return data;
     },
-    token : (state)=>state.token
+    token : (state)=>state.token,
+    position: (state)=>state.position,
+    name: (state)=>state.name,
+    id: (state)=>state.id,
   },
   mutations: {
     setFooter(state,item){
@@ -31,12 +37,19 @@ export default createStore({
     setLoading(state, item){
       state.isLoading = item;
     },
+    setLogin(state,item){
+      (state.logedIn = item.logedIn),
+      (state.name = item.name),
+      (state.position = item.position),
+      (state.id = item.id)
+    },
     setLoginDefault(state){
       state.logedIn = false;
       state.passcode = false;
       state.user._id ='';
       state.user.name = '';
       state.token = '';
+      state.position = '';
       localStorage.clear();
     },
     setLogedIn(state,item){

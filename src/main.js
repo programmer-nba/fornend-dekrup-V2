@@ -1,21 +1,22 @@
 import './assets/main.css';
 
-import { createPinia } from 'pinia';
 import { createApp } from 'vue';
 
 import App from './App.vue';
 import router from './router';
 import store from './store';
-import PrimeVue from 'primevue/config'
+import PrimeVue from "primevue/config";
 
 import "primeicons/primeicons.css"; //icons
 import "primevue/resources/primevue.min.css"; //core css
 import "primevue/resources/themes/lara-light-purple/theme.css"; //theme
 
 //prime flex
-import "primeflex/primeflex.css"
+import "primeflex/primeflex.css";
 
 // component PrimVue ตัวเสริมที่ใช้บ่อยๆ ให้อัพที่นี่
+import ToastService from "primevue/toastservice";
+import ConfirmationService from "primevue/confirmationservice";
 // import Badge from "primevue/badge";
 // import Button from "primevue/button";
 // import Calendar from "primevue/calendar";
@@ -65,9 +66,10 @@ import OrganizationChart from 'primevue/organizationchart';
 
 const app = createApp(App);
 
-app.use(createPinia());
 app.use(store);
 app.use(router);
+app.use(ConfirmationService);
+app.use(ToastService);
 app.use(PrimeVue);
 
 // //Component
