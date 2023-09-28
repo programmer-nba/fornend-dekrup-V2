@@ -11,18 +11,19 @@
             </Menubar>
         </div>
         <div class="col-5 md:col-7 lg:col-3 flex align-items-center justify-content-end ">
-            <Button type="button" class="btn-login" label="Login" @click="$route.push('/login')">
-                Login
-            </Button>
+            <Button class="p-button-danger" label="ออกจากระบบ" icon="pi pi-power-off" @click="logout()" />
         </div>
     </div>
 </template> 
 
 <script>
 import Menubar from "primevue/menubar";
+import Button from 'primevue/button';
+import axios from "axios";
 export default {
     components: {
         Menubar,
+        Button,
     },
 
     async mounted() {
@@ -52,7 +53,24 @@ export default {
                     to: "/register",
                 },
             ]
-        }
+        },
+        async logout() {
+            this.$store.commit("setLoading", true);
+            await axios
+                .post(`${process.env.VUE_APP_DEKRUP}/logout`, null, {
+                    headers: {
+                        token: this.$store.getters.token,
+                    },
+                })
+                .then(() => {
+                    this.$store.commit("setLoginDefault");
+                    window.location.reload();
+                })
+                .catch((err) => {
+                    this.$store.commit("setLoading", false);
+                    this.$toast.error(err.response.data.message);
+                });
+        },
     }
 }
 </script>

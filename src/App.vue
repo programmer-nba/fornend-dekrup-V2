@@ -4,7 +4,7 @@
       <HomePageAdmin />
     </div>
     <div v-else>
-      
+      <HomeView />
     </div>
   </div>
   <div v-else>
@@ -13,13 +13,13 @@
 </template>
 <script>
 import axios from 'axios';
-// import HomeView from "./views/HomeView.vue";
+import HomeView from "./views/HomeView.vue";
 import HomePageAdmin from "./components/admin/HomePageAdmin.vue";
 import LoginView from "./views/Public/LoginView.vue";
 import jwtDecode from "jwt-decode";
 export default {
   components: {
-    // HomeView,
+    HomeView,
     HomePageAdmin,
     LoginView,
   },

@@ -14,6 +14,7 @@
 <script>
 import Menubar from "primevue/menubar";
 import Button from 'primevue/button';
+import axios from "axios";
 export default {
     components: {
         Menubar,
@@ -58,17 +59,22 @@ export default {
                 },
             ]
         },
-        logout() {
-            this.$confirm.require({
-                message: "ต้องการออกจากระบบนี้?",
-                header: "ออกจากระบบ",
-                icon: "pi pi-exclamation-triangle",
-                acceptLabel: "ออกจากระบบ",
-                acceptClass: "p-button-danger",
-                acceptIcon: "pi pi-fw pi-power-off",
-                rejectLabel: "ยกเลิก"
-        
-            });
+        async logout() {
+            this.$store.commit("setLoading", true);
+            await axios
+                .post(`${process.env.VUE_APP_DEKRUP}/logout`, null, {
+                    headers: {
+                        token: this.$store.getters.token,
+                    },
+                })
+                .then(() => {
+                    this.$store.commit("setLoginDefault");
+                    window.location.reload();
+                })
+                .catch((err) => {
+                    this.$store.commit("setLoading", false);
+                    this.$toast.error(err.response.data.message);
+                });
         },
     }
 }
