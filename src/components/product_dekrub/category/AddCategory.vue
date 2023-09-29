@@ -1,9 +1,11 @@
 <template>
   <div class="mt-3">
     <Button
-      label="เพิ่มหมวดหมู่สินค้า"  style="background-color: #C21010;"
-      icon="pi pi-plus" class="border-none"
-      @click="(displayAdd = true), (category = ''), fetchProps()"
+      label="เพิ่มหมวดหมู่สินค้า"
+      style="background-color: #C21010;"
+      icon="pi pi-plus"
+      class="border-none"
+      @click="(displayAdd = true), (category = '')"
     />
 
     <Dialog
@@ -24,15 +26,17 @@
       </span>
       <template #footer>
         <Button
-          label="ยกเลิก" 
+          label="ยกเลิก"
           icon="pi pi-times"
           @click="displayAdd = false"
           class="p-button-text text-red-600"
         />
         <Button
-          label="บันทึก" style="background-color: #C21010;"
-          icon="pi pi-check" class="border-none"
-          @click="addCategory" 
+          label="บันทึก"
+          style="background-color: #C21010;"
+          icon="pi pi-check"
+          class="border-none"
+          @click="addCategory"
           autofocus
         />
       </template>
@@ -45,6 +49,7 @@ import axios from "axios";
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
 import { ref } from "vue";
+
 export default {
   props: {
     categorys: Array,
@@ -59,57 +64,60 @@ export default {
       categorys.value = props.categorys;
     };
 
-    const addCategory = async () => {
-  if (category.value !== "") {
-    confirm.require({
-      message: "คุณต้องการเพิ่มหมวดหมู่สินค้านี้ ?",
-      header: "การยืนยัน",
-      icon: "pi pi-exclamation-triangle",
-      accept: () => {
-        postCategory();
-      },
-    });
-  }
-};
+ 
 
-const postCategory = async () => {
-  console.log(category.value);
-  await axios
-    .post(
-      `${process.env.VUE_APP_DEKRUP}/product/category/create`,
-      {
-        name: category.value,
-      },
-      {
-        headers: {
-          "token": localStorage.getItem("token"),
-        },
+    const addCategory = async () => {
+      if (category.value !== "") {
+        confirm.require({
+          message: "คุณต้องการเพิ่มหมวดหมู่สินค้านี้ ?",
+          header: "การยืนยัน",
+          icon: "pi pi-exclamation-triangle",
+          accept: () => {
+            postCategory();
+          },
+        });
       }
-    )
-    .then((res) => {
-      categorys.value.push(res.data.data);
-      displayAdd.value = false;
-      toast.add({
-        severity: "success",
-        summary: "สำเร็จ",
-        detail: "การเพิ่มหมวดหมู่สินค้าสำเร็จ",
-        life: 3000,
-      });
-    })
-    .catch((err) => {
-      toast.add({
-        severity: "warn",
-        summary: "เตือน",
-        detail: err.response.data.message,
-        life: 3000,
-      });
-    });
+    };
+
+    const postCategory = async () => {
+      console.log(category.value);
+      await axios
+        .post(
+          `${process.env.VUE_APP_DEKRUP}/product/category/create`,
+          {
+            name: category.value,
+          },
+          {
+            headers: {
+              "token": localStorage.getItem("token"),
+            },
+          }
+        )
+        .then((res) => {
+          categorys.value.push(res.data.data);
+          displayAdd.value = false;
+          toast.add({
+            severity: "success",
+            summary: "สำเร็จ",
+            detail: "การเพิ่มหมวดหมู่สินค้าสำเร็จ",
+            life: 3000,
+          });
+        })
+        .catch((err) => {
+          toast.add({
+            severity: "warn",
+            summary: "เตือน",
+            detail: err.response.data.message,
+            life: 3000,
+          });
+        });
     };
 
     return { displayAdd, fetchProps, addCategory, category };
   },
 };
 </script>
+
 
 <style >
 

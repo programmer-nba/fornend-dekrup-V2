@@ -43,8 +43,8 @@
       </div>
       <div class="col-12 lg:col-2 mt-2">
         <div class="field">
-          <Button label="Add Product" style="background-color: #E60965;" class="border-red-400"
-            @click="$router.push('/product/add')" />
+          <Button label="Add product" style="background-color: #E60965;" class="border-red-400"
+            @click="$router.push('/admin/product/add')" />
         </div>
       </div>
     </div>

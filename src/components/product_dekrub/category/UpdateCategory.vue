@@ -42,6 +42,7 @@ import axios from "axios";
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
 import { ref } from "vue";
+
 export default {
   props: {
     cat_id: String,
@@ -103,11 +104,56 @@ export default {
       });
     };
 
+    const delCategory = async () => {
+      confirm.require({
+        message: "คุณต้องการลบหมวดหมู่นี้?",
+        header: "ยืนยันการลบ",
+        icon: "pi pi-info-circle",
+        accept: async () => {
+          try {
+            const response = await axios.delete(
+              `${process.env.VUE_APP_DEKRUP}/product/category/delete/${_id.value}`,
+              {
+                headers: {
+                  "token": localStorage.getItem("token"),
+                },
+              }
+            );
+            if (response.status === 200) {
+              const updatedCategories = props.categorys.filter(category => category._id !== _id.value);
+
+              emit("update:categorys", updatedCategories);
+
+              toast.add({
+                severity: "success",
+                summary: "สำเร็จ",
+                detail: "ลบหมวดหมู่แล้ว",
+                life: 3000,
+              });
+
+              displayupdate.value = false;
+            } else {
+              // กรณีที่เกิดข้อผิดพลาดในการลบ
+              toast.add({
+                severity: "error",
+                summary: "เกิดข้อผิดพลาด",
+                detail: "ไม่สามารถลบหมวดหมู่ได้",
+                life: 3000,
+              });
+            }
+          } catch (error) {
+            console.error("เกิดข้อผิดพลาดในการลบหมวดหมู่: ", error);
+          }
+        },
+      });
+    };
+
     // ส่วนอื่น ๆ อยู่ตรงนี้
 
-    return { startEdit, updateCategory, displayupdate, name };
+    return { delCategory, startEdit, updateCategory, displayupdate, name };
   },
 };
+
 </script>
 
 <style lang="scss" scoped></style>
