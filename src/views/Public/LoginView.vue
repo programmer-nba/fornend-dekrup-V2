@@ -4,14 +4,14 @@
       <img class="img-logo" src="../../assets/img/Deekrub.png">
       <div class="flex justify-content-center mb-5">
         <span class="p-float-label w-full">
-          <InputText v-model="username" type="text" placeholder="ชื่อผู้ใช้งาน"   @keyup.enter="checklogin()"  hide-details="auto" />
+          <InputText v-model="username" type="text" placeholder="ชื่อผู้ใช้งาน" />
           <label for="username">กรุณากรอกยูสเซอร์เนม</label>
         </span>
       </div>
       <div class="flex justify-content-center mb-1">
         <span class="p-float-label">
-          <!-- <InputText v-model="password" type="text" placeholer="รหัสผ่าน" /> -->
-          <Password v-model="password" inputId="password" :feedback="false" class="w-full" toogleMask   @keyup.enter="checklogin()" />
+          <InputText v-model="password" type="text" placeholer="รหัสผ่าน" />
+          <!-- <InputText v-model="password" inputId="password" :feedback="false" class="w-full" toogleMask /> -->
           <label for="password">กรุณากรอกรหัสผ่าน</label>
         </span>
       </div>
@@ -29,12 +29,10 @@
   
 <script>
 import axios from 'axios';
-import Password from 'primevue/password';
 import Button from 'primevue/button';
 export default {
   components: {
-    Button,
-    Password
+    Button
   },
 
   created() {
@@ -72,7 +70,7 @@ export default {
         })
         .then((res) => {
           localStorage.setItem("token", res.data.token);
-          window.location.assign("/");
+          window.location.assign("/admin");
         })
         .catch(() => {
           this.isLoading = false;
@@ -117,7 +115,6 @@ export default {
 }
 
 .p-component {
-  width: -webkit-fill-available;
   z-index: 1;
 }
 

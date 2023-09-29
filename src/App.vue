@@ -1,31 +1,23 @@
 <template>
-  <div v-if="this.$store.getters.logedIn === true">
-    <div v-if="this.$store.getters.position === 'admin'">
-      <HomePageAdmin />
-    </div>
+  <div>
+    <router-view v-if="this.$store.getters.logedIn === true" />
     <div v-else>
-      <HomeView />
+      <!-- หากไม่ได้เข้าสู่ระบบให้แสดงหน้า Login -->
+      <LoginView />
     </div>
-  </div>
-  <div v-else>
-    <LoginView />
   </div>
 </template>
+
 <script>
 import axios from 'axios';
-import HomeView from "./views/HomeView.vue";
-import HomePageAdmin from "./components/admin/HomePageAdmin.vue";
-import LoginView from "./views/Public/LoginView.vue";
 import jwtDecode from "jwt-decode";
+import LoginView from "./views/Public/LoginView.vue";
+
 export default {
   components: {
-    HomeView,
-    HomePageAdmin,
     LoginView,
   },
-  // async created(){
-  //   document.title = 'Dekrub Shop HomePage';
-  // },
+
   async beforeCreate() {
     if (localStorage.getItem("token") !== null) {
       await axios
@@ -43,6 +35,11 @@ export default {
             id: decode._id,
           };
           this.$store.commit("setLogin", data_login);
+
+          if (this.$store.getters.position === 'admin') {
+            // เปลี่ยนหน้าเมื่อโหลดข้อมูลเสร็จสิ้น
+            this.$router.push("/admin");
+          }
         })
         .catch(() => {
           localStorage.clear();
@@ -56,9 +53,3 @@ export default {
   },
 }
 </script>
-
-<style>
-#app {
-  font-family: 'Kanit', sans-serif !important;
-}
-</style>

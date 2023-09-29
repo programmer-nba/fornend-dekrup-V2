@@ -109,10 +109,6 @@
 </Dialog>
 
 
-
-
-
-
     <Footer></Footer>
   </div>
 
@@ -123,12 +119,12 @@
 <script setup>
 import { ref } from "vue";
 
-import Dialog from 'primevue/dialog';
-import Button from 'primevue/button';
-import Image from 'primevue/image';
-import Dropdown from 'primevue/dropdown';
-import Navbar from "@/views/NavbarView.vue";
 import Footer from "@/views/FooterView.vue";
+import Navbar from "@/views/NavbarView.vue";
+import Button from 'primevue/button';
+import Dialog from 'primevue/dialog';
+import Dropdown from 'primevue/dropdown';
+import Image from 'primevue/image';
 
 
 const visible = ref(false);
@@ -140,7 +136,6 @@ const cities = ref([
     { name: 'Istanbul', code: 'IST' },
     { name: 'Paris', code: 'PRS' }
 ]);
-
 
 
 </script>

@@ -157,7 +157,7 @@ body {
     flex-direction: column;
     top: 100%;
     left: 0;
-    z-index: 1;
+    z-index: 100;
 
     border-radius: 5px;
     width: 200px;}

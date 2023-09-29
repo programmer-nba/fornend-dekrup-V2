@@ -10,12 +10,12 @@
     >
       <!---->
     </div>
-    <div class="grid px-3">
-      <div class="col-2 mt-2">
+    <div class="grid  z-0 justify-content-center">
+      <div class="col-12 lg:col-2 mt-2">
         <div class="field">
           <Dropdown
             v-model="filter_type"
-            class="w-full"
+            class="w-full z-0"
             inputClass="font"
             :options="type"
             optionLabel="type_name"
@@ -29,11 +29,11 @@
           </Dropdown>
         </div>
       </div>
-      <div class="col-2 mt-2">
+      <div class="col-12 lg:col-2 mt-2">
         <div class="field">
           <Dropdown
             v-model="filter_brand"
-            class="w-full"
+            class="w-full z-0"
             inputClass="font"
             :options="brand"
             optionLabel="brand_name"
@@ -47,11 +47,11 @@
           </Dropdown>
         </div>
       </div>
-      <div class="col-2 mt-2">
+      <div class="col-12 lg:col-2 mt-2">
         <div class="field">
           <Dropdown
             v-model="statustype"
-            class="w-full"
+            class="w-full z-0"
             inputClass="font"
             :options="status_type"
             optionLabel="name"
@@ -65,7 +65,7 @@
           </Dropdown>
         </div>
       </div>
-      <div class="col-3 mt-2">
+      <div class="col-12 lg:col-2 mt-2">
         <div class="field">
           <div class="p-inputgroup">
             <span class="p-inputgroup-addon border-red-400" style="background-color: #C21010;">
@@ -73,23 +73,23 @@
             </span>
             <InputText
               v-model="search"
-              @keyup="searchData()"
-              class="w-full font"
+           
+              class="w-full font z-0" 
               placeholder="ค้นหาสินค้า เช่น ชื่อสินค้า "
             />
           </div>
         </div>
       </div>
-      <div class="col-1 mt-2">
+      <div class="col-12 lg:col-1 mt-2">
         <div class="field">
           <Button
             label="Clear All" style="background-color: #BD1616;"
-            class=" w-full border-red-400"
+            class=" w-full border-red-400 z-0"
             @click="refiltertype()"
           />
         </div>
       </div>
-      <div class="col mt-2">
+      <div class="col-12 lg:col-2 mt-2">
         <div class="field">
           <Button
             label="Add Product"  style="background-color: #E60965;"
@@ -126,11 +126,7 @@
               <!-- <switchProduct :product="slotProps.data" /> -->
             </template>
           </Column>
-          <Column style="min-width: 12rem" header="บาร์โค้ดสินค้า">
-            <template #body="item">
-              <Chip :label="item.data.productNBA_barcode" />
-            </template>
-          </Column>
+          
           <Column
             field="productNBA_name"
             header="ชื่อสินค้า"

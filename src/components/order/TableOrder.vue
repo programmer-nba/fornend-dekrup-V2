@@ -5,7 +5,7 @@
         <span class="p-inputgroup-addon border-none" style="background-color: #C21010;">
           <i class="pi pi-search text-white"></i>
         </span>
-        <InputText placeholder="ค้นหาข้อมูล" />
+        <InputText placeholder="ค้นหาข้อมูล"  class="z-0"/>
       </div>
     </div>
     <div class="col-12 md:col-4">
@@ -13,53 +13,35 @@
         <span class="p-inputgroup-addon border-none" style="background-color: #C21010;">
           <i class="pi pi-calendar text-white"></i>
         </span>
-        <Calendar inputId="range" selectionMode="range" :manualInput="false" :showButtonBar="true" />
+        <Calendar inputId="range" class="z-0" selectionMode="range" :manualInput="false" :showButtonBar="true" />
       </div>
     </div>
     <div class="col-12 md:col-1">
       <Button label="Clear" class="border-red-500" icon="pi pi-refresh" style="background-color: #C21010;"></Button>
     </div>
   </div>
-  <!-- <DataTable stripedRows responsiveLayout="scroll" :paginator="true" :rows="20"
+  <DataTable stripedRows responsiveLayout="scroll" :paginator="true" :rows="20"
     paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
     currentPageReportTemplate="แสดง {first} ถึง {last} ใน {totalRecords} รายการ" class=" px-3">
-    <Column header="เลขที่ใบสั่งชื้อ">
+    <Column header="เลขที่ใบสั่งชื้อ" style="width: 20%;">
       <template #body="item">
       </template>
     </Column>
-    <Column field="barcode" header="บาร์โค้ด"></Column>
-    <Column header="ร้านค้า">
+    <Column header="ชื่อ" style="width: 20%;">
       <template #body="item">
       </template>
     </Column>
-    <Column header="รายการ">
+    <Column header="ที่อยู่" style="width: 20%;">
       <template #body="item">
       </template>
     </Column>
-    <Column header="สถานะ">
+    <Column header="สถานะ" style="width: 15%;">
       <template #body="item">
         <Chip :label="item.data.status_now" />
       </template>
     </Column>
-    <Column header="ผู้ส่ง">
-      <template #body="item">
-      </template>
-    </Column>
-    <Column header="ขนส่ง">
-      <template #body="item">
-        <p v-if="item.data.tracking_code !== 'ไม่มี'">
-          {{ item.data.tracking_code }}
-        </p>
-      </template>
-    </Column>
-    <Column header="Trakinge Number">
-      <template #body="item">
-        <p v-if="item.data.tracking_number !== 'ไม่มี'">
-          <Tag severity="info" :value="item.data.tracking_number"></Tag>
-        </p>
-      </template>
-    </Column>
-    <Column field="timestamp" header="วันที่ทำรายการ">
+
+    <Column field="timestamp" header="วันที่ทำรายการ" style="width: 15%;">
       <template #body="item">
       </template>
     </Column>
@@ -71,11 +53,38 @@
         <FormOrderdealer v-else :orderdealer="item.data" />
       </template>
     </Column>
-  </DataTable> -->
+  </DataTable>
 </template>
 
 <script>
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
 
+export default {
+  setup() {
+    const orders = ref([]);
+
+    onMounted(async () => {
+      try {
+        const authToken = localStorage.getItem("auth-token");
+        const response = await axios.get(`${process.env.VUE_APP_DEKRUP}/order/list`, {
+  headers: {
+    'auth-token': authToken,
+  },
+});
+
+
+        orders.value = response.data.data;
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    });
+
+    return {
+      orders,
+    };
+  },
+};
 </script>
 
 

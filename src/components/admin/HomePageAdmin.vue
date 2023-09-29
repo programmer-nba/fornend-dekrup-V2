@@ -1,6 +1,9 @@
 <template>
-  <NavberAdmin />
-</template>
+  <div>
+    <NavberAdmin />
+    <router-view /> <!-- ส่วนของเนื้อหาหน้า HomePageAdmin ไว้ที่นี่ -->
+  </div>
+  </template>
 
 <script>
 import NavberAdmin from '../template/NavberAdmin.vue'

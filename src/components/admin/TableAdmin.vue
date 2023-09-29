@@ -9,7 +9,7 @@
         </div>
       </div>
     </div>
-    <!-- <DataTable :value="admin" :paginator="true" :rows="10" class="px-3 py-3"
+    <DataTable :value="admin" :paginator="true" :rows="10" class="px-3 py-3"
       paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink  RowsPerPageDropdown"
       :rowsPerPageOptions="[5, 10, 25]" currentPageReportTemplate=" แสดง {first} ถึง {last} ของ {totalRecords} รายการ"
       responsiveLayout="scroll">
@@ -28,8 +28,8 @@
           <Button icon="pi pi-trash" class="p-button-outlined p-button-danger" @click="del(Props.data)" />
         </template>
       </Column>
-    </DataTable> -->
-    <!-- <Dialog :style="{ width: '900px' }" header="รายละเอียดข้อมูลผู้ดูแลระบบ" :modal="true" class="p-fluid mb-5">
+    </DataTable>
+    <Dialog :style="{ width: '900px' }" header="รายละเอียดข้อมูลผู้ดูแลระบบ" :modal="true" class="p-fluid mb-5">
       <div class="grid">
         <div class="col-12">
           <Panel>
@@ -71,7 +71,8 @@
           </Panel>
         </div>
       </div>
-    </Dialog> -->
+    </Dialog> 
+    
     <Dialog :style="{ width: '450px' }" header="แก้ไขข้อมูล" :modal="true">
       <div class="confirmation-content">
         <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
@@ -96,8 +97,72 @@
   </div>
 </template>
 <script>
+import axios from "axios";
+import dayjs from "dayjs";
+import "dayjs/locale/th";
+
 export default {
-  
+  name: "TableAdmin",
+  data() {
+    return {
+      admins: [],
+      admin: [],
+      search: "",
+      admin_id: "",
+      admin_detail: [],
+      delete_id: "",
+      delete_name: "",
+      confirmDailog: false,
+      deleteDailog: false,
+      adminDialog: false,
+      isloading: false,
+      position: [
+        { name: "admin", value: "admin" },
+      ],
+    };
+  },
+  mounted() {
+    this.getdata();
+  },
+  methods: {
+    dateformat(date) {
+      return dayjs(date).locale("th").add(543, "year").format("DD/MMMM/YYYY");
+    },
+
+    async getdata() {
+  let res = await axios
+    .get(`${process.env.VUE_APP_DEKRUP}/admin`, {
+      headers: {
+        "token": localStorage.getItem("token"),
+      },
+    })
+    .catch((e) => {
+      if (e.res.status === 408) {
+        window.location.reload();
+      }
+    });
+  this.admins = res.data.data;
+  this.admin = this.admins.reverse();
+},
+
+
+    searchData() {
+      if (this.search !== "") {
+        this.admin = this.admins.filter(
+          (el) =>
+            el.admin_name.search(this.search) !== -1 ||
+            el.admin_username.search(this.search) !== -1 ||
+            el.admin_position.search(this.search) !== -1
+        );
+      } else {
+        this.admin = this.admins;
+      }
+    },
+
+
+ 
+
+  },
 };
 </script>
 
