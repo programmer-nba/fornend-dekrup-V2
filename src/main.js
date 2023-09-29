@@ -70,6 +70,7 @@ app.use(store);
 app.use(router);
 app.use(ConfirmationService);
 app.use(ToastService);
+
 app.use(PrimeVue);
 
 // //Component

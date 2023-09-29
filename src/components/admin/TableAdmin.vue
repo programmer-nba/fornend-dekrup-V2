@@ -10,25 +10,25 @@
       </div>
     </div>
     <DataTable :value="admin" :paginator="true" :rows="10" class="px-3 py-3"
-      paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink  RowsPerPageDropdown"
-      :rowsPerPageOptions="[5, 10, 25]" currentPageReportTemplate=" แสดง {first} ถึง {last} ของ {totalRecords} รายการ"
-      responsiveLayout="scroll">
-      <template #empty>ไม่มีข้อมูล</template>
-      <Column field="admin_name" header="ชื่อผู้ดูแลระบบ"></Column>
-      <Column field="admin_username" header="ชื่อผู้ใช้งานระบบ"></Column>
-      <Column field="admin_position" header="ตำแหน่ง"></Column>
-      <Column field="admin_date_start" header="วันที่เริ่มระบบ">
-        <template #body="Props">
-          {{ dateformat(Props.data.admin_date_start) }}
-        </template>
-      </Column>
-      <Column :exportable="false" style="min-width: 8rem">
-        <template #body="Props">
-          <Button icon="pi pi-list" class="p-button-outlined" @click="openD(Props.data)" />&nbsp;
-          <Button icon="pi pi-trash" class="p-button-outlined p-button-danger" @click="del(Props.data)" />
-        </template>
-      </Column>
-    </DataTable>
+  paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink  RowsPerPageDropdown"
+  :rowsPerPageOptions="[5, 10, 25]" currentPageReportTemplate=" แสดง {first} ถึง {last} ของ {totalRecords} รายการ"
+  responsiveLayout="scroll">
+  <template #empty>ไม่มีข้อมูล</template>
+  <Column field="name" header="ชื่อผู้ดูแลระบบ"></Column>
+  <Column field="username" header="ชื่อผู้ใช้งานระบบ"></Column>
+  <Column field="admin_date_start" header="วันที่เริ่มระบบ">
+    <template #body="Props">
+      {{ dateformat(Props.data.admin_date_start) }}
+    </template>
+  </Column>
+  <Column :exportable="false" style="min-width: 8rem">
+    <template #body="Props">
+      <Button icon="pi pi-list" class="p-button-outlined" @click="openD(Props.data)" />&nbsp;
+      <Button icon="pi pi-trash" class="p-button-outlined p-button-danger" @click="del(Props.data)" />
+    </template>
+  </Column>
+</DataTable>
+
     <Dialog :style="{ width: '900px' }" header="รายละเอียดข้อมูลผู้ดูแลระบบ" :modal="true" class="p-fluid mb-5">
       <div class="grid">
         <div class="col-12">
@@ -42,13 +42,7 @@
                     placeholder="กรอกชื่อ-นามสกุลของผู้ดูแลระบบ" />
                 </div>
               </div>
-              <div class="col-12 md:col-6">
-                <div class="field">
-                  <label>*ตำแหน่ง :</label><br />
-                  <Dropdown v-model="admin_detail.admin_position" :options="position" optionLabel="name"
-                    optionValue="value" placeholder="เลือกตำแหน่ง" />
-                </div>
-              </div>
+             
               <div class="col-12 md:col-6">
                 <div class="field">
                   <label>*ชื่อผู้ใช้งาน :</label>
@@ -109,16 +103,13 @@ export default {
       admin: [],
       search: "",
       admin_id: "",
-      admin_detail: [],
       delete_id: "",
       delete_name: "",
       confirmDailog: false,
       deleteDailog: false,
       adminDialog: false,
       isloading: false,
-      position: [
-        { name: "admin", value: "admin" },
-      ],
+   
     };
   },
   mounted() {
@@ -151,17 +142,72 @@ export default {
         this.admin = this.admins.filter(
           (el) =>
             el.admin_name.search(this.search) !== -1 ||
-            el.admin_username.search(this.search) !== -1 ||
-            el.admin_position.search(this.search) !== -1
+            el.admin_username.search(this.search) !== -1 
         );
       } else {
         this.admin = this.admins;
       }
     },
 
-
- 
-
+    openD(admin) {
+      this.adminDialog = true;
+      this.admin_id = admin._id;
+      this.admin_detail = admin;
+      console.log(this.admin_detail);
+    },
+    del(admin) {
+      this.deleteDailog = true;
+      this.delete_id = admin._id;
+      this.delete_name = admin.admin_name;
+    },
+    openC() {
+      this.confirmDailog = true;
+    },
+    closeD() {
+      this.confirmDailog = false;
+      this.deleteDailog = false;
+    },
+    async update() {
+      this.isloading = true;
+      await axios
+        .put(
+          `${process.env.VUE_APP_DEKRUP}/admin/user/${this.admin_id}`,
+          {
+            admin_name: this.admin_detail.admin_name,
+            admin_username: this.admin_detail.admin_username,
+            admin_position: this.admin_detail.admin_position,
+            admin_date_start: this.admin_detail.admin_date_start,
+          },
+          {
+            headers: {
+              "token": localStorage.getItem("token"),
+            },
+          }
+        )
+        .then(() => {
+          this.isloading = false;
+          this.$toast.add({
+            severity: "success",
+            summary: "สำเร็จ",
+            detail: "แก้ไข้ข้อมูลเรียบร้อย",
+            life: 3000,
+          });
+          this.adminDialog = false;
+          this.confirmDailog = false;
+        })
+        .catch((e) => {
+          this.isloading = false;
+          if (e.response.status === 408) {
+            window.location.reload();
+          }
+          this.$toast.add({
+            severity: "erroe",
+            summary: "แจ้งเตือน",
+            detail: e.response.data.message,
+            life: 3000,
+          });
+        });
+    },
   },
 };
 </script>
