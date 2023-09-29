@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@vue/cli-plugin-router": "^5.0.8",
+    "@vueup/vue-quill": "^1.2.0",
     "axios": "^1.5.1",
     "chart.js": "^4.4.0",
     "core-js": "^3.8.3",
