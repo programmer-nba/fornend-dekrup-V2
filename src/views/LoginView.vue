@@ -17,10 +17,10 @@
       </div>
       <div class="flex justify-content-between mb-5">
         <div class="font-color">
-          <a href="/register"><p >สมัครสมาชิก</p></a>
+          <p @click="$router.push('/register')">สมัครสมาชิก</p>
         </div>
         <div class="font-color">
-          <a href="/forgetpassword"><p >ลืมรหัสผ่าน</p></a>
+          <p  @click="$router.push('/forgetpassword')">ลืมรหัสผ่าน</p>
         </div>
       </div>
       <div class="flex justify-content-center">

@@ -9,7 +9,7 @@
                         <span class="p-inputgroup-addon">
                             <i class="pi pi-user"></i>
                         </span>
-                        <InputText placeholder="ชื่อ-นามสกุล" class="style-font" />
+                        <InputText v-model="member.name" placeholder="ชื่อ-นามสกุล" class="style-font" />
                     </div>
                 </div>
                 <div class="sm:col-12 col-12">
@@ -17,9 +17,7 @@
                         <span class="p-inputgroup-addon">
                             <i class="pi pi-phone"></i>
                         </span>
-                        <InputText placeholder="เบอร์โทรศัพท์" class="style-font" />
-
-
+                        <InputText v-model="member.tel" placeholder="เบอร์โทรศัพท์" class="style-font" />
                     </div>
                 </div>
                 <div class="sm:col-6 col-12">
@@ -27,7 +25,7 @@
                         <span class="p-inputgroup-addon">
                             <i class="pi pi-user-edit"></i>
                         </span>
-                        <InputText placeholder="ยูสเซอร์เนม" class="style-font" />
+                        <InputText v-model="member.username" placeholder="ยูสเซอร์เนม" class="style-font" />
                     </div>
                 </div>
                 <div class="sm:col-6 col-12">
@@ -35,7 +33,7 @@
                         <span class="p-inputgroup-addon">
                             <i class="pi pi-key"></i>
                         </span>
-                        <Password v-model="password" toggleMask placeholder="รหัสผ่าน" class="style-font" />
+                        <Password v-model="member.password" toggleMask placeholder="รหัสผ่าน" class="style-font" />
                     </div>
                 </div>
                 <div class="sm:col-12 col-12">
@@ -43,7 +41,7 @@
                         <span class="p-inputgroup-addon">
                             <i class="pi pi-map-marker"></i>
                         </span>
-                        <InputText placeholder="ที่อยู่" class="style-font" />
+                        <InputText v-model="member.address" placeholder="ที่อยู่" class="style-font" />
                     </div>
                 </div>
                 <div class="sm:col-6 col-12">
@@ -52,8 +50,9 @@
                             <i class="pi pi-map-marker"></i>
                         </span>
                         <div class="card flex justify-content-center">
-                            <Dropdown v-model="selectedCity" :options="cities" optionLabel="name" placeholder="เลือกจังหวัด"
-                                class="w-full w-14rem md:w-16rem" />
+                            <Dropdown v-model="province" class="w-full w-14rem md:w-16rem" inputClass="font"
+                                :options="item_province" placeholder="เลือกจังหวัด" optionLabel="name_th" :filter="true"
+                                filterPlaceholder="ค้นหาจังหวัด" @change="chooseProvince" />
                         </div>
                     </div>
                 </div>
@@ -63,8 +62,9 @@
                             <i class="pi pi-map-marker"></i>
                         </span>
                         <div class="card flex justify-content-center">
-                            <Dropdown v-model="selectedCity" :options="cities" optionLabel="name" placeholder="เลือกอำเภอ"
-                                class="w-full w-14rem md:w-16rem" />
+                            <Dropdown v-model="amphure" class="w-full w-14rem md:w-16rem" inputClass="font"
+                                :options="item_amphure" placeholder="เลือกเขต/จังหวัด" optionLabel="name_th" :filter="true"
+                                filterPlaceholder="ค้นหาเขต/อำเภอ" @change="chooseAmphure" />
                         </div>
                     </div>
                 </div>
@@ -74,8 +74,9 @@
                             <i class="pi pi-map-marker"></i>
                         </span>
                         <div class="card flex justify-content-center">
-                            <Dropdown v-model="selectedCity" :options="cities" optionLabel="name" placeholder="เลือกตำบล"
-                                class="w-full w-14rem md:w-16rem" />
+                            <Dropdown v-model="tambon" class="w-full w-14rem md:w-16rem" inputClass="font"
+                                :options="item_tambon" placeholder="เลือกตำบล" @change="chooseToDistrict"
+                                optionLabel="name_th" :filter="true" filterPlaceholder="ค้นหาแขวง/ตำบล" />
                         </div>
                     </div>
                 </div>
@@ -85,8 +86,8 @@
                             <i class="pi pi-map-marker"></i>
                         </span>
                         <div class="card flex justify-content-center">
-                            <Dropdown v-model="selectedCity" :options="cities" optionLabel="name"
-                                placeholder="เลือกรหัสไปรษณ์" class="w-full w-14rem md:w-16rem" />
+                            <InputText v-model="postcode" class="w-full w-14rem md:w-16rem" :disabled="isDisabled"
+                                placeholder="รหัสไปรษณ์" />
                         </div>
                     </div>
                 </div>
@@ -104,16 +105,187 @@ import Dropdown from 'primevue/dropdown';
 import Password from "primevue/password";
 import Button from "primevue/button";
 
+import axios from 'axios';
+
 export default {
     created() {
         document.title = "สมัครสมาชิก | Dekrub Shop";
+    },
+    async mounted() {
+        this.$store.commit('setLoading', true);
+        await axios.get(`${process.env.VUE_APP_THAILAND}thailand/province`, {
+            headers: {
+                'auth-token': `Bearer ${localStorage.getItem('token')}`
+            }
+        }).then((res) => {
+            this.item_province = res.data;
+            this.$store.commit('setLoading', false);
+        }).catch((err) => {
+            console.log(err);
+            this.$store.commit('setLoading', false);
+            this.$toast.add({
+                severity: "error",
+                summary: "ไม่สำเร็จ",
+                detail: err.response.data.message,
+                life: 3000,
+            });
+        })
     },
     components: {
         Dropdown,
         Password,
         Button
+    },
+    data: () => ({
+        isLoading: false,
+
+        item_province: [],
+        item_amphure: [],
+        item_tambon: [],
+
+        province: null,
+        amphure: null,
+        tambon: null,
+        postcode: '',
+
+        member: {
+            member_ref: '',
+            name: '',
+            username: '',
+            password: '',
+            tel: '',
+            address: '',
+            subdistrict: '',
+            district: '',
+            province: '',
+            postcode: '',
+        },
+
+        ref_status: false
+
+    }),
+
+    methods: {
+        reload() {
+            window.location.reload();
+        },
+
+        async checkRefMember() {
+
+        },
+
+        clear() {
+            this.province = null;
+            this.district = null;
+            this.subdistrict = null;
+            this.postcode = '';
+            this.item_subdistrict = [];
+            this.item_district = [];
+        },
+        async chooseProvince(evt) {
+            this.member.province = evt.value.name_th;
+            await axios.get(`${process.env.VUE_APP_THAILAND}thailand/amphure/by-province-id/${evt.value.id}`, {
+                headers: {
+                    'auth-token': `Bearer ${localStorage.getItem('token')}`
+                }
+            }).then((res) => {
+                this.item_amphure = res.data;
+                this.item_tambon = [];
+                this.member.district = null;
+                this.amphure = null;
+                this.tambon = null;
+            });
+        },
+        async chooseAmphure(evt) {
+            await axios.get(`${process.env.VUE_APP_THAILAND}thailand/tambon/by-amphure-id/${evt.value.id}`, {
+                headers: {
+                    'auth-token': `Bearer ${localStorage.getItem('token')}`
+                }
+            }).then((res) => {
+                this.item_tambon = res.data;
+                this.member.district = null;
+                this.tambon = null;
+            })
+        },
+        chooseToDistrict(evt) {
+            this.district = evt.value;
+            this.postcode = evt.value.zip_code;
+        },
+        async checkPlatform() {
+            await axios.get(`${process.env.VUE_APP_PLATFORM}public/member/check/${this.tel_platform}`, {
+                headers: {
+                    'auth-token': `Bearer ${localStorage.getItem('token')}`
+                }
+            }).then((res) => {
+                this.$toast.add({ severity: 'success', summary: res.data.data.name, detail: `${res.data.data.address}, ${res.data.data.subdistrict} ${res.data.data.district} ${res.data.data.province} ${res.data.data.postcode}`, life: 7000 })
+            }).catch((err) => {
+                console.log(err);
+                this.$toast.add({ severity: 'error', summary: 'ผิดพลาด', detail: 'เบอร์นี้ยังไม่ได้สมัครแพลตฟอร์ม ไม่สามารถรับค่าคอมมิชชั่นได้ กรุณาแจ้งให้พาร์ทเนอร์สมัครแพลตฟอร์ม', life: 5000 })
+            })
+        },
+
+        confirm() {
+            if (
+                this.member.name === '' ||
+                this.member.username === '' ||
+                this.member.password === '' ||
+                this.member.tel === '' ||
+                this.member.subdistrict === '' ||
+                this.member.district === '' ||
+                this.member.province === '' ||
+                this.member.postcode === ''
+            ) {
+                this.toast.info('กรุณากรอกข้อมูลให้ครบถ้วน')
+                return false;
+            }
+            if (this.member.password.length < 8) {
+                this.toast.info('รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษรขึ้นไป')
+                return false;
+            }
+            this.$swal({
+                icon: 'warn',
+                title: 'ยืนยันข้อมูล',
+                text: 'ยืนยันข้อมูลและสมัครสมาชิกตอนนี้?',
+                showCancelButton: true,
+                confirmButtonText: 'ตกลง',
+                cancelButtonText: 'ยกเลิก',
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    this.$store.commit('setLoading', true);
+                    const data_register = {
+                        name: this.member.name,
+                        username: this.member.username,
+                        password: this.member.password,
+                        tel: this.member.tel,
+                        address: this.member.address,
+                        subdistrict: this.member.subdistrict,
+                        district: this.member.district,
+                        province: this.member.province,
+                        postcode: this.member.postcode,
+                    }
+
+                    let data = null;
+                    if (this.ref_status) {
+                        data = { ...data_register, member_ref: this.member.member_ref }
+                    } else {
+                        data = data_register
+                    }
+                    await axios.post(`${process.env.VUE_APP_DEKRUP}/register`, data).then((res) => {
+                        console.log(res);
+                        localStorage.setItem('token', res.data.token);
+                        this.$store.commit('setLoading', false);
+                    }).catch((err) => {
+                        this.$store.commit('setLoading', false);
+                        this.toast.error(err.response.data.message);
+                    })
+                }
+            })
+
+        },
     }
 }
+
+
 </script>
   
       

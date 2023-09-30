@@ -5,8 +5,10 @@
     <router-view />
   </div>
   <div v-else>
-    <!-- <div v-if="$route.path === '/register' || $route.path === '/forgetpassword'"></div> -->
-    <LoginView />
+    <div v-if="$route.path === '/register' || $route.path === '/forgetpassword'">
+      <router-view />
+    </div>
+    <LoginView v-else/>
   </div>
 </template>
 
@@ -26,7 +28,6 @@ export default {
   async beforeCreate() {
     this.$store.commit('setLoading', true);
     if (localStorage.getItem("token") !== null) {
-      console.log(localStorage.getItem("token"))
       await axios
         .get(`${process.env.VUE_APP_DEKRUP}/me`, {
           headers: {
