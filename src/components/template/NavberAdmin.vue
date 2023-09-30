@@ -53,9 +53,9 @@ export default {
                             to: "/admin/product",
                         },
                         {
-                            label: "หมวดหมู่สินค้า",  
+                            label: "หมวดหมู่สินค้า",
                             icon: 'pi pi-tag',
-                            to: "/admin/product/category",  
+                            to: "/admin/product/category",
                         },
                     ],
                 },
@@ -108,7 +108,7 @@ export default {
                 })
                 .then(() => {
                     this.$store.commit("setLoginDefault");
-                    window.location.reload();
+                    window.location.reload('/');
                 })
                 .catch((err) => {
                     this.$store.commit("setLoading", false);

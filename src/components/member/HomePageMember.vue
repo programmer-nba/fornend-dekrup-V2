@@ -1,5 +1,5 @@
 <template>
-  <p>ระบบจัดการ Dekrub-shop || Home Page Admin</p>
+  <p>ระบบจัดการ Dekrub-shop || Home Page Member</p>
 </template>
 
 <script>
@@ -8,7 +8,7 @@ export default {
 
   },
   async created() {
-    document.title = 'ระบบจัดการ Dekrub-shop';
+    document.title = 'Dekrub-shop';
   },
 }
 </script>

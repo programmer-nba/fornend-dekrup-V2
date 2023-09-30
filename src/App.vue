@@ -1,49 +1,53 @@
 <template>
-  <div>
-    <router-view v-if="this.$store.getters.logedIn === true" />
-    <div v-else>
-      <!-- หากไม่ได้เข้าสู่ระบบให้แสดงหน้า Login -->
-      <LoginView />
-      
-    </div>
+  <div v-if="this.$store.getters.logedIn === true">
+    <NavberAdmin v-if="this.$store.getters.position === 'admin'" />
+    <NavberMember v-if="this.$store.getters.position === 'member'" />
+    <router-view />
+  </div>
+  <div v-else>
+    <!-- <div v-if="$route.path === '/register' || $route.path === '/forgetpassword'"></div> -->
+    <LoginView />
   </div>
 </template>
 
 <script>
 import axios from 'axios';
 import jwtDecode from "jwt-decode";
-import LoginView from "./views/Public/LoginView.vue";
+import LoginView from "./views/LoginView.vue";
+import NavberAdmin from './components/template/NavberAdmin.vue';
+import NavberMember from './components/template/NavberMember.vue';
 
 export default {
   components: {
     LoginView,
+    NavberAdmin,
+    NavberMember,
   },
-
   async beforeCreate() {
+    this.$store.commit('setLoading', true);
     if (localStorage.getItem("token") !== null) {
+      console.log(localStorage.getItem("token"))
       await axios
-        .get(`${process.env.VUE_APP_DEKRUP}/me`,{
+        .get(`${process.env.VUE_APP_DEKRUP}/me`, {
           headers: {
-            "token": `${localStorage.getItem("token")}`,
+            'token': localStorage.getItem('token'),
           },
         })
         .then(async (res) => {
           const decode = await jwtDecode(localStorage.getItem("token"));
           const data_login = {
             logedIn: true,
-            position: res.data.position,
-            name: res.data.name,
+            position: res.data.data.position,
+            name: res.data.data.name,
             id: decode._id,
           };
           this.$store.commit("setLogin", data_login);
-
-          if (this.$store.getters.position === 'admin') {
-            // เปลี่ยนหน้าเมื่อโหลดข้อมูลเสร็จสิ้น
-            this.$router.push("/admin");
-          }
+          this.$store.commit('setLoading', false);
+          console.log(data_login);
         })
         .catch(() => {
           localStorage.clear();
+          this.$store.commit('setLoading', false);
           this.$store.commit("setDefaultLogin");
           this.$router.push("/login");
         });

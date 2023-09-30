@@ -1,7 +1,7 @@
 <template>
   <div class="img-login">
     <div class="background-login">
-      <img class="img-logo" src="../../assets/img/Deekrub.png">
+      <img class="img-logo" src="../assets/img/Deekrub.png">
       <div class="flex justify-content-center mb-5">
         <span class="p-float-label w-full">
           <InputText v-model="username" type="text" placeholder="ชื่อผู้ใช้งาน" />
@@ -16,8 +16,12 @@
         </span>
       </div>
       <div class="flex justify-content-between mb-5">
-        <div><a href="/register" class="font-color">สมัครสมาชิก</a></div>
-        <div><a href="/forgotpassword" class="font-color">ลืมรหัสผ่าน</a></div>
+        <div class="font-color">
+          <a href="/register"><p >สมัครสมาชิก</p></a>
+        </div>
+        <div class="font-color">
+          <a href="/forgetpassword"><p >ลืมรหัสผ่าน</p></a>
+        </div>
       </div>
       <div class="flex justify-content-center">
         <Button label="เข้าสู่ระบบ" style="font-family: 'Kanit', sans-serif;" class="button-login" severity="success"
@@ -30,6 +34,7 @@
 <script>
 import axios from 'axios';
 import Button from 'primevue/button';
+import { useToast } from "vue-toastification";
 export default {
   components: {
     Button
@@ -39,27 +44,21 @@ export default {
     document.title = "เข้าสู่ระบบ | Dekrub Shop";
   },
 
+  setup() {
+    const toast = useToast();
+    return { toast };
+  },
+
   data: () => ({
     isLoading: false,
     username: "",
     password: "",
   }),
 
-  mounted() {
-    if (this.$store.getters.logedIn === true) {
-      this.$router.push("/admin");
-    }
-  },
-
   methods: {
     async checklogin() {
       if (this.username === "" || this.password === "") {
-        this.$toast.add({
-          severity: "warn",
-          summary: "แจ้งเตือน",
-          detail: "กรุณากรอกชื่อผู้ใช้งานและรหัสผ่าน",
-          life: 3000,
-        });
+        this.toast.info("กรอกชื่อผู้ใช้งานและรหัสผ่าน");
         return false;
       }
       this.isLoading = true;
@@ -68,9 +67,11 @@ export default {
           username: this.username,
           password: this.password,
         })
-        .then((res) => {
+        .then(async (res) => {
+          this.isLoading = false;
+          this.toast.success("ยินดีต้อนรับเข้าสู่ NBA PLATFORM");
           localStorage.setItem("token", res.data.token);
-          window.location.assign("/admin");
+          window.location.reload('/');
         })
         .catch(() => {
           this.isLoading = false;
@@ -91,7 +92,7 @@ export default {
 <style>
 .img-login {
   width: 100%;
-  background: url("../../assets/img/backgrond.jpg");
+  background: url("../assets/img/backgrond.jpg");
   height: 100vh;
   background-size: cover;
   /* This will cover the entire container */

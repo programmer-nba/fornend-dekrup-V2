@@ -1,16 +1,32 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory } from "vue-router";
+
+let routes = [];
+routes = [
+  {
+    path: "/admin",
+    name: "admin",
+    component: () => import("../components/admin/HomePageAdmin.vue"),
+  },
+  {
+    path: "/admin/product",
+    name: "admin-product",
+    component: () => import("../components/admin/product_dekrub/ProductView.vue"),
+  },
+  {
+    path: "/admin/product/add",
+    name: "admin-product-add",
+    component: () => import("../components/admin/product_dekrub/addView.vue"),
+  },
+  {
+    path: "/admin/product/category",
+    name: "admin-product-category",
+    component: () => import("../components/admin/product_dekrub/category/CategoryProduct.vue"),
+  },
+];
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
+  history: createWebHistory(process.env.BASE_URL),
+  routes,
+});
 
-    {
-      path: '/homeadmin',
-      name: 'homeadmin',
-      component : ()=>import("../views/Homeadmin/HomeAdmin.vue")
-    },
-
-  ]
-})
-
-export default router
+export default router;
