@@ -1,11 +1,11 @@
 <template>
-    <div class="grid">
-        <div class="col-10">
+    <div class="grid navbar-sticky" style="background: red; ">
+        <div class="xl:col-10 col-7 flex justify-content-center align-items-center">
             <Menubar :model="item_manu"
-                class="custom-menu  border-round-3xl p-0 mt-2 w-auto hover:border-2 hover:border-purple-900 flex align-items-center justify-content-center bg-white">
+                class="custom-menu  border-round-3xl p-0 mt-2  hover:border-2 hover:border-purple-900 flex align-items-center justify-content-center bg-white" style="width: 40%;">
             </Menubar>
         </div>
-        <div class="col mt-2">
+        <div class="xl:col-2 col-5 mt-2 flex justify-content-end px-3">
             <Button class="p-button-danger z-0" label="ออกจากระบบ" icon="pi pi-power-off" @click="logout()" />
         </div>
     </div>
@@ -34,68 +34,15 @@ export default {
         setItemMenu() {
             this.item_manu = [
                 {
-                    label: "Home",
-                    icon: "pi pi-fw pi-home",
-                    to: "/member",
+                    label: "สินค้า",
+                    icon: "pi pi-shopping-cart",
+                    to: "/member/product",
                 },
                 {
-                    label: "Product Dekrub",
-                    icon: 'pi pi-shopping-cart',
-                    items: [
-                        {
-                            label: "เพิ่มสินค้า",
-                            icon: 'pi pi-user',
-                            to: "/admin/product/add",
-                        },
-                        {
-                            label: "สินค้าทั้งหมด",
-                            icon: 'pi pi-plus',
-                            to: "/admin/product",
-                        },
-                        {
-                            label: "หมวดหมู่สินค้า",
-                            icon: 'pi pi-tag',
-                            to: "/admin/product/category",
-                        },
-                    ],
-                },
-                {
-                    label: "Order Dekrub",
-                    icon: 'pi pi-shopping-cart',
-                    to: "/admin/order",
-                },
-                {
-                    label: "จัดการผู้ใช้งาน",
-                    icon: 'pi pi-shopping-cart',
-                    items: [
-                        {
-                            label: "ผู้ใช้งานทั้งหมด",
-                            icon: 'pi pi-user',
-                            to: "/admin/user",
-                        },
-                        {
-                            label: "เพิ่มผู้ใช้งานระบบ",
-                            icon: 'pi pi-plus',
-                            to: "/admin/user/add",
-                        },
-                    ],
-                },
-                {
-                    label: "จัดการระบบ",
-                    icon: 'pi pi-shopping-cart',
-                    items: [
-                        {
-                            label: "ผู้ใช้งานทั้งหมด",
-                            icon: 'pi pi-user',
-                            to: "/admin/user",
-                        },
-                        {
-                            label: "เพิ่มผู้ใช้งานระบบ",
-                            icon: 'pi pi-plus',
-                            to: "/admin/user/add",
-                        },
-                    ],
-                },
+                    label: "ตั้งค่าโปรไฟล์",
+                    icon: "pi pi-user",
+                    to: "/member/profile",
+                }
             ];
         },
         async logout() {
@@ -120,6 +67,12 @@ export default {
 </script>
 
 <style>
+.navbar-sticky{
+    position: sticky !important;
+ top: 0 !important;
+ z-index: 100; 
+
+}
 .p-menubar .p-submenu-list {
     display: none;
     position: absolute;

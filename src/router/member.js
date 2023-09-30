@@ -7,6 +7,16 @@ routes = [
     name: "member",
     component: () => import("../components/member/HomePageMember.vue"),
   },
+  {
+    path: "/member/product",
+    name: "member-product",
+    component: () => import("../components/member/MenuProductMember.vue"),
+  },
+  {
+    path: "/member/profile",
+    name: "member-profile",
+    component: () => import("../components/member/ProfileMember.vue"),
+  },
   
 ];
 
