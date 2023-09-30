@@ -5,7 +5,7 @@
         <span class="p-inputgroup-addon border-none" style="background-color: #C21010;">
           <i class="pi pi-search text-white"></i>
         </span>
-        <InputText placeholder="ค้นหาข้อมูล"  class="z-0"/>
+        <InputText placeholder="ค้นหาข้อมูล" class="z-0" />
       </div>
     </div>
     <div class="col-12 md:col-4">
@@ -20,45 +20,62 @@
       <Button label="Clear" class="border-red-500" icon="pi pi-refresh" style="background-color: #C21010;"></Button>
     </div>
   </div>
-  <DataTable stripedRows responsiveLayout="scroll" :paginator="true" :rows="20"
-    paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
-    currentPageReportTemplate="แสดง {first} ถึง {last} ใน {totalRecords} รายการ" class=" px-3">
-    <Column header="เลขที่ใบสั่งชื้อ" style="width: 20%;">
-      <template #body="item">
-      </template>
-    </Column>
-    <Column header="ชื่อ" style="width: 20%;">
-      <template #body="item">
-      </template>
-    </Column>
-    <Column header="ที่อยู่" style="width: 20%;">
-      <template #body="item">
-      </template>
-    </Column>
-    <Column header="สถานะ" style="width: 15%;">
-      <template #body="item">
-        <Chip :label="item.data.status_now" />
-      </template>
-    </Column>
+  <DataTable :value="orders" stripedRows responsiveLayout="scroll" :paginator="true" :rows="20"
+  paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
+  currentPageReportTemplate="แสดง {first} ถึง {last} ใน {totalRecords} รายการ" class=" px-3">
+  <!-- ตรวจสอบว่ามีข้อมูลใบสั่งชื้อหรือไม่ -->
+  <template #empty>
+    <p class="font-italic text-center text-5xl" style="color: #BD1616;">ไม่พบข้อมูลใบสั่งชื้อ</p>
+  </template>
 
-    <Column field="timestamp" header="วันที่ทำรายการ" style="width: 15%;">
-      <template #body="item">
-      </template>
-    </Column>
-    <Column :exportable="false" style="min-width: 8rem">
-      <template #body="item">
-        <DialogDetail :order="item.data" />
-        <Button v-if="item.data.dealer_id === 'ไม่มี'" icon="pi pi-print" label="พิมพ์ใบส่งสินค้า"
-          class="p-button-outlined p-button-sm text-sm text-teal-300" />
-        <FormOrderdealer v-else :orderdealer="item.data" />
-      </template>
-    </Column>
-  </DataTable>
+  <Column header="เลขที่ใบสั่งชื้อ" style="width: 15%;">
+    <template #body="item">
+      {{ item.data.receiptnumber }}
+    </template>
+  </Column>
+  <Column header="ชื่อ" style="width: 15%;">
+    <template #body="item">
+      {{ item.data.customer_name }}
+    </template>
+  </Column>
+  <Column header="ที่อยู่" style="width: 25%;">
+    <template #body="item">
+      {{ item.data.customer_address }}
+    </template>
+  </Column>
+  <Column header="สถานะ" style="width: 12%;">
+    <template #body="item">
+      <Chip :label="item.data.status[0].status" />
+    </template>
+  </Column>
+  <Column field="timestamp" header="วันที่ทำรายการ" style="width: 15%;">
+    <template #body="item">
+      {{ new Date(item.data.timestamp).toLocaleString() }}
+    </template>
+  </Column>
+  <Column :exportable="false" style="min-width: 8rem">
+        <template #body="item">
+          <DialogDetail :order="item.data" :shops="shops"  />
+          <Button
+            icon="pi pi-print"
+            label="พิมพ์ใบส่งสินค้า"
+            class="p-button-outlined p-button-sm text-sm text-teal-300"
+            @click="openformorder(item.data.ponba_id)"
+          />
+          <FormOrderdealer
+           
+          />
+        </template>
+      </Column>
+</DataTable>
+
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import DialogDetail from "@/components/admin/order/DialogDetail.vue";
 import axios from 'axios';
+
+import { onMounted, ref } from 'vue';
 
 export default {
   setup() {
@@ -66,17 +83,15 @@ export default {
 
     onMounted(async () => {
       try {
-        const authToken = localStorage.getItem("auth-token");
         const response = await axios.get(`${process.env.VUE_APP_DEKRUP}/order/list`, {
-  headers: {
-    'auth-token': authToken,
-  },
-});
-
+          headers: {
+            "token": localStorage.getItem("token"),
+          },
+        });
 
         orders.value = response.data.data;
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error(error);
       }
     });
 
@@ -86,6 +101,12 @@ export default {
   },
 };
 </script>
+
+
+
+
+
+
 
 
 <style>

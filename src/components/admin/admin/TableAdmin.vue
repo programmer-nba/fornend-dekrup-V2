@@ -10,26 +10,27 @@
       </div>
     </div>
     <DataTable :value="admin" :paginator="true" :rows="10" class="px-3 py-3"
-  paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink  RowsPerPageDropdown"
-  :rowsPerPageOptions="[5, 10, 25]" currentPageReportTemplate=" แสดง {first} ถึง {last} ของ {totalRecords} รายการ"
-  responsiveLayout="scroll">
-  <template #empty>ไม่มีข้อมูล</template>
-  <Column field="name" header="ชื่อผู้ดูแลระบบ"></Column>
-  <Column field="username" header="ชื่อผู้ใช้งานระบบ"></Column>
-  <Column field="admin_date_start" header="วันที่เริ่มระบบ">
-    <template #body="Props">
-      {{ dateformat(Props.data.admin_date_start) }}
-    </template>
-  </Column>
-  <Column :exportable="false" style="min-width: 8rem">
-    <template #body="Props">
-      <Button icon="pi pi-list" class="p-button-outlined" @click="openD(Props.data)" />&nbsp;
-      <Button icon="pi pi-trash" class="p-button-outlined p-button-danger" @click="del(Props.data)" />
-    </template>
-  </Column>
-</DataTable>
+      paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink  RowsPerPageDropdown"
+      :rowsPerPageOptions="[5, 10, 25]" currentPageReportTemplate=" แสดง {first} ถึง {last} ของ {totalRecords} รายการ"
+      responsiveLayout="scroll">
+      <template #empty>ไม่มีข้อมูล</template>
+      <Column field="name" header="ชื่อผู้ดูแลระบบ"></Column>
+      <Column field="username" header="ชื่อผู้ใช้งานระบบ"></Column>
+      <Column field="admin_date_start" header="วันที่เริ่มระบบ">
+        <template #body="Props">
+          {{ dateformat(Props.data.admin_date_start) }}
+        </template>
+      </Column>
+      <Column :exportable="false" style="min-width: 8rem">
+        <template #body="Props">
+          <Button icon="pi pi-list" class="p-button-outlined" @click="openD(Props.data)" />&nbsp;
+          <Button icon="pi pi-trash" class="p-button-outlined p-button-danger" @click="del(Props.data)" />
+        </template>
+      </Column>
+    </DataTable>
 
-    <Dialog :style="{ width: '900px' }" header="รายละเอียดข้อมูลผู้ดูแลระบบ" :modal="true" class="p-fluid mb-5">
+    <Dialog v-model:visible="adminDialog" :style="{ width: '900px' }" header="รายละเอียดข้อมูลผู้ดูแลระบบ" :modal="true"
+      class="p-fluid mb-5">
       <div class="grid">
         <div class="col-12">
           <Panel>
@@ -38,24 +39,32 @@
               <div class="col-12 md:col-6">
                 <div class="field">
                   <label>*ชื่อ-นามสกุล :</label>
-                  <InputText v-model="admin_detail.admin_name" class="w-full font" type="text"
+                  <InputText v-model="admin_detail.name" class="w-full font" type="text"
                     placeholder="กรอกชื่อ-นามสกุลของผู้ดูแลระบบ" />
                 </div>
               </div>
-             
+
               <div class="col-12 md:col-6">
                 <div class="field">
                   <label>*ชื่อผู้ใช้งาน :</label>
-                  <InputText v-model="admin_detail.admin_username" class="w-full font" type="text"
+                  <InputText v-model="admin_detail.username" class="w-full font" type="text"
                     placeholder="ผู้ใช้งาน" />
                 </div>
               </div>
+
+
+
+              
               <div class="col-12 md:col-6">
                 <div class="field">
                   <label>รีเซตรหัส :</label>
                   <Button label="รีเซตรหัส" @click="resetPassword()" class="mr-2" />
                 </div>
               </div>
+
+
+
+
             </div>
             <div class="col-12 md:col-2">
               <div class="field">
@@ -65,8 +74,8 @@
           </Panel>
         </div>
       </div>
-    </Dialog> 
-    
+    </Dialog>
+
     <Dialog :style="{ width: '450px' }" header="แก้ไขข้อมูล" :modal="true">
       <div class="confirmation-content">
         <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
@@ -109,7 +118,7 @@ export default {
       deleteDailog: false,
       adminDialog: false,
       isloading: false,
-   
+
     };
   },
   mounted() {
@@ -121,20 +130,20 @@ export default {
     },
 
     async getdata() {
-  let res = await axios
-    .get(`${process.env.VUE_APP_DEKRUP}/admin`, {
-      headers: {
-        "token": localStorage.getItem("token"),
-      },
-    })
-    .catch((e) => {
-      if (e.res.status === 408) {
-        window.location.reload();
-      }
-    });
-  this.admins = res.data.data;
-  this.admin = this.admins.reverse();
-},
+      let res = await axios
+        .get(`${process.env.VUE_APP_DEKRUP}/admin`, {
+          headers: {
+            "token": localStorage.getItem("token"),
+          },
+        })
+        .catch((e) => {
+          if (e.res.status === 408) {
+            window.location.reload();
+          }
+        });
+      this.admins = res.data.data;
+      this.admin = this.admins.reverse();
+    },
 
 
     searchData() {
@@ -142,7 +151,7 @@ export default {
         this.admin = this.admins.filter(
           (el) =>
             el.admin_name.search(this.search) !== -1 ||
-            el.admin_username.search(this.search) !== -1 
+            el.admin_username.search(this.search) !== -1
         );
       } else {
         this.admin = this.admins;

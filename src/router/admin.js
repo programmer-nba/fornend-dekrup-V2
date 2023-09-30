@@ -22,6 +22,32 @@ routes = [
     name: "admin-product-category",
     component: () => import("../components/admin/product_dekrub/category/CategoryProduct.vue"),
   },
+
+  {
+    path: "/admin/order",
+    name: "admin-order",
+    component: () => import("../components/admin/order/TableOrder.vue"),
+  },
+  {
+    path: "/admin/admin",
+    name: "admin-admin",
+    component: () => import("../components/admin/admin/TableAdmin.vue"),
+  },
+  {
+    path: "/admin/add",
+    name: "admin-admin-add",
+    component: () => import("../components/admin/admin/addView.vue"),
+  },
+  {
+    path: "/admin/member",
+    name: "admin-member",
+    component: () => import("../components/admin/member/TableMember.vue"),
+  },
+  {
+    path: "/admin/member/add",
+    name: "admin-member-add",
+    component: () => import("../components/admin/member/addView.vue"),
+  },
 ];
 
 const router = createRouter({

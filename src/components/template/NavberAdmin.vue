@@ -71,12 +71,12 @@ export default {
                         {
                             label: "ผู้ใช้งานทั้งหมด",
                             icon: 'pi pi-user',
-                            to: "/admin/user",
+                            to: "/admin/member",
                         },
                         {
                             label: "เพิ่มผู้ใช้งานระบบ",
                             icon: 'pi pi-plus',
-                            to: "/admin/user/add",
+                            to: "/admin/member/add",
                         },
                     ],
                 },
@@ -87,12 +87,12 @@ export default {
                         {
                             label: "ผู้ใช้งานทั้งหมด",
                             icon: 'pi pi-user',
-                            to: "/admin/user",
+                            to: "/admin/admin",
                         },
                         {
                             label: "เพิ่มผู้ใช้งานระบบ",
                             icon: 'pi pi-plus',
-                            to: "/admin/user/add",
+                            to: "/admin/member/add",
                         },
                     ],
                 },
