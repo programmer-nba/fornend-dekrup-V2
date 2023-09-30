@@ -1,6 +1,6 @@
 <template>
   <Button icon="pi pi-pencil" class="p-button-rounded p-button-info mr-2" @click="(displayupdate = true), (name = '')" />
-  <Button icon="pi pi-trash" class="p-button-rounded p-button-danger" @click="delCategory" />
+  <Button icon="pi pi-trash" class="p-button-rounded p-button-danger"  @click="delCheck = true" />
   <Dialog header="แก้ไขหมวดหมู่สินค้า" v-model:visible="displayupdate" :breakpoints="{ '960px': '75vw', '640px': '90vw' }"
     :style="{ width: '35vw' }" :modal="true">
     <span class="p-float-label m-0 mt-5">
@@ -12,6 +12,11 @@
       <Button label="บันทึก" icon="pi pi-check" @click="updateCategor" autofocus />
     </template>
   </Dialog>
+
+  <Dialog v-model:visible="delCheck" modal header="คุณแน่ใจว่าต้องการลบข้อมูล" class="responsive-delCheck" >
+    <div class="flex justify-content-center" ><Button icon="pi pi-trash" label="ฉันแน่ใจ" class="p-button-rounded p-button-danger" @click="delCategory" /></div>
+    </Dialog>
+
 </template>
 
 <script>
@@ -33,6 +38,7 @@ export default {
     const name = ref();
 
     const displayupdate = ref(false);
+    const delCheck = ref(false);
 
 
     const updateCategor = async () => {
@@ -90,10 +96,10 @@ export default {
       }
     };
 
-    return { delCategory, updateCategor, displayupdate, name };
+    return { delCategory, updateCategor, displayupdate, name ,delCheck};
   },
 };
 </script>
 
 
-<style lang="scss" scoped></style>
+
