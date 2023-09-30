@@ -4,6 +4,7 @@
     <div v-else>
       <!-- หากไม่ได้เข้าสู่ระบบให้แสดงหน้า Login -->
       <LoginView />
+      
     </div>
   </div>
 </template>

@@ -2,10 +2,10 @@ import './assets/main.css';
 
 import { createApp } from 'vue';
 
+import PrimeVue from "primevue/config";
 import App from './App.vue';
 import router from './router';
 import store from './store';
-import PrimeVue from "primevue/config";
 
 import "primeicons/primeicons.css"; //icons
 import "primevue/resources/primevue.min.css"; //core css
@@ -17,6 +17,8 @@ import "primeflex/primeflex.css";
 // component PrimVue ตัวเสริมที่ใช้บ่อยๆ ให้อัพที่นี่
 import ToastService from "primevue/toastservice";
 import ConfirmationService from "primevue/confirmationservice";
+import ConfirmDialog from "primevue/confirmdialog";
+import Toast from "primevue/toast";
 // import Badge from "primevue/badge";
 import Button from "primevue/button";
 import Calendar from "primevue/calendar";
@@ -25,7 +27,6 @@ import Card from "primevue/card";
 // import Chip from "primevue/chip";
 import Column from "primevue/column";
 import ColumnGroup from "primevue/columngroup"; //optional for column grouping
-import ConfirmDialog from "primevue/confirmdialog";
 import DataTable from "primevue/datatable";
 import DataView from "primevue/dataview";
 import Dialog from "primevue/dialog";
@@ -57,12 +58,13 @@ import TabPanel from "primevue/tabpanel";
 import TabView from "primevue/tabview";
 // import Textarea from "primevue/textarea";
 // import Timeline from "primevue/timeline";
-import Toast from "primevue/toast";
 // import Toolbar from "primevue/toolbar";
 // import Carousel from 'primevue/carousel';
 // import Chart from "primevue/chart";
-import OrganizationChart from 'primevue/organizationchart';
+import ConfirmPopup from 'primevue/confirmpopup';
 import Editor from "primevue/editor";
+import OrganizationChart from 'primevue/organizationchart';
+
 
 const app = createApp(App);
 
@@ -120,6 +122,8 @@ app.component('SelectButton',SelectButton);
 // app.component('Chart',Chart);
 app.component('OrganizationChart',OrganizationChart);
 app.component("Editor", Editor);
+app.component('ConfirmPopup',ConfirmPopup);
+
 
 app.mount("#app");
 
