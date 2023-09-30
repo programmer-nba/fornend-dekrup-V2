@@ -1,13 +1,13 @@
 <template>
   <div class="px-4 py-3">
-    <h1>เพิ่มข้อมูลผู้ดูแลระบบ</h1>
+    <h1>เพิ่มข้อมูลผู้ใช้งาน</h1>
   </div>
   <div class="grid px-3">
     <div class="col-12">
       <Panel class="custom-header-panel">
         <template #header>ข้อมูลผู้ดูแลระบบ</template>
         <div class="grid">
-          <div class="col-12 md:col-6">
+          <div class="col-12 md:col-3">
             <div class="field">
               <label>*ชื่อ-นามสกุล :</label>
               <InputText
@@ -19,17 +19,8 @@
             </div>
           </div>
          
+        
           <div class="col-12 md:col-3">
-            <div class="field">
-              <label>*วันที่เปิดระบบ :</label>
-              <InputText
-              v-model="admin.admin_date_start"
-                class="font w-full"
-                type="date"
-              />
-            </div>
-          </div>
-          <div class="col-12 md:col-6">
             <div class="field">
               <label>*ชื่อผู้ใช้งาน :</label>
               <InputText
@@ -40,7 +31,7 @@
               />
             </div>
           </div>
-          <div class="col-12 md:col-6">
+          <div class="col-12 md:col-3">
             <div class="field">
               <label>*รหัสผ่าน :</label>
               <InputText

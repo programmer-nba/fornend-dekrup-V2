@@ -92,7 +92,7 @@ export default {
                         {
                             label: "เพิ่มผู้ใช้งานระบบ",
                             icon: 'pi pi-plus',
-                            to: "/admin/member/add",
+                            to: "/admin/admin/add",
                         },
                     ],
                 },

@@ -21,58 +21,72 @@
     </div>
   </div>
   <DataTable :value="orders" stripedRows responsiveLayout="scroll" :paginator="true" :rows="20"
-  paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
-  currentPageReportTemplate="แสดง {first} ถึง {last} ใน {totalRecords} รายการ" class=" px-3">
-  <!-- ตรวจสอบว่ามีข้อมูลใบสั่งชื้อหรือไม่ -->
-  <template #empty>
-    <p class="font-italic text-center text-5xl" style="color: #BD1616;">ไม่พบข้อมูลใบสั่งชื้อ</p>
-  </template>
+    paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
+    currentPageReportTemplate="แสดง {first} ถึง {last} ใน {totalRecords} รายการ" class=" px-3">
+    <!-- ตรวจสอบว่ามีข้อมูลใบสั่งชื้อหรือไม่ -->
+    <template #empty>
+      <p class="font-italic text-center text-5xl" style="color: #BD1616;">ไม่พบข้อมูลใบสั่งชื้อ</p>
+    </template>
 
-  <Column header="เลขที่ใบสั่งชื้อ" style="width: 15%;">
-    <template #body="item">
-      {{ item.data.receiptnumber }}
+    <Column header="เลขที่ใบสั่งชื้อ" style="width: 15%;">
+      <template #body="item">
+        {{ item.data.receiptnumber }}
+      </template>
+    </Column>
+    <Column header="ชื่อ" style="width: 15%;">
+      <template #body="item">
+        {{ item.data.customer_name }}
+      </template>
+    </Column>
+    <Column header="ที่อยู่" style="width: 25%;">
+      <template #body="item">
+        {{ item.data.customer_address }}
+      </template>
+    </Column>
+    <Column header="สถานะ" style="width: 12%;">
+      <template #body="item">
+        <Chip :label="item.data.status[0].status" />
+      </template>
+    </Column>
+    <Column field="timestamp" header="วันที่ทำรายการ" style="width: 15%;">
+      <template #body="item">
+        {{ new Date(item.data.timestamp).toLocaleString() }}
+      </template>
+    </Column>
+    <Column :exportable="false" style="min-width: 8rem">
+      <template #body="rowData">
+        <Button
+          icon="pi pi-print"
+          label="พิมพ์ใบส่งสินค้า"
+          class="p-button-outlined p-button-sm text-sm text-teal-300"
+          @click="showDialog(rowData)"
+        />
+      </template>
+    </Column>
+  </DataTable>
+
+
+  <Dialog
+    class="dialog-change"
+    v-model:visible="Dialogbill"
+    :style="{ width: '450px' }"
+    header="ใบส่งสินค้า"
+    :modal="true"
+  >
+    <img :src="selectedItemImage" class="product-image" style="width: 200px;"/>
+    <template #footer>
+      <Button
+        label="ปิด"
+        icon="pi pi-times text-red-600"
+        class="p-button-text text-red-600"
+        @click="closeDialog"
+      />
     </template>
-  </Column>
-  <Column header="ชื่อ" style="width: 15%;">
-    <template #body="item">
-      {{ item.data.customer_name }}
-    </template>
-  </Column>
-  <Column header="ที่อยู่" style="width: 25%;">
-    <template #body="item">
-      {{ item.data.customer_address }}
-    </template>
-  </Column>
-  <Column header="สถานะ" style="width: 12%;">
-    <template #body="item">
-      <Chip :label="item.data.status[0].status" />
-    </template>
-  </Column>
-  <Column field="timestamp" header="วันที่ทำรายการ" style="width: 15%;">
-    <template #body="item">
-      {{ new Date(item.data.timestamp).toLocaleString() }}
-    </template>
-  </Column>
-  <Column :exportable="false" style="min-width: 8rem">
-        <template #body="item">
-          <DialogDetail :order="item.data" :shops="shops"  />
-          <Button
-            icon="pi pi-print"
-            label="พิมพ์ใบส่งสินค้า"
-            class="p-button-outlined p-button-sm text-sm text-teal-300"
-            @click="openformorder(item.data.ponba_id)"
-          />
-          <FormOrderdealer
-           
-          />
-        </template>
-      </Column>
-</DataTable>
+  </Dialog>
 
 </template>
 
 <script>
-import DialogDetail from "@/components/admin/order/DialogDetail.vue";
 import axios from 'axios';
 
 import { onMounted, ref } from 'vue';
@@ -80,6 +94,8 @@ import { onMounted, ref } from 'vue';
 export default {
   setup() {
     const orders = ref([]);
+    const Dialogbill = ref(false);
+    const selectedItemImage = ref('');
 
     onMounted(async () => {
       try {
@@ -95,12 +111,42 @@ export default {
       }
     });
 
+    const showDialog = (rowData) => {
+      selectedItemImage.value = getImage(rowData.data.picture);
+      Dialogbill.value = true;
+    };
+
+    const closeDialog = () => {
+      Dialogbill.value = false;
+    };
+
+    const getImage = (item) => {
+      if (typeof item === 'string') {
+        return `https://drive.google.com/uc?export=view&id=${item}`;
+      } else if (Array.isArray(item) && item.length > 0) {
+        const firstImageId = item[0];
+        return `https://drive.google.com/uc?export=view&id=${firstImageId}`;
+      } else {
+        return "";
+      }
+    };
+
     return {
       orders,
+      showDialog,
+      closeDialog,
+      selectedItemImage,
+      Dialogbill,
     };
   },
 };
 </script>
+
+
+
+
+
+
 
 
 

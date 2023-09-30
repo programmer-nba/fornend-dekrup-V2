@@ -7,7 +7,7 @@
       <Panel class="custom-header-panel">
         <template #header>ข้อมูลผู้ดูแลระบบ</template>
         <div class="grid">
-          <div class="col-12 md:col-6">
+          <div class="col-12 md:col-3">
             <div class="field">
               <label>*ชื่อ-นามสกุล :</label>
               <InputText
@@ -19,17 +19,8 @@
             </div>
           </div>
          
+        
           <div class="col-12 md:col-3">
-            <div class="field">
-              <label>*วันที่เปิดระบบ :</label>
-              <InputText
-              v-model="admin.admin_date_start"
-                class="font w-full"
-                type="date"
-              />
-            </div>
-          </div>
-          <div class="col-12 md:col-6">
             <div class="field">
               <label>*ชื่อผู้ใช้งาน :</label>
               <InputText
@@ -40,7 +31,7 @@
               />
             </div>
           </div>
-          <div class="col-12 md:col-6">
+          <div class="col-12 md:col-3">
             <div class="field">
               <label>*รหัสผ่าน :</label>
               <InputText
@@ -97,9 +88,7 @@ export default {
         admin_username: "",
         admin_password: "",
         admin_date_start: dayjs(Date.now()).format(),
-
       },
-  
       confirmDialog: false,
       isloading: false,
     };
@@ -107,14 +96,12 @@ export default {
   created() {
     document.title = "เพิ่มข้อมูลผู้ดูแลระบบ";
   },
-
   methods: {
     save() {
       if (
         this.admin.admin_name === "" ||
         this.admin.admin_username === "" ||
-        this.admin.admin_password === "" ||
-        this.admin.admin_date_start === ""
+        this.admin.admin_password === ""
       )
         this.$toast.add({
           severity: "error",
@@ -127,42 +114,53 @@ export default {
       }
     },
     async addAdmin() {
-  this.isloading = true;
+      this.isloading = true;
 
-  try {
-    const response = await axios.post(`${process.env.VUE_APP_DEKRUP}/admin`, this.admin, {
-      headers: {
-        "token": localStorage.getItem("token"),
-      },
-    });
+      try {
+        const response = await axios.post(
+          `${process.env.VUE_APP_DEKRUP}/admin`,
+          {
+            name: this.admin.admin_name,
+            username: this.admin.admin_username,
+            password: this.admin.admin_password,
+          },
+          {
+            headers: {
+              token: localStorage.getItem("token"),
+            },
+          }
+        );
 
-    this.isloading = false;
-    this.$toast.add({
-      severity: "success",
-      summary: "สำเร็จ",
-      detail: "เพิ่มข้อมูลผู้ดูแลระบบเรียบร้อย",
-      life: 3000,
-    });
-    this.confirmDialog = false;
-    this.$router.push("/admin");
-  } catch (error) {
-    this.isloading = false;
-    if (error.response && error.response.status === 408) {
-      window.location.reload();
-    }
-    this.$toast.add({
-      severity: "error",
-      summary: "แจ้งเตือน",
-      detail: error.response ? error.response.data.message : "มีข้อผิดพลาดในการส่งข้อมูล",
-      life: 3000,
-    });
-    this.confirmDialog = false;
-  }
-},
-
+        this.isloading = false;
+        this.$toast.add({
+          severity: "success",
+          summary: "สำเร็จ",
+          detail: "เพิ่มข้อมูลผู้ดูแลระบบเรียบร้อย",
+          life: 3000,
+        });
+        this.confirmDialog = false;
+        this.$router.push("/admin/admin");
+      } catch (error) {
+        this.isloading = false;
+        if (error.response && error.response.status === 408) {
+          window.location.reload();
+        }
+        this.$toast.add({
+          severity: "error",
+          summary: "แจ้งเตือน",
+          detail: error.response
+            ? error.response.data.message
+            : "มีข้อผิดพลาดในการส่งข้อมูล",
+          life: 3000,
+        });
+        this.confirmDialog = false;
+      }
+    },
   },
 };
 </script>
+
+
 
 <style>
   .custom-header-panel .p-panel-header {
