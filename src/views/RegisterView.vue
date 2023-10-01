@@ -4,7 +4,18 @@
             <img class="img-logo" src="../assets/img/Deekrub.png" />
             <h2 class="text-center font-reset mb-3">สมัครสมาชิก</h2>
             <div class="grid">
-                <div class="sm:col-12 col-12">
+                <div class="sm:col-6 col-12">
+                    <div class="p-inputgroup flex-1">
+                        <span class="p-inputgroup-addon">
+                            <i class="pi pi-user"></i>
+                        </span>
+                        <InputText v-model="member.member_ref" label="รหัสผู้แนะนำ" variant="outlined" density="comfortable"
+                            placeholder="กรอกเบอร์โทรศัพท์ผู้แนะนำ(ถ้ามี)" :disabled="ref_status" hide-details="auto"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                            :append-inner-icon="(ref_status ? 'mdi-check' : '')" @change="checkRefMember" />
+                    </div>
+                </div>
+                <div class="sm:col-6 col-12">
                     <div class="p-inputgroup flex-1">
                         <span class="p-inputgroup-addon">
                             <i class="pi pi-user"></i>
@@ -12,7 +23,7 @@
                         <InputText v-model="member.name" placeholder="ชื่อ-นามสกุล" class="style-font" />
                     </div>
                 </div>
-                <div class="sm:col-12 col-12">
+                <div class="sm:col-6 col-12">
                     <div class="p-inputgroup flex-1">
                         <span class="p-inputgroup-addon">
                             <i class="pi pi-phone"></i>
@@ -34,6 +45,15 @@
                             <i class="pi pi-key"></i>
                         </span>
                         <Password v-model="member.password" toggleMask placeholder="รหัสผ่าน" class="style-font" />
+                    </div>
+                </div>
+                <div class="sm:col-6 col-12">
+                    <div class="p-inputgroup flex-1">
+                        <span class="p-inputgroup-addon">
+                            <i class="pi pi-key"></i>
+                        </span>
+                        <Password v-model="member.confirm_password" toggleMask placeholder="ยืนยันรหัสผ่าน"
+                            class="style-font" />
                     </div>
                 </div>
                 <div class="sm:col-12 col-12">
@@ -94,7 +114,7 @@
             </div>
             <div class="flex justify-content-center">
                 <Button label="สมัครสมาชิก" style="font-family: 'Kanit', sans-serif;   width: -webkit-fill-available;"
-                    class="button-login mt-5" severity="danger" />
+                    class="button-login mt-5" severity="danger" @click="confirm()" />
             </div>
         </div>
     </div>
@@ -138,6 +158,7 @@ export default {
     },
     data: () => ({
         isLoading: false,
+        isDisabled: false,
 
         item_province: [],
         item_amphure: [],
@@ -153,6 +174,7 @@ export default {
             name: '',
             username: '',
             password: '',
+            confirm_password: '',
             tel: '',
             address: '',
             subdistrict: '',
@@ -166,12 +188,16 @@ export default {
     }),
 
     methods: {
-        reload() {
-            window.location.reload();
-        },
-
         async checkRefMember() {
-
+            if (this.member.member_ref !== '') {
+                await axios.get(`${process.env.VUE_APP_DEKRUP}/public/member/check/${this.member.member_ref}`, {
+                }).then((res) => {
+                    this.$toast.add({ severity: 'success', summary: res.data.data.name, detail: `${res.data.data.address}, ${res.data.data.subdistrict} ${res.data.data.district} ${res.data.data.province} ${res.data.data.postcode}`, life: 7000 })
+                }).catch((err) => {
+                    console.log(err);
+                    this.$toast.add({ severity: 'error', summary: 'ผิดพลาด', detail: 'เบอร์นี้ยังไม่ได้สมัครแพลตฟอร์ม ไม่สามารถรับค่าคอมมิชชั่นได้ กรุณาแจ้งให้พาร์ทเนอร์สมัครแพลตฟอร์ม', life: 5000 })
+                })
+            }
         },
 
         clear() {
@@ -226,61 +252,81 @@ export default {
 
         confirm() {
             if (
+                this.member.member_ref === '' ||
                 this.member.name === '' ||
                 this.member.username === '' ||
-                this.member.password === '' ||
                 this.member.tel === '' ||
-                this.member.subdistrict === '' ||
-                this.member.district === '' ||
-                this.member.province === '' ||
-                this.member.postcode === ''
+                this.province === null ||
+                this.amphure === null ||
+                this.tambon === null ||
+                this.postcode === ''
             ) {
-                this.toast.info('กรุณากรอกข้อมูลให้ครบถ้วน')
+                this.$toast.add({
+                    severity: "warn",
+                    summary: "แจ้งเตือน",
+                    detail: "กรุณากรอกข้อมูลทั่วไปให้ครบถ้วน",
+                    life: 3000,
+                });
                 return false;
             }
             if (this.member.password.length < 8) {
                 this.toast.info('รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษรขึ้นไป')
                 return false;
             }
-            this.$swal({
-                icon: 'warn',
-                title: 'ยืนยันข้อมูล',
-                text: 'ยืนยันข้อมูลและสมัครสมาชิกตอนนี้?',
-                showCancelButton: true,
-                confirmButtonText: 'ตกลง',
-                cancelButtonText: 'ยกเลิก',
-            }).then(async (result) => {
-                if (result.isConfirmed) {
-                    this.$store.commit('setLoading', true);
-                    const data_register = {
-                        name: this.member.name,
-                        username: this.member.username,
-                        password: this.member.password,
-                        tel: this.member.tel,
-                        address: this.member.address,
-                        subdistrict: this.member.subdistrict,
-                        district: this.member.district,
-                        province: this.member.province,
-                        postcode: this.member.postcode,
-                    }
-
-                    let data = null;
-                    if (this.ref_status) {
-                        data = { ...data_register, member_ref: this.member.member_ref }
-                    } else {
-                        data = data_register
-                    }
-                    await axios.post(`${process.env.VUE_APP_DEKRUP}/register`, data).then((res) => {
-                        console.log(res);
-                        localStorage.setItem('token', res.data.token);
-                        this.$store.commit('setLoading', false);
-                    }).catch((err) => {
-                        this.$store.commit('setLoading', false);
-                        this.toast.error(err.response.data.message);
-                    })
+            //check password
+            if (this.member.password === '' || this.member.confirm_password === '') {
+                this.toast.info('กรุณากำหนดและยืนยันรหัสผ่าน');
+                return false;
+            }
+            if (this.member.password !== this.member.confirm_password) {
+                this.toast.info('รหัสผ่านไม่ตรงกัน')
+                return false;
+            }
+            const member_data = {
+                member_ref: this.member.member_ref,
+                name: this.member.name,
+                username: this.member.username,
+                password: this.member.password,
+                tel: this.member.tel,
+                address: this.member.address,
+                subdistrict: this.tambon.name_th,
+                district: this.amphure.name_th,
+                province: this.province.name_th,
+                postcode: this.postcode,
+            }
+            this.$confirm.require({
+                messagr: "ยืนยันข้อมูลและสมัครสมาชิกตอนนี้?",
+                header: "ยืนยันข้อมูล",
+                icon: "warn",
+                acceptLabel: "ตกลง",
+                rejectLabel: "ยกเลิก",
+                accept: async () => {
+                    this.isLoading = true;
+                    await axios
+                        .post(`${process.env.VUE_APP_DEKRUP}/register`, member_data, {
+                        }).then(() => {
+                            this.isLoading = false;
+                            this.$toast.add({
+                                severity: "success",
+                                summary: "สำเร็จ",
+                                detail: "ทำการสมัครสมาชิกเรียบร้อยแล้ว",
+                                life: 3000,
+                            })
+                            this.$router.push("/login");
+                        }).catch((err) => {
+                            this.isLoading = false;
+                            if (err.response.status === 408) {
+                                window.location.reload();
+                            }
+                            this.$toast.add({
+                                severity: "error",
+                                summary: "ไม่สำเร็จ",
+                                detail: err.response.data.message,
+                                life: 3000,
+                            });
+                        });
                 }
             })
-
         },
     }
 }

@@ -8,15 +8,19 @@
                         <div class="col-12 text-center">
                             <div class="justify-content-center"
                                 style="display: flex; flex-direction: row; flex-wrap: nowrap;">
-                                <Image v-for="(preview, index) in imagePreviews" :key="index" :src="preview.url" width="200"
-                                    :preview="true" />
-
+                                <!-- <Image v-for="(preview, index) in imagePreviews" :key="index" :src="preview.url" width="200"
+                                    :preview="true" /> -->
+                                <label v-if="!img_preview" class="file-input-label">
+                                    <span>เลือกรูปหน้าปก</span>
+                                    <input type="file" class="input-image" @change="SetImage" />
+                                </label>
+                                <Image v-if="img_preview" :src="img_preview" width="200" height="200" />
                             </div>
-                            <FileUpload mode="basic" chooseLabel="เลือกรูปสินค้า" :auto="true" @uploader="chooseImg"
+                            <!-- <FileUpload mode="basic" chooseLabel="เลือกรูปสินค้า" :auto="true" @change="SetImage"
                                 :customUpload="true" accept="image/png, image/jpeg, image/jpg" :fileLimit="3"
                                 :maxFileSize="2097152" invalidFileSizeMessage="ขนาดรูปภาพจะต้องไม่เกิน 2 mb"
                                 :disabled="isDisabled" class="border-red-400 mt-3" style="background-color: #C21010;" />
-                            <p><em>(ขนาดจะต้องเป็น 1:1)</em></p>
+                            <p><em>(ขนาดจะต้องเป็น 1:1)</em></p> -->
                         </div>
                     </div>
 
@@ -33,8 +37,8 @@
                         <div class="col-12 lg:col-4">
                             <div class="field">
                                 <label>หมวดหมู่สินค้า :</label>
-                                <Dropdown v-model="product.categoryid" :options="item_category" optionLabel="name"
-                                    optionValue="_id" placeholder="เลือกหมวดหมู่สินค้า" class="w-full" inputClass="font"
+                                <Dropdown v-model="categoryid" :options="item_category" optionLabel="name" optionValue="_id"
+                                    placeholder="เลือกหมวดหมู่สินค้า" class="w-full" inputClass="font"
                                     :disabled="isDisabled" :filter="true" />
                             </div>
                         </div>
@@ -42,7 +46,7 @@
                         <div class="col-12 lg:col-4">
                             <div class="field">
                                 <label>ราคาขาย (Shop) :</label>
-                                <InputNumber v-model="product.price" class="w-full" inputClass="font"
+                                <InputNumber v-model="price" class="w-full" inputClass="font"
                                     placeholder="กรอกราคาขายสินค้า" mode="decimal" :minFractionDigits="2"
                                     :maxFractionDigits="2" :disabled="isDisabled" />
                             </div>
@@ -51,7 +55,7 @@
                         <div class="col-12 lg:col-4">
                             <div class="field">
                                 <label>จำนวนสินค้าในสต๊อก<small>(ชิ้น)</small> :</label>
-                                <InputNumber v-model="product.quantity" class="w-full" inputClass="font"
+                                <InputNumber v-model="quantity" class="w-full" inputClass="font"
                                     placeholder="กรอกจำนวนสินค้าในสต๊อก" mode="decimal" :minFractionDigits="2"
                                     :maxFractionDigits="2" :disabled="isDisabled" />
                             </div>
@@ -59,16 +63,8 @@
                         <div class="col-12">
                             <div class="field">
                                 <label>รายละเอียดสินค้า</label>
-                                <Editor v-model="detail" editorStyle="height: 200px"
-                                    placeholder="กรอกรายละเอียดเกี่ยวกับสินค้า" :disabled="isDisabled">
-                                    <template #toolbar>
-                                        <span class="ql-formats">
-                                            <button class="ql-bold"></button>
-                                            <button class="ql-italic"></button>
-                                            <button class="ql-underline"></button>
-                                        </span>
-                                    </template>
-                                </Editor>
+                                <Textarea v-model="detail" autoResize rows="5" cols="30" class="font w-full"
+                                    :disabled="isDisabled" />
                             </div>
                         </div>
                     </div>
@@ -90,23 +86,38 @@
 
 <script>
 import axios from "axios";
+import { Product } from "../../../service/product";
 
 export default {
     name: "addView",
-    data() {
-        return {
-            isDisabled: false,
-            imagePreviews: [],
-            product: {
-                imagePreviews: [],
-                productDK_images: [],
-                price: null,
-                quantity: null,
-            },
-            item_category: [], 
-
-        };
+    components: {
+        Product,
     },
+    setup() {
+        const product = new Product();
+        return { product }
+    },
+    data: () => ({
+        loading: false,
+        isloading: false,
+        isDisabled: false,
+
+        img_preview: null,
+        img_upload: null,
+        img_size: null,
+        dialog_img_warning: false,
+
+        imagePreviews: [],
+
+        name: '',
+        categoryid: '',
+        detail: '',
+        price: '',
+        quantity: '',
+
+        item_category: [],
+    }),
+
     created() {
         document.title = "เพิ่มข้อมูลสินค้า";
         this.fetchProductCategories();
@@ -126,94 +137,74 @@ export default {
             }
         },
 
-
-        save() {
-            if (
-                this.product.name === "" ||
-                this.product.categoryid === "" ||
-                this.product.price === "" ||
-                this.product.quantity === "" ||
-                this.product.detail === ""
-
-            )
-                this.$toast.add({
-                    severity: "error",
-                    summary: "แจ้งเตือน",
-                    detail: "กรุณากรอกข้อมูลให้ครบถ้วน",
-                    life: 3000,
-                });
-            else {
-                this.confirmDialog = true;
-            }
+        ResetImage() {
+            this.img_preview = null;
+            this.img_upload = null;
+            this.dialog_img_warning = false;
         },
-        chooseImg(event) {
-            if (event.files.length + this.product.imagePreviews.length > 3) {
-                this.$toast.add({
-                    severity: "warn",
-                    summary: "แจ้งเตือน",
-                    detail: "คุณสามารถอัปโหลดรูปได้สูงสุด 3 รูป",
-                    life: 3000,
-                });
-                return;
-            }
-            for (const file of event.files) {
-                const objectURL = URL.createObjectURL(file); // สร้าง URL สำหรับรูปภาพ
-                this.imagePreviews.push({ url: objectURL }); // เพิ่ม URL ลงในอาร์เรย์
-                this.product.imagePreviews.push({ url: objectURL }); // เพิ่ม URL ลงในอาร์เรย์ใน product
-                this.product.productDK_images.push(file);
-            }
 
-            // ลบรูปภาพตัวอย่างหลังจาก 5 วินาที
-            setTimeout(() => {
-                this.product.imagePreviews = [];
-            }, 5000);
+        ResetData() {
+            this.name = null;
+            this.categoryid = null;
+            this.detail = null;
+            this.price = null;
+            this.quantity = null;
         },
+
         async addProduct() {
-      this.isloading = true;
+            this.loading = true;
+            if (this.img_upload) {
+                const data = {
+                    name: this.name,
+                    categoryid: this.categoryid,
+                    detail: this.detail,
+                    price: this.price,
+                    quantity: this.quantity
+                }
+                const formData = new FormData();
+                formData.append("name", this.name);
+                formData.append("categoryid", this.categoryid);
+                formData.append("detail", this.detail);
+                formData.append("price", this.price);
+                formData.append("quantity", this.quantity);
+                formData.append("imgCollection", this.img_upload[0]);
 
-      try {
-        const response = await axios.post(
-          `${process.env.VUE_APP_DEKRUP}/product/create`,
-          {
-            name: this.product.name,
-            categoryid: this.product.categoryid,
-            price: this.product.price,
-            quantity: this.product.quantity,
-            detail: this.product.detail,
-          },
-          {
-            headers: {
-              token: localStorage.getItem("token"),
-            },
-          }
-        );
+                console.log(data)
 
-        this.isloading = false;
-        this.$toast.add({
-          severity: "success",
-          summary: "สำเร็จ",
-          detail: "เพิ่มข้อมูลเรียบร้อย",
-          life: 3000,
-        });
-        this.confirmDialog = false;
-        this.$router.push("/admin/admin");
-      } catch (error) {
-        this.isloading = false;
-        if (error.response && error.response.status === 408) {
-          window.location.reload();
-        }
-        this.$toast.add({
-          severity: "error",
-          summary: "แจ้งเตือน",
-          detail: error.response
-            ? error.response.data.message
-            : "มีข้อผิดพลาดในการส่งข้อมูล",
-          life: 3000,
-        });
-        this.confirmDialog = false;
-      }
-    },
+                await this.product.CreateProduct(formData).then(async (result) => {
 
+                    if (result) {
+                        console.log(result);
+                        this.ResetData();
+                        this.ResetImage();
+                        this.loading = false;
+                        this.$toast.add({
+                            severity: "success",
+                            summary: "สำเร็จ",
+                            detail: "เพิ่มรายการสินค้าสำเร็จ",
+                            life: 3000,
+                        })
+                    }
+                })
+            }
+        },
+
+        SetImage(e) {
+            const file = e.target.files;
+            if (file) {
+                this.img_size = file[0].size;
+
+                if (this.img_size > 500000) {
+                    this.dialog_img_warning = true;
+                }
+                const fileReader = new FileReader();
+                fileReader.readAsDataURL(file[0]);
+                fileReader.addEventListener("load", (event) => {
+                    this.img_preview = event.target.result;
+                })
+                this.img_upload = file;
+            }
+        },
 
 
     },
