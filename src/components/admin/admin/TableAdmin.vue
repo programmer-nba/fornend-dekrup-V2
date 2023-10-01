@@ -23,82 +23,42 @@
       </Column>
       <Column :exportable="false" style="min-width: 8rem">
         <template #body="Props">
-          <Button icon="pi pi-list" class="p-button-outlined" @click="openD(Props.data)" />&nbsp;
           <Button icon="pi pi-trash" class="p-button-outlined p-button-danger" @click="del(Props.data)" />
         </template>
       </Column>
     </DataTable>
 
-    <Dialog v-model:visible="adminDialog" :style="{ width: '900px' }" header="รายละเอียดข้อมูลผู้ดูแลระบบ" :modal="true"
-      class="p-fluid mb-5">
-      <div class="grid">
-        <div class="col-12">
-          <Panel>
-            <template #header>ข้อมูลผู้ดูแลระบบ</template>
-            <div class="grid">
-              <div class="col-12 md:col-6">
-                <div class="field">
-                  <label>*ชื่อ-นามสกุล :</label>
-                  <InputText v-model="admin_detail.name" class="w-full font" type="text"
-                    placeholder="กรอกชื่อ-นามสกุลของผู้ดูแลระบบ" />
-                </div>
-              </div>
 
-              <div class="col-12 md:col-6">
-                <div class="field">
-                  <label>*ชื่อผู้ใช้งาน :</label>
-                  <InputText v-model="admin_detail.username" class="w-full font" type="text"
-                    placeholder="ผู้ใช้งาน" />
-                </div>
-              </div>
-
-
-
-              
-              <div class="col-12 md:col-6">
-                <div class="field">
-                  <label>รีเซตรหัส :</label>
-                  <Button label="รีเซตรหัส" @click="resetPassword()" class="mr-2" />
-                </div>
-              </div>
-
-
-
-
-            </div>
-            <div class="col-12 md:col-2">
-              <div class="field">
-                <Button label="อัพเดต" @click="openC()" class="mr-2" />
-              </div>
-            </div>
-          </Panel>
-        </div>
-      </div>
-    </Dialog>
-
-    <Dialog :style="{ width: '450px' }" header="แก้ไขข้อมูล" :modal="true">
+    <Dialog
+      v-model:visible="deleteDailog"
+      :style="{ width: '450px' }"
+      header="Confirm"
+      :modal="true"
+    >
       <div class="confirmation-content">
         <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-        <span> คูณต้องการแก้ไขข้อมูลผู้ดูแลระบบนี้ ?</span>
-      </div>
+        <span >
+      คุณต้องการลบผู้ดูแลระบบ </span>
+  </div>
       <template #footer>
-        <Button label="No" icon="pi pi-times" class="p-button-text" @click="closeD" />
-        <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="update" :loading="isloading" />
-      </template>
-    </Dialog>
-    <Dialog :style="{ width: '450px' }" header="Confirm" :modal="true">
-      <div class="confirmation-content">
-        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-        <span v-if="delete_name">
-          คุณต้องการลบผู้ดูแลระบบ <b>{{ delete_name }} </b>?</span>
-      </div>
-      <template #footer>
-        <Button label="No" icon="pi pi-times" class="p-button-text" @click="closeD" />
-        <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="deletedata" :loading="isloading" />
+        <Button
+          label="No"
+          icon="pi pi-times"
+          class="p-button-text"
+          @click="closeD"
+        />
+        <Button
+          label="Yes"
+          icon="pi pi-check"
+          class="p-button-text"
+          @click="deletedata"
+          :loading="isloading"
+        />
       </template>
     </Dialog>
   </div>
 </template>
+
 <script>
 import axios from "axios";
 import dayjs from "dayjs";
@@ -116,8 +76,8 @@ export default {
       delete_name: "",
       confirmDailog: false,
       deleteDailog: false,
-      adminDialog: false,
       isloading: false,
+      admin_detail: [],
 
     };
   },
@@ -130,21 +90,18 @@ export default {
     },
 
     async getdata() {
-      let res = await axios
-        .get(`${process.env.VUE_APP_DEKRUP}/admin`, {
-          headers: {
-            "token": localStorage.getItem("token"),
-          },
-        })
-        .catch((e) => {
-          if (e.res.status === 408) {
-            window.location.reload();
-          }
-        });
+      let res = await axios.get(`${process.env.VUE_APP_DEKRUP}/admin`, {
+        headers: {
+          token: localStorage.getItem("token"),
+        },
+      }).catch((e) => {
+        if (e.response.status === 408) {
+          window.location.reload();
+        }
+      });
       this.admins = res.data.data;
       this.admin = this.admins.reverse();
     },
-
 
     searchData() {
       if (this.search !== "") {
@@ -158,6 +115,7 @@ export default {
       }
     },
 
+
     openD(admin) {
       this.adminDialog = true;
       this.admin_id = admin._id;
@@ -165,10 +123,10 @@ export default {
       console.log(this.admin_detail);
     },
     del(admin) {
-      this.deleteDailog = true;
-      this.delete_id = admin._id;
-      this.delete_name = admin.admin_name;
-    },
+    this.deleteDailog = true;
+    this.delete_id = admin._id;
+    this.delete_name = admin.admin_username; // แสดง username แทน admin_name
+  },
     openC() {
       this.confirmDailog = true;
     },
@@ -176,50 +134,38 @@ export default {
       this.confirmDailog = false;
       this.deleteDailog = false;
     },
-    async update() {
+    deletedata() {
       this.isloading = true;
-      await axios
-        .put(
-          `${process.env.VUE_APP_DEKRUP}/admin/user/${this.admin_id}`,
-          {
-            admin_name: this.admin_detail.admin_name,
-            admin_username: this.admin_detail.admin_username,
-            admin_position: this.admin_detail.admin_position,
-            admin_date_start: this.admin_detail.admin_date_start,
+      axios
+        .delete(`${process.env.VUE_APP_DEKRUP}/admin/delete/${this.delete_id}`, {
+          headers: {
+            "token": localStorage.getItem("token"),
           },
-          {
-            headers: {
-              "token": localStorage.getItem("token"),
-            },
-          }
-        )
+        })
         .then(() => {
           this.isloading = false;
+          const i = this.admin.findIndex((el) => el._id === this.delete_id);
+          this.admin.splice(i, 1);
           this.$toast.add({
             severity: "success",
-            summary: "สำเร็จ",
-            detail: "แก้ไข้ข้อมูลเรียบร้อย",
+            summary: "แจ้งเตือน",
+            detail: "ลบข้อมูลเรียบร้อย",
             life: 3000,
           });
-          this.adminDialog = false;
-          this.confirmDailog = false;
+          this.deleteDailog = false;
         })
         .catch((e) => {
           this.isloading = false;
           if (e.response.status === 408) {
             window.location.reload();
           }
-          this.$toast.add({
-            severity: "erroe",
-            summary: "แจ้งเตือน",
-            detail: e.response.data.message,
-            life: 3000,
-          });
         });
     },
+
   },
 };
 </script>
+
 
 <style>
 .p-datatable .p-datatable-thead>tr>th {

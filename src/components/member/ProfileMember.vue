@@ -43,6 +43,41 @@
 </template>
 
 
+<script>
+import { ref , onMounted   } from "vue";
+import axios from 'axios';
+export default ({
+    setup() {
+        const item_profile = ref([]);
+        const getData = async () => {
+      try {
+        const response = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/list`, {
+          headers: {
+            "token": `${localStorage.getItem("token")}`,
+          },
+        });
+
+        item_profile.value = response.data.data.reverse();
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    onMounted(() => {
+      getData();
+    });
+
+    return {
+        item_profile
+
+    };
+
+    },
+})
+</script>
+
+
+
 
 <style >
 .custom-header-panel .p-panel-header {

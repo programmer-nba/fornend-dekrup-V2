@@ -34,7 +34,7 @@ routes = [
     component: () => import("../components/admin/admin/TableAdmin.vue"),
   },
   {
-    path: "/admin/add",
+    path: "/admin/admin/add",
     name: "admin-admin-add",
     component: () => import("../components/admin/admin/addView.vue"),
   },
