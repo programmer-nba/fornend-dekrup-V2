@@ -1,61 +1,109 @@
 <template>
-  <h1 class="px-3" style="color:#FE0000;"> สั่งซื้อสินค้า </h1>
+  <h1 class="px-3" style="color: #fe0000">สั่งซื้อสินค้า</h1>
   <div class="grid">
-    <div class="col-6  mt-2 ">
+    <div class="col-6 mt-2">
       <div class="field">
         <div class="p-inputgroup">
           <span class="p-float-label">
-            <InputText v-model="search"
+            <InputText
+              v-model="search"
               class="w-4rem font border-red-700 input-search-sercice border-round-3xl text-red-800"
-              style="background-color: #FFE5E5;" />
+              style="background-color: #ffe5e5"
+              @keyup="searchData()"
+              @keydown.delete.prevent="deleteLastCharacter"
+            />
             <label class="text-red-800 px-3">ค้นหา</label>
           </span>
         </div>
       </div>
     </div>
-    <div class="col  mt-2 ">
+    <div class="col mt-2">
       <div class="field">
         <div class="card flex justify-content-start">
-          <Dropdown v-model="selectedCity" :options="cities" optionLabel="name" placeholder="Select a City"
-            class="w-full md:w-14rem" />
+          <Dropdown
+            v-model="selectedCategory"
+            :options="categories"
+            optionLabel="name"
+            placeholder="Select a Category"
+            class="w-full md:w-14rem"
+          />
         </div>
-
       </div>
     </div>
   </div>
-  <div class="grid ">
-    <div class="col-6 md:col-4 lg:col-3" v-for="product in item_product" :key="product.id">
+  <div class="grid">
+    <div
+      class="col-6 md:col-4 lg:col-3"
+      v-for="product in item_product"
+      :key="product.id"
+    >
       <div class="card-background">
-        <img :src="getImage(product.picture)" class="img-modal-product-preview" />
+        <img
+          :src="getImage(product.picture)"
+          class="img-modal-product-preview"
+        />
         <strong class="txt-head">{{ product.name }}</strong>
-        <p class="txt-category">หมวดหมู่ <span>{{ product.category }}</span></p>
-        <p class="txt-category">จำนวน <span>{{ product.quantity }}</span></p>
-        <p class="txt-price">ราคา <span>{{ product.price }}</span> บาท</p>
+        <p class="txt-category">
+          หมวดหมู่ <span>{{ product.category }}</span>
+        </p>
+        <p class="txt-category">
+          จำนวน <span>{{ product.quantity }}</span>
+        </p>
+        <p class="txt-price">
+          ราคา <span>{{ product.price }}</span> บาท
+        </p>
         <div class="flex">
-          <Button severity="warning" icon="pi pi-shopping-cart" style="margin-right: 5px;"
-            @click="addNumberProduct = true" />
-          <Button @click="choose(product)" class="btn-description" label="รายละเอียด" severity="danger" />
+          <Button
+            severity="warning"
+            icon="pi pi-shopping-cart"
+            style="margin-right: 5px"
+            @click="addNumberProduct = true"
+          />
+          <Button
+          @click="choose(product)"
+            class="btn-description"
+            label="รายละเอียด"
+            severity="danger"
+          />
         </div>
       </div>
     </div>
-
-
-
   </div>
 
-
-
-  <Dialog v-model:visible="addNumberProduct" modal header="Header" :style="{ width: '50vw' }">
-    <InputNumber v-model="value2" inputId="minmax-buttons" mode="decimal" showButtons :min="0" :max="100" />
+  <!-- Dialog จำนวนสั่งซื้อ -->
+  <Dialog
+    v-model:visible="addNumberProduct"
+    modal
+    header="จำนวนสั่งซื้อ"
+    :style="{ width: '50vw' }"
+  >
+    <InputNumber
+      v-model="quantity"
+      inputId="minmax-buttons"
+      mode="decimal"
+      showButtons
+      :min="0"
+    />
     <template #footer>
-      <Button label="ปิด" icon="pi pi-times" @click="addNumberProduct = false" text />
-    </template>
+      <Button label="สั่งซื้อ" icon="pi pi-shopping-cart" />
+    <Button
+      label="ปิด"
+      icon="pi pi-times"
+      @click="addNumberProduct = false"
+      text
+    />
+  </template>
   </Dialog>
 
 
 
 
-  <Dialog v-model:visible="dialogChooseProduct" :modal="true" header="สินค้าของเรา" style="width: 100vh;">
+  <Dialog
+    v-model:visible="dialogChooseProduct"
+    :modal="true"
+    header="สินค้าของเรา"
+    style="width: 100vh"
+  >
     <div class="grid">
       <div class="md:col-4 col-12">
         <Image alt="Image" preview>
@@ -63,85 +111,171 @@
             <i class="pi pi-eye"></i>
           </template>
           <template #image>
-            <img :src="getImage(productMember.picture)" class="img-modal-product" alt="image" />
+            <img
+              :src="getImage(productMember.picture)"
+              class="img-modal-product"
+              alt="image"
+            />
           </template>
           <template #preview="slotProps">
-            <img :src="getImage(productMember.picture)" class="img-modal-product-preview" alt="preview"
-              :style="slotProps.style" @click="slotProps.onClick" />
+            <img
+              :src="getImage(productMember.picture)"
+              class="img-modal-product-preview"
+              alt="preview"
+              :style="slotProps.style"
+              @click="slotProps.onClick"
+            />
           </template>
         </Image>
       </div>
     </div>
-    <div class="card-head ">
-      <p class="text-red-500 text-xl" style="-webkit-text-stroke: 1px;">{{ productMember.name }}</p>
-      <small class="text-600" style="font-size: 14px; -webkit-text-stroke: 1px;">หมวดหมู่: {{ productMember.category}}</small> <br>
-      <small class="text-600" style="font-size: 14px; -webkit-text-stroke: 1px;">จำนวน {{ productMember.quantity}}</small>
+    <div class="card-head">
+      <p class="text-red-500 text-xl" style="-webkit-text-stroke: 1px">
+        {{ productMember.name }}
+      </p>
+      <small class="text-600" style="font-size: 14px; -webkit-text-stroke: 1px"
+        >หมวดหมู่: {{ productMember.category }}</small
+      >
+      <br />
+      <small class="text-600" style="font-size: 14px; -webkit-text-stroke: 1px"
+        >จำนวน {{ productMember.quantity }}</small
+      >
     </div>
     <div class="my-2">
-      <label class="text-700 " for="" style="font-size: 20px; -webkit-text-stroke: 1px;">รายละเอียดสินค้า</label>
+      <label
+        class="text-700"
+        for=""
+        style="font-size: 20px; -webkit-text-stroke: 1px"
+        >รายละเอียดสินค้า</label
+      >
     </div>
-    <small class="text-700  " for="" style="font-size: 18px;"> {{ productMember.detail }}</small>
+    <small class="text-700" for="" style="font-size: 18px">
+      {{ productMember.detail }}</small
+    >
     <div class="my-2">
-      <label class="text-red-500" for="" style="font-size: 24px; -webkit-text-stroke: 1px;">ราคา {{ productMember.price }} บาท</label>
+      <label
+        class="text-red-500"
+        for=""
+        style="font-size: 24px; -webkit-text-stroke: 1px"
+        >ราคา {{ productMember.price }} บาท</label
+      >
     </div>
     <template #footer>
-      <Button label="ปิด" icon="pi pi-times" @click="dialogChooseProduct = false" text />
+      <Button
+        label="ปิด"
+        icon="pi pi-times"
+        @click="dialogChooseProduct = false"
+        text
+      />
     </template>
   </Dialog>
-</template>
-  
-<script>
-import { ref, onMounted } from "vue";
-import Dialog from 'primevue/dialog';
-import Button from 'primevue/button';
-import Image from 'primevue/image';
-import Dropdown from 'primevue/dropdown';
-import InputNumber from 'primevue/inputnumber';
-import axios from 'axios';
 
+</template>
+
+<script>
+import { ref, onMounted, computed } from "vue";
+import Image from "primevue/image";
+import axios from "axios";
 
 export default {
   components: {
-    Dialog,
-    Button,
     Image,
-    Dropdown,
-    InputNumber
   },
-
 
   setup() {
     const addNumberProduct = ref(false);
-    const visible = ref(false);
-
-    const selectedCity = ref();
-    const cities = ref([
-      { name: 'New York', code: 'NY' },
-      { name: 'Rome', code: 'RM' },
-      { name: 'London', code: 'LDN' },
-      { name: 'Istanbul', code: 'IST' },
-      { name: 'Paris', code: 'PRS' }
-    ]);
-
-
+    const selectedCategory = ref([]);
+    const categories = ref([]);
     const item_product = ref([]);
-    const getData = async () => {
-      try {
-        const response = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/member/list`, {
-          headers: {
-            "token": `${localStorage.getItem("token")}`,
-          },
-        });
+    const productMember = ref("");
+    const dialogChooseProduct = ref(false);
+    const quantity = ref(0);
+    const total = ref(0);
+    const search = ref("");
+    const originalItemProduct = ref([]);
+    const orders = ref([]); // เพิ่มตัวแปรเพื่อเก็บรายการออเดอร์
+    const selectedProduct = ref(null); // เพิ่มตัวแปรเพื่อเก็บสินค้าที่ถูกเลือก
 
-        item_product.value = response.data.data.reverse();
+    const getCategory = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.VUE_APP_DEKRUP}/product/category/list`,
+          {
+            headers: {
+              token: localStorage.getItem("token"),
+            },
+          }
+        );
+        categories.value = response.data.data.reverse();
       } catch (error) {
         console.error(error);
       }
     };
 
+    const getData = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.VUE_APP_DEKRUP}/product/member/list`,
+          {
+            headers: {
+              token: `${localStorage.getItem("token")}`,
+            },
+          }
+        );
+
+        item_product.value = response.data.data.reverse();
+        originalItemProduct.value = [...response.data.data];
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+  const confirmOrder = () => {
+    if (quantity.value > 0 && productMember.value) {
+      orders.value.push({
+        product: productMember.value,
+        quantity: quantity.value,
+      });
+
+      productMember.value = null;
+      quantity.value = 0;
+
+      addNumberProduct.value = false;
+    }
+  };
+
+    const choose = (product) => {
+  if (product) {
+    productMember.value = product;
+    dialogChooseProduct.value = true;
+  }
+};
+
+    const numberDigitFormat = (number) => {
+      return number.toFixed(2);
+    };
+    const clearSearch = () => {
+      search.value = "";
+    };
+
+    const searchData = () => {
+      if (search.value !== "") {
+        item_product.value = originalItemProduct.value.filter((el) =>
+          el.name.toLowerCase().includes(search.value.toLowerCase())
+        );
+      } else {
+        item_product.value = [...originalItemProduct.value];
+      }
+    };
+
+    const deleteLastCharacter = () => {
+      if (search.value.length > 0) {
+        search.value = search.value.slice(0, -1); 
+      }
+    };
 
     const getImage = (item) => {
-      if (typeof item === 'string') {
+      if (typeof item === "string") {
         return `https://drive.google.com/uc?export=view&id=${item}`;
       } else if (Array.isArray(item) && item.length > 0) {
         const firstImageId = item[0];
@@ -150,48 +284,44 @@ export default {
         return "";
       }
     };
+
+    const filteredProducts = computed(() => {
+      return search.value
+        ? originalItemProduct.value.filter((el) =>
+            el.name.toLowerCase().includes(search.value.toLowerCase())
+          )
+        : [...originalItemProduct.value];
+    });
+
     onMounted(() => {
       getData();
+      getCategory();
     });
+
     return {
       item_product,
-      getData,
       getImage,
-      cities,
-      selectedCity,
-      visible,
-      addNumberProduct
+      selectedCategory,
+      addNumberProduct,
+      productMember,
+      dialogChooseProduct,
+      choose,
+      categories,
+      quantity,
+      total,
+      searchData,
+      search,
+      filteredProducts,
+      deleteLastCharacter,
+      numberDigitFormat,
     };
   },
-
-
-
-  methods: {
-    async choose(item) {
-      if (item) {
-        this.productMember = item;
-        this.dialogChooseProduct = true;
-      }
-    },
-  },
-
-  data: () => ({
-    productMember: '',
-    dialogChooseProduct: false,
-  }),
 };
-
-
-
-
-
-
 </script>
 
 <style scoped>
 .txt-font-faimily {
-  font-family: 'Kanit', sans-serif;
-
+  font-family: "Kanit", sans-serif;
 }
 
 .p-dropdown {
@@ -199,7 +329,7 @@ export default {
 }
 
 .p-inputtext {
-  font-family: 'Kanit', sans-serif;
+  font-family: "Kanit", sans-serif;
   border: 2px solid #ff0000;
   box-shadow: rgba(173, 8, 8, 0.24) 0px 3px 8px;
   border-radius: 50px;
@@ -237,7 +367,7 @@ export default {
   border-radius: 10px;
   width: 80%;
   background: red;
-  font-family: 'Kanit', sans-serif;
+  font-family: "Kanit", sans-serif;
 }
 
 .p-dropdown {
@@ -245,7 +375,7 @@ export default {
 }
 
 .card-background {
-  background: #FFF1F1;
+  background: #fff1f1;
   width: 100%;
   height: auto;
   padding: 15px;
@@ -263,9 +393,7 @@ export default {
   width: 100%;
 }
 
-
-@media only screen and (max-width:576px) {
-
+@media only screen and (max-width: 576px) {
   .txt-head {
     font-size: 16px;
   }
@@ -293,8 +421,9 @@ export default {
   }
 }
 
-@media only screen and (max-width:380px) {
+@media only screen and (max-width: 380px) {
   .btn-description {
     padding: 5px;
   }
-}</style>
+}
+</style>
