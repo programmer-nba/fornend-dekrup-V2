@@ -31,6 +31,7 @@
       </div>
     </div>
   </div>
+
   <div class="grid">
     <div
       class="col-6 md:col-4 lg:col-3"
@@ -57,10 +58,10 @@
             severity="warning"
             icon="pi pi-shopping-cart"
             style="margin-right: 5px"
-            @click="addNumberProduct = true"
+            @click="chooseProductQuantity(product)"
           />
           <Button
-          @click="choose(product)"
+            @click="choose(product)"
             class="btn-description"
             label="รายละเอียด"
             severity="danger"
@@ -78,25 +79,22 @@
     :style="{ width: '50vw' }"
   >
     <InputNumber
-      v-model="quantity"
+      v-model="quantityToOrder"
       inputId="minmax-buttons"
       mode="decimal"
       showButtons
       :min="0"
     />
     <template #footer>
-      <Button label="สั่งซื้อ" icon="pi pi-shopping-cart" />
-    <Button
-      label="ปิด"
-      icon="pi pi-times"
-      @click="addNumberProduct = false"
-      text
-    />
-  </template>
+      <Button label="สั่งซื้อ" icon="pi pi-shopping-cart" @click="addToOrder" />
+      <Button
+        label="ปิด"
+        icon="pi pi-times"
+        @click="addNumberProduct = false"
+        text
+      />
+    </template>
   </Dialog>
-
-
-
 
   <Dialog
     v-model:visible="dialogChooseProduct"
@@ -169,13 +167,13 @@
       />
     </template>
   </Dialog>
-
 </template>
 
 <script>
 import { ref, onMounted, computed } from "vue";
 import Image from "primevue/image";
 import axios from "axios";
+import { useStore } from "vuex";
 
 export default {
   components: {
@@ -183,18 +181,21 @@ export default {
   },
 
   setup() {
+    const store = useStore();
+
     const addNumberProduct = ref(false);
     const selectedCategory = ref([]);
     const categories = ref([]);
     const item_product = ref([]);
     const productMember = ref("");
     const dialogChooseProduct = ref(false);
-    const quantity = ref(0);
+    const selectedQuantity = ref(0); // นิยาม selectedQuantity และกำหนดค่าเริ่มต้นเป็น 0
     const total = ref(0);
     const search = ref("");
+    const quantityToOrder = ref(0); // เปลี่ยนชื่อ quantity เป็น quantityToOrder
+
     const originalItemProduct = ref([]);
     const orders = ref([]); // เพิ่มตัวแปรเพื่อเก็บรายการออเดอร์
-    const selectedProduct = ref(null); // เพิ่มตัวแปรเพื่อเก็บสินค้าที่ถูกเลือก
 
     const getCategory = async () => {
       try {
@@ -207,9 +208,7 @@ export default {
           }
         );
         categories.value = response.data.data.reverse();
-      } catch (error) {
-        console.error(error);
-      }
+      } catch (error) {}
     };
 
     const getData = async () => {
@@ -230,26 +229,41 @@ export default {
       }
     };
 
-  const confirmOrder = () => {
-    if (quantity.value > 0 && productMember.value) {
-      orders.value.push({
-        product: productMember.value,
-        quantity: quantity.value,
-      });
+    const chooseProductQuantity = (product) => {
+      if (product) {
+        productMember.value = product;
+        addNumberProduct.value = true;
+        quantityToOrder.value = 0;
+      }
+    };
 
-      productMember.value = null;
-      quantity.value = 0;
+    const addToOrder = () => {
+      if (quantityToOrder.value > 0 && productMember.value) {
+        const order = {
+          product: {
+            name: productMember.value.name,
+            price: productMember.value.price,
+            quantity: productMember.value.quantity,
+            category: productMember.value.category,
+          },
+          quantity: quantityToOrder.value,
+        };
+        orders.value.push(order);
 
-      addNumberProduct.value = false;
-    }
-  };
+        productMember.value = "";
+        quantityToOrder.value = 0;
+        addNumberProduct.value = false;
+        store.commit("addToOrder", order);
+        console.log("Orders:", orders.value);
+      }
+    };
 
     const choose = (product) => {
-  if (product) {
-    productMember.value = product;
-    dialogChooseProduct.value = true;
-  }
-};
+      if (product) {
+        productMember.value = product;
+        dialogChooseProduct.value = true;
+      }
+    };
 
     const numberDigitFormat = (number) => {
       return number.toFixed(2);
@@ -270,7 +284,7 @@ export default {
 
     const deleteLastCharacter = () => {
       if (search.value.length > 0) {
-        search.value = search.value.slice(0, -1); 
+        search.value = search.value.slice(0, -1);
       }
     };
 
@@ -307,13 +321,16 @@ export default {
       dialogChooseProduct,
       choose,
       categories,
-      quantity,
       total,
       searchData,
       search,
       filteredProducts,
       deleteLastCharacter,
       numberDigitFormat,
+      addToOrder,
+      selectedQuantity,
+      quantityToOrder,
+      chooseProductQuantity,
     };
   },
 };

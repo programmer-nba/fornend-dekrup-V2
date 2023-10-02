@@ -10,6 +10,8 @@ export default createStore({
     name: "",
     position: "",
     id: "",
+    orders: [],
+
 
   },
   getters: {
@@ -52,6 +54,12 @@ export default createStore({
     setUser(state, item){
       state.user._id = item._id;
       state.user.name = item.name;
+    },
+    addToOrder(state, order) {
+      state.orders.push(order);
+    },
+    clearOrders(state) {
+      state.orders = [];
     },
   },
   actions: {},
