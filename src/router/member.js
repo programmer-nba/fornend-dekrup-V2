@@ -17,6 +17,11 @@ routes = [
     name: "member-profile",
     component: () => import("../components/member/ProfileMember.vue"),
   },
+  {
+    path: "/member/dashboard",
+    name: "dashboard",
+    component: () => import("../components/member/dashboard/ContractDocument.vue"),
+  }
   
 ];
 

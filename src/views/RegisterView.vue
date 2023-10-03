@@ -124,6 +124,7 @@
 import Dropdown from 'primevue/dropdown';
 import Password from "primevue/password";
 import Button from "primevue/button";
+import { Member } from "../service/member";
 
 import axios from 'axios';
 
@@ -154,7 +155,12 @@ export default {
     components: {
         Dropdown,
         Password,
-        Button
+        Button,
+        Member
+    },
+    setup() {
+        const members = new Member();
+        return { members }
     },
     data: () => ({
         isLoading: false,
@@ -195,7 +201,7 @@ export default {
                     this.$toast.add({ severity: 'success', summary: res.data.data.name, detail: `${res.data.data.address}, ${res.data.data.subdistrict} ${res.data.data.district} ${res.data.data.province} ${res.data.data.postcode}`, life: 7000 })
                 }).catch((err) => {
                     console.log(err);
-                    this.$toast.add({ severity: 'error', summary: 'ผิดพลาด', detail: 'เบอร์นี้ยังไม่ได้สมัครแพลตฟอร์ม ไม่สามารถรับค่าคอมมิชชั่นได้ กรุณาแจ้งให้พาร์ทเนอร์สมัครแพลตฟอร์ม', life: 5000 })
+                    this.$toast.add({ severity: 'error', summary: 'ผิดพลาด', detail: 'เบอร์นี้ยังไม่ได้สมัคร ไม่สามารถรับค่าคอมมิชชั่นได้ กรุณาแจ้งแอดมิน', life: 5000 })
                 })
             }
         },
@@ -208,6 +214,7 @@ export default {
             this.item_subdistrict = [];
             this.item_district = [];
         },
+
         async chooseProvince(evt) {
             this.member.province = evt.value.name_th;
             await axios.get(`${process.env.VUE_APP_THAILAND}thailand/amphure/by-province-id/${evt.value.id}`, {
@@ -250,7 +257,8 @@ export default {
             })
         },
 
-        confirm() {
+        async register() {
+            this.loading = true;
             if (
                 this.member.member_ref === '' ||
                 this.member.name === '' ||
@@ -258,8 +266,7 @@ export default {
                 this.member.tel === '' ||
                 this.province === null ||
                 this.amphure === null ||
-                this.tambon === null ||
-                this.postcode === ''
+                this.tambon === null 
             ) {
                 this.$toast.add({
                     severity: "warn",
@@ -282,7 +289,7 @@ export default {
                 this.toast.info('รหัสผ่านไม่ตรงกัน')
                 return false;
             }
-            const member_data = {
+            const data = {
                 member_ref: this.member.member_ref,
                 name: this.member.name,
                 username: this.member.username,
@@ -292,39 +299,20 @@ export default {
                 subdistrict: this.tambon.name_th,
                 district: this.amphure.name_th,
                 province: this.province.name_th,
-                postcode: this.postcode,
             }
-            this.$confirm.require({
-                messagr: "ยืนยันข้อมูลและสมัครสมาชิกตอนนี้?",
-                header: "ยืนยันข้อมูล",
-                icon: "warn",
-                acceptLabel: "ตกลง",
-                rejectLabel: "ยกเลิก",
-                accept: async () => {
-                    this.isLoading = true;
-                    await axios
-                        .post(`${process.env.VUE_APP_DEKRUP}/register`, member_data, {
-                        }).then(() => {
-                            this.isLoading = false;
-                            this.$toast.add({
-                                severity: "success",
-                                summary: "สำเร็จ",
-                                detail: "ทำการสมัครสมาชิกเรียบร้อยแล้ว",
-                                life: 3000,
-                            })
-                            this.$router.push("/login");
-                        }).catch((err) => {
-                            this.isLoading = false;
-                            if (err.response.status === 408) {
-                                window.location.reload();
-                            }
-                            this.$toast.add({
-                                severity: "error",
-                                summary: "ไม่สำเร็จ",
-                                detail: err.response.data.message,
-                                life: 3000,
-                            });
-                        });
+            console.log(data);
+            await this.members.RegisterMember(data).then(async (result) => {
+
+                if (result) {
+                    console.log(result);
+                    this.loading = false;
+                    this.$toast.add({
+                        severity: "success",
+                        summary: "สำเร็จ",
+                        detail: "สมัครสมาชิกสำเร็จ",
+                        life: 3000,
+                    })
+                    window.location.reload('/');
                 }
             })
         },

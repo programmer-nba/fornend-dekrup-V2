@@ -1,7 +1,9 @@
 <template>
   <div v-if="this.$store.getters.logedIn === true">
     <NavberAdmin v-if="this.$store.getters.position === 'admin'" />
-    <NavberMember v-if="this.$store.getters.position === 'member'" />
+    <div v-if="this.$store.getters.status !== false">
+      <NavberMember v-if="this.$store.getters.position === 'member'" />
+    </div>
     <router-view />
   </div>
   <div v-else>
@@ -38,13 +40,25 @@ export default {
           const decode = await jwtDecode(localStorage.getItem("token"));
           const data_login = {
             logedIn: true,
+            member_number: res.data.data.member_number,
             position: res.data.data.position,
             name: res.data.data.name,
             id: decode._id,
+            status: res.data.data.status,
           };
           this.$store.commit("setLogin", data_login);
           this.$store.commit('setLoading', false);
-          console.log(data_login);
+          console.log(res);
+          if (this.$store.getters.position === 'member') {
+            if (res.data.data.status === false) {
+              this.$router.push("/member/dashboard");
+            } else {
+              this.$router.push("/member/product");
+            }
+          }
+          if (this.$store.getters.position === 'admin') {
+            this.$router.push("/admin");
+          }
         })
         .catch(() => {
           localStorage.clear();

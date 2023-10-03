@@ -10,9 +10,9 @@ export default createStore({
     name: "",
     position: "",
     id: "",
+    member_number: "",
     orders: [],
-
-
+    status: false,
   },
   getters: {
     isFooter : (state)=>state.isFooter,
@@ -30,6 +30,8 @@ export default createStore({
     position: (state)=>state.position,
     name: (state)=>state.name,
     id: (state)=>state.id,
+    member_number: (state)=>state.member_number,
+    status: (state)=>state.status,
   },
   mutations: {
     setFooter(state,item){
@@ -42,13 +44,17 @@ export default createStore({
       (state.logedIn = item.logedIn),
       (state.name = item.name),
       (state.position = item.position),
-      (state.id = item.id)
+      (state.id = item.id),
+      (state.member_number = item.member_number),
+      (state.status = item.status)
     },
     setLoginDefault(state){
       state.user._id ='';
       state.user.name = '';
       state.token = '';
       state.position = '';
+      state.member_number = '';
+      state.state = false;
       localStorage.clear();
     },
     setUser(state, item){

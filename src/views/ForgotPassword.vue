@@ -3,36 +3,103 @@
     <div class="background-login">
       <img class="img-logo" src="../assets/img/Deekrub.png">
       <h2 class="text-center font-reset mb-3">เปลี่ยนรหัสผ่านใหม่</h2>
-      <div class="flex justify-content-center mb-5">
-        <span class="p-float-label">
-          <Password v-model="password" inputId="password" :feedback="false" class="w-full" toogleMask />
-          <label for="password">กรุณากรอกรหัสผ่าน</label>
-        </span>
-      </div>
-      <div class="flex justify-content-center mb-5">
-        <span class="p-float-label">
-          <Password v-model="resetPassword" inputId="password" :feedback="false" class="w-full" toogleMask />
-          <label for="password">กรุณากรอกรหัสผ่านอีกครั้ง</label>
-        </span>
-      </div>
-      <div class="flex justify-content-center">
-        <Button label="เปลี่ยนรหัสผ่าน" style="font-family: 'Kanit', sans-serif;" class="button-login"
-          severity="success" />
+      <div class="grid">
+        <div class="sm:col-6 col-12">
+          <div class="p-inputgroup flex-1">
+            <span class="p-inputgroup-addon">
+              <i class="pi pi-user"></i>
+            </span>
+            <InputText v-model="member_number" placeholder="ชื่อผู้ใช้งาน (รหัสสมาชิก)" class="style-font" />
+          </div>
+        </div>
+        <div class="sm:col-6 col-12">
+          <div class="p-inputgroup flex-1">
+            <span class="p-inputgroup-addon">
+              <i class="pi pi-key"></i>
+            </span>
+            <Password v-model="password" toggleMask placeholder="รหัสผ่าน" class="style-font" />
+          </div>
+        </div>
+        <div class="sm:col-6 col-12">
+          <div class="p-inputgroup flex-1">
+            <span class="p-inputgroup-addon">
+              <i class="pi pi-key"></i>
+            </span>
+            <Password v-model="confirmpassword" toggleMask placeholder="ยืนยันรหัสผ่าน" class="style-font" />
+          </div>
+        </div>
+        <div class="flex justify-content-center">
+          <Button label="เปลี่ยนรหัสผ่าน" style="font-family: 'Kanit', sans-serif;   width: -webkit-fill-available;"
+            class="button-login mt-5" severity="danger" @click="confirm()" />
+        </div>
       </div>
     </div>
   </div>
 </template>
   
 <script>
-import Password from "primevue/password";
+
+import { Member } from "../service/member";
 
 export default {
   created() {
-        document.title = "รีเซ็ตรหัสผ่าน | Dekrub Shop";
-    },
+    document.title = "รีเซ็ตรหัสผ่าน | Dekrub Shop";
+  },
   components: {
-    Password,
+    Member,
+  },
+  setup() {
+    const members = new Member();
+    return { members }
+  },
+  data: () => ({
+    member_number: '',
+    password: '',
+    confirmpassword: '',
+
+    isLoading: false,
+    isDisabled: false,
+  }),
+
+  methods: {
+    async confirm() {
+      this.loading = true;
+      if (this.password.length < 8) {
+        this.toast.info('รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษรขึ้นไป')
+        return false;
+      }
+      //check password
+      if (this.password === '' || this.confirmpassword === '') {
+        this.toast.info('กรุณากำหนดและยืนยันรหัสผ่าน');
+        return false;
+      }
+      if (this.password !== this.confirmpassword) {
+        this.toast.info('รหัสผ่านไม่ตรงกัน')
+        return false;
+      }
+      const data = {
+        member_number: this.member_number,
+        password: this.password,
+      }
+      console.log(data);
+      await this.members.ResetPassword(data).then(async (result) => {
+
+        if (result) {
+          console.log(result);
+          this.loading = false;
+          this.$toast.add({
+            severity: "success",
+            summary: "สำเร็จ",
+            detail: "ทำการรีเซ็ตรหัสผ่านเรียบร้อย",
+            life: 3000,
+          })
+          window.location.reload('/');
+        }
+      })
+    },
   }
+
+
 }
 </script>
     

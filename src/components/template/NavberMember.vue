@@ -42,6 +42,10 @@ export default {
                     label: "ตั้งค่าโปรไฟล์",
                     icon: "pi pi-user",
                     to: "/member/profile",
+                },
+                {
+                    label: "Dashboard",
+                    to: "/member/dashboard"
                 }
             ];
         },
