@@ -11,7 +11,6 @@
                         </span>
                         <InputText v-model="member.member_ref" label="รหัสผู้แนะนำ" variant="outlined" density="comfortable"
                             placeholder="กรอกเบอร์โทรศัพท์ผู้แนะนำ(ถ้ามี)" :disabled="ref_status" hide-details="auto"
-                            oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*?)\..*/g, '$1');"
                             :append-inner-icon="(ref_status ? 'mdi-check' : '')" @change="checkRefMember" />
                     </div>
                 </div>
