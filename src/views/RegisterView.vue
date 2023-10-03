@@ -70,7 +70,7 @@
                             <i class="pi pi-map-marker"></i>
                         </span>
                         <div class="card flex justify-content-center">
-                            <Dropdown v-model="province" class="w-full w-13rem sm:w-11rem md:w-12rem lg:w-14rem xl:w-16" inputClass="font"
+                            <Dropdown v-model="province" class="w-full w-14rem md:w-16rem" inputClass="font"
                                 :options="item_province" placeholder="เลือกจังหวัด" optionLabel="name_th" :filter="true"
                                 filterPlaceholder="ค้นหาจังหวัด" @change="chooseProvince" />
                         </div>
@@ -82,7 +82,7 @@
                             <i class="pi pi-map-marker"></i>
                         </span>
                         <div class="card flex justify-content-center">
-                            <Dropdown v-model="amphure" class="w-full w-13rem sm:w-11rem md:w-12rem lg:w-14rem xl:w-16" inputClass="font"
+                            <Dropdown v-model="amphure" class="w-full w-14rem md:w-16rem" inputClass="font"
                                 :options="item_amphure" placeholder="เลือกเขต/จังหวัด" optionLabel="name_th" :filter="true"
                                 filterPlaceholder="ค้นหาเขต/อำเภอ" @change="chooseAmphure" />
                         </div>
@@ -94,7 +94,7 @@
                             <i class="pi pi-map-marker"></i>
                         </span>
                         <div class="card flex justify-content-center">
-                            <Dropdown v-model="tambon" class="w-full w-13rem sm:w-11rem md:w-12rem lg:w-14rem xl:w-16" inputClass="font"
+                            <Dropdown v-model="tambon" class="w-full w-14rem md:w-16rem" inputClass="font"
                                 :options="item_tambon" placeholder="เลือกตำบล" @change="chooseToDistrict"
                                 optionLabel="name_th" :filter="true" filterPlaceholder="ค้นหาแขวง/ตำบล" />
                         </div>
@@ -106,7 +106,7 @@
                             <i class="pi pi-map-marker"></i>
                         </span>
                         <div class="card flex justify-content-center">
-                            <InputText v-model="postcode" class="w-full w-13rem sm:w-11rem md:w-12rem lg:w-14rem xl:w-16" :disabled="isDisabled"
+                            <InputText v-model="postcode" class="w-full w-14rem md:w-16rem" :disabled="isDisabled"
                                 placeholder="รหัสไปรษณ์" />
                         </div>
                     </div>
@@ -114,7 +114,7 @@
             </div>
             <div class="flex justify-content-center">
                 <Button label="สมัครสมาชิก" style="font-family: 'Kanit', sans-serif;   width: -webkit-fill-available;"
-                    class="button-login mt-5" severity="danger" @click="confirm()" />
+                    class="button-login mt-5" severity="danger" @click="register()" />
             </div>
         </div>
     </div>
@@ -156,7 +156,7 @@ export default {
         Dropdown,
         Password,
         Button,
-        Member
+        Member,
     },
     setup() {
         const members = new Member();
@@ -201,7 +201,7 @@ export default {
                     this.$toast.add({ severity: 'success', summary: res.data.data.name, detail: `${res.data.data.address}, ${res.data.data.subdistrict} ${res.data.data.district} ${res.data.data.province} ${res.data.data.postcode}`, life: 7000 })
                 }).catch((err) => {
                     console.log(err);
-                    this.$toast.add({ severity: 'error', summary: 'ผิดพลาด', detail: 'เบอร์นี้ยังไม่ได้สมัคร ไม่สามารถรับค่าคอมมิชชั่นได้ กรุณาแจ้งแอดมิน', life: 5000 })
+                    this.$toast.add({ severity: 'error', summary: 'ผิดพลาด', detail: 'เบอร์นี้ยังไม่ได้สมัครแพลตฟอร์ม ไม่สามารถรับค่าคอมมิชชั่นได้ กรุณาแจ้งให้พาร์ทเนอร์สมัครแพลตฟอร์ม', life: 5000 })
                 })
             }
         },
@@ -214,7 +214,6 @@ export default {
             this.item_subdistrict = [];
             this.item_district = [];
         },
-
         async chooseProvince(evt) {
             this.member.province = evt.value.name_th;
             await axios.get(`${process.env.VUE_APP_THAILAND}thailand/amphure/by-province-id/${evt.value.id}`, {
@@ -324,8 +323,6 @@ export default {
   
       
 <style scoped>
-
-
 .style-font {
     font-family: 'Kanit', sans-serif;
 
@@ -382,44 +379,13 @@ export default {
     padding: 0.75rem 0.75rem;
     min-width: 3rem;
 }
-@media only screen and (max-width: 1850px) {
-    .background-login {
-        width: 42%;
-    }
 
-
-}
-@media only screen and (max-width: 1750px) {
-    .background-login {
-        width: 45%;
-    }
-
-
-}
-@media only screen and (max-width: 1580px) {
-    .background-login {
-        width: 50%;
-    }
-
-
-}
-@media only screen and (max-width: 1350px) {
+@media only screen and (max-width: 1200px) {
     .background-login {
         margin-left: auto;
         margin-right: auto;
         width: 60%;
         background: #ffffffde;
-    }
-}
-@media only screen and (max-width: 1140px) {
-    .background-login {
-        width: 70%;
-    }
-}
-
-@media only screen and (max-width: 650px) {
-    .background-login {
-        width: 85%;
     }
 }
 
