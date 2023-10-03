@@ -39,14 +39,21 @@ export default {
                     to: "/member/product",
                 },
                 {
+                    label: "รายได้ค่าคอมมิชชั่น",
+                    icon: "pi pi-money-bill",
+                    to: "/member/commissionday"
+                },
+                {
+                    label: "รายได้ค่าบริหาร",
+                    icon: "pi pi-money-bill",
+                    to: "/member/commissionweek"
+                },
+                {
                     label: "ตั้งค่าโปรไฟล์",
                     icon: "pi pi-user",
                     to: "/member/profile",
                 },
-                {
-                    label: "Dashboard",
-                    to: "/member/dashboard"
-                }
+                
             ];
         },
         async logout() {

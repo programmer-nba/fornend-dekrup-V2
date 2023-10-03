@@ -18,6 +18,16 @@ routes = [
     component: () => import("../components/member/ProfileMember.vue"),
   },
   {
+    path: "/member/commissionday",
+    name: "member-commissionday",
+    component: () => import("../components/member/CommissionDay.vue"),
+  },
+  {
+    path: "/member/commissionweek",
+    name: "member-commissionweek",
+    component: () => import("../components/member/CommissionWeek.vue"),
+  },
+  {
     path: "/member/dashboard",
     name: "dashboard",
     component: () => import("../components/member/dashboard/ContractDocument.vue"),

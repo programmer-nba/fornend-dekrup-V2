@@ -9,23 +9,15 @@
             <span class="p-inputgroup-addon">
               <i class="pi pi-user"></i>
             </span>
-            <InputText v-model="member_number" placeholder="ชื่อผู้ใช้งาน (รหัสสมาชิก)" class="style-font" />
+            <InputText v-model="member_number" placeholder="รหัสสมาชิก" class="style-font" />
           </div>
         </div>
         <div class="sm:col-6 col-12">
           <div class="p-inputgroup flex-1">
             <span class="p-inputgroup-addon">
-              <i class="pi pi-key"></i>
+              <i class="pi pi-user"></i>
             </span>
-            <Password v-model="password" toggleMask placeholder="รหัสผ่าน" class="style-font" />
-          </div>
-        </div>
-        <div class="sm:col-6 col-12">
-          <div class="p-inputgroup flex-1">
-            <span class="p-inputgroup-addon">
-              <i class="pi pi-key"></i>
-            </span>
-            <Password v-model="confirmpassword" toggleMask placeholder="ยืนยันรหัสผ่าน" class="style-font" />
+            <InputText v-model="username" placeholder="ชื่อผู้ใช้งาน" class="style-font" />
           </div>
         </div>
         <div class="flex justify-content-center">
@@ -54,8 +46,7 @@ export default {
   },
   data: () => ({
     member_number: '',
-    password: '',
-    confirmpassword: '',
+    username: '',
 
     isLoading: false,
     isDisabled: false,
@@ -64,22 +55,9 @@ export default {
   methods: {
     async confirm() {
       this.loading = true;
-      if (this.password.length < 8) {
-        this.toast.info('รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษรขึ้นไป')
-        return false;
-      }
-      //check password
-      if (this.password === '' || this.confirmpassword === '') {
-        this.toast.info('กรุณากำหนดและยืนยันรหัสผ่าน');
-        return false;
-      }
-      if (this.password !== this.confirmpassword) {
-        this.toast.info('รหัสผ่านไม่ตรงกัน')
-        return false;
-      }
       const data = {
         member_number: this.member_number,
-        password: this.password,
+        username: this.username,
       }
       console.log(data);
       await this.members.ResetPassword(data).then(async (result) => {
