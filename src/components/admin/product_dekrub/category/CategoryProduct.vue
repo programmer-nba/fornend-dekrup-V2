@@ -15,9 +15,9 @@
           <Column
             field="name"
             header="หมวดหมู่"
-            style="min-width: 550px"
+            class="column-responsive"
           ></Column>
-          <Column :exportable="false" style="min-width: 8rem">
+          <Column :exportable="false" style="min-width: 10rem">
             <template #body="item">
               <CategoryProduct
                 :cat_id="item.data._id"
@@ -63,14 +63,17 @@
   
       return { categorys };
     },
+//  
   };
   </script>
   
   <style>
-  
+  .column-responsive{
+    width: 1600px;
+  }
   .p-datatable .p-datatable-thead>tr>th {
-      background-color: #FFFDE3 !important;
-      color: #C21010;
+      background-color: #ffe3e3 !important;
+      color: #ff0000;
       border-bottom: 1px solid #CFE8A9;
   }
   
@@ -86,6 +89,13 @@
       padding: 0;
       margin-top: 1.5rem;
       border-radius: 40px;
+  }
+
+
+  @media only screen and (max-width:1700px){
+    .column-responsive{
+    width: 1200px;
+  }
   }
   </style>
   

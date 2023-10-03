@@ -76,7 +76,6 @@
     v-model:visible="addNumberProduct"
     modal
     header="จำนวนสั่งซื้อ"
-    :style="{ width: '50vw' }"
   >
     <InputNumber
       v-model="quantityToOrder"
@@ -236,27 +235,106 @@ export default {
         quantityToOrder.value = 0;
       }
     };
+    
+    const checkStock = (product, quantity) => {
+  if (product.quantity >= quantity) {
+    return true; // สินค้ามีจำนวนเพียงพอให้เพิ่มลงในตะกร้า
+  } else {
+    return false; // สินค้ามีจำนวนไม่เพียงพอ
+  }
+};
 
-    const addToOrder = () => {
-      if (quantityToOrder.value > 0 && productMember.value) {
-        const order = {
-          product: {
-            name: productMember.value.name,
-            price: productMember.value.price,
-            quantity: productMember.value.quantity,
-            category: productMember.value.category,
-          },
-          quantity: quantityToOrder.value,
-        };
-        orders.value.push(order);
+const addToOrder = () => {
+  if (quantityToOrder.value > 0 && productMember.value) {
+    const product = productMember.value;
+    const quantity = quantityToOrder.value;
 
-        productMember.value = "";
-        quantityToOrder.value = 0;
-        addNumberProduct.value = false;
-        store.commit("addToOrder", order);
-        console.log("Orders:", orders.value);
-      }
-    };
+    if (checkStock(product, quantity)) {
+      const order = {
+        product: {
+          name: product.name,
+          price: product.price,
+          quantity: product.quantity,
+          category: product.category,
+        },
+        quantity: quantityToOrder.value,
+      };
+      orders.value.push(order);
+
+      // ลดจำนวนสินค้าในสต๊อก
+      product.quantity -= quantityToOrder.value;
+
+      productMember.value = "";
+      quantityToOrder.value = 0;
+      addNumberProduct.value = false;
+      store.commit("addToOrder", order);
+      console.log("Orders:", orders.value);
+    } else {
+      alert("ขออภัยจำนวนสินค้าไม่เพียงพอ");
+    }
+  }
+};
+
+// const addToOrder = () => {
+//   if (quantityToOrder.value > 0 && productMember.value) {
+//     const product = productMember.value;
+//     const quantity = quantityToOrder.value;
+
+//     // ตรวจสอบว่าสินค้าอยู่ในรายการออเดอร์แล้วหรือไม่
+//     const existingOrder = orders.value.find((order) => {
+//       return (
+//         order.product &&
+//         order.product.name === product.name &&
+//         order.product.detail === product.detail
+//       );
+//     });
+
+//     if (existingOrder) {
+//       // หากสินค้ามีอยู่ในรายการออเดอร์แล้ว ให้เพิ่มจำนวนสินค้าในรายการเดิม
+//       if (checkStock(product, quantity)) {
+//         existingOrder.quantity += quantityToOrder.value;
+
+//         // ลดจำนวนสินค้าในสต๊อก
+//         product.quantity -= quantityToOrder.value;
+
+//         productMember.value = "";
+//         quantityToOrder.value = 0;
+//         addNumberProduct.value = false;
+//         console.log("Orders:", orders.value);
+//       } else {
+//         alert("ขออภัยจำนวนสินค้าไม่เพียงพอ");
+//       }
+//     } else {
+//       // หากสินค้ายังไม่มีในรายการออเดอร์ ให้สร้างรายการใหม่
+//       if (checkStock(product, quantity)) {
+//         const order = {
+//           product: {
+//             name: product.name,
+//             price: product.price,
+//             quantity: product.quantity,
+//             category: product.category,
+//           },
+//           quantity: quantityToOrder.value,
+//         };
+//         orders.value.push(order);
+
+//         // ลดจำนวนสินค้าในสต๊อก
+//         product.quantity -= quantityToOrder.value;
+
+//         productMember.value = "";
+//         quantityToOrder.value = 0;
+//         addNumberProduct.value = false;
+//         console.log("Orders:", orders.value);
+//       } else {
+//         alert("ขออภัยจำนวนสินค้าไม่เพียงพอ");
+//       }
+//     }
+//   }
+// };
+
+
+
+    
 
     const choose = (product) => {
       if (product) {
@@ -268,10 +346,6 @@ export default {
     const numberDigitFormat = (number) => {
       return number.toFixed(2);
     };
-    const clearSearch = () => {
-      search.value = "";
-    };
-
     const searchData = () => {
       if (search.value !== "") {
         item_product.value = originalItemProduct.value.filter((el) =>
@@ -298,6 +372,7 @@ export default {
         return "";
       }
     };
+
 
     const filteredProducts = computed(() => {
       return search.value
@@ -331,6 +406,7 @@ export default {
       selectedQuantity,
       quantityToOrder,
       chooseProductQuantity,
+      checkStock
     };
   },
 };

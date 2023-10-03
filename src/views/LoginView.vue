@@ -3,24 +3,30 @@
     <div class="background-login">
       <img class="img-logo" src="../assets/img/Deekrub.png">
       <div class="flex justify-content-center mb-5">
+        <!-- <div class="flex flex-column gap-2">
+          <label for="username">Username</label>
+          <InputText id="username" v-model="value" placeholder="ชื่อผู้ใช้งาน"  aria-describedby="username-help" />
+        </div> -->
         <span class="p-float-label w-full">
-          <InputText v-model="username" type="text" placeholder="ชื่อผู้ใช้งาน" />
+          <InputText v-model="username" type="text" placeholder="ชื่อผู้ใช้งาน"  @keyup.enter="checklogin()" />
           <label for="username">กรุณากรอกยูสเซอร์เนม</label>
         </span>
       </div>
       <div class="flex justify-content-center mb-1">
+        
         <span class="p-float-label">
-          <InputText v-model="password" type="text" placeholer="รหัสผ่าน" />
-          <!-- <InputText v-model="password" inputId="password" :feedback="false" class="w-full" toogleMask /> -->
+          <Password v-model="password" :feedback="false" placeholder="กรุณากรอกรหัสผ่าน" inputId="password"  class="w-full" @keyup.enter="checklogin()"/>
+          <!-- <InputText v-model="password" type="text" placeholer="รหัสผ่าน" /> -->
+          <!-- <InputText v-model="password" inputId="password" :feedback="false" class="w-full" togleMask /> -->
           <label for="password">กรุณากรอกรหัสผ่าน</label>
         </span>
       </div>
       <div class="flex justify-content-between mb-5">
         <div class="font-color">
-          <p @click="$router.push('/register')">สมัครสมาชิก</p>
+          <p @click="$router.push('/register')" class="cursor">สมัครสมาชิก</p>
         </div>
         <div class="font-color">
-          <p  @click="$router.push('/forgetpassword')">ลืมรหัสผ่าน</p>
+          <p  @click="$router.push('/forgetpassword')" class="cursor">ลืมรหัสผ่าน</p>
         </div>
       </div>
       <div class="flex justify-content-center">
@@ -69,7 +75,7 @@ export default {
         })
         .then(async (res) => {
           this.isLoading = false;
-          this.toast.success("ยินดีต้อนรับเข้าสู่ NBA PLATFORM");
+          this.toast.success("ยินดีต้อนรับเข้าสู่ DKRUB");
           localStorage.setItem("token", res.data.token);
           window.location.reload('/');
         })
@@ -90,6 +96,16 @@ export default {
 </script>
     
 <style>
+.p-input-icon-left, .p-input-icon-right {
+    position: initial !important;
+    display: inline-block;
+}
+.cursor{
+  cursor: pointer;
+}
+.cursor:hover{
+  color: rgb(255, 196, 0);
+}
 .img-login {
   width: 100%;
   background: url("../assets/img/backgrond.jpg");
@@ -115,9 +131,7 @@ export default {
   border: 3px solid #ffff;
 }
 
-.p-component {
-  z-index: 1;
-}
+
 
 .font-color {
   color: #ffff;

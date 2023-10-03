@@ -70,7 +70,7 @@
                             <i class="pi pi-map-marker"></i>
                         </span>
                         <div class="card flex justify-content-center">
-                            <Dropdown v-model="province" class="w-full w-14rem md:w-16rem" inputClass="font"
+                            <Dropdown v-model="province" class="w-full w-13rem sm:w-11rem md:w-12rem lg:w-14rem xl:w-16" inputClass="font"
                                 :options="item_province" placeholder="เลือกจังหวัด" optionLabel="name_th" :filter="true"
                                 filterPlaceholder="ค้นหาจังหวัด" @change="chooseProvince" />
                         </div>
@@ -82,7 +82,7 @@
                             <i class="pi pi-map-marker"></i>
                         </span>
                         <div class="card flex justify-content-center">
-                            <Dropdown v-model="amphure" class="w-full w-14rem md:w-16rem" inputClass="font"
+                            <Dropdown v-model="amphure" class="w-full w-13rem sm:w-11rem md:w-12rem lg:w-14rem xl:w-16" inputClass="font"
                                 :options="item_amphure" placeholder="เลือกเขต/จังหวัด" optionLabel="name_th" :filter="true"
                                 filterPlaceholder="ค้นหาเขต/อำเภอ" @change="chooseAmphure" />
                         </div>
@@ -94,7 +94,7 @@
                             <i class="pi pi-map-marker"></i>
                         </span>
                         <div class="card flex justify-content-center">
-                            <Dropdown v-model="tambon" class="w-full w-14rem md:w-16rem" inputClass="font"
+                            <Dropdown v-model="tambon" class="w-full w-13rem sm:w-11rem md:w-12rem lg:w-14rem xl:w-16" inputClass="font"
                                 :options="item_tambon" placeholder="เลือกตำบล" @change="chooseToDistrict"
                                 optionLabel="name_th" :filter="true" filterPlaceholder="ค้นหาแขวง/ตำบล" />
                         </div>
@@ -106,7 +106,7 @@
                             <i class="pi pi-map-marker"></i>
                         </span>
                         <div class="card flex justify-content-center">
-                            <InputText v-model="postcode" class="w-full w-14rem md:w-16rem" :disabled="isDisabled"
+                            <InputText v-model="postcode" class="w-full w-13rem sm:w-11rem md:w-12rem lg:w-14rem xl:w-16" :disabled="isDisabled"
                                 placeholder="รหัสไปรษณ์" />
                         </div>
                     </div>
@@ -336,6 +336,8 @@ export default {
   
       
 <style scoped>
+
+
 .style-font {
     font-family: 'Kanit', sans-serif;
 
@@ -392,13 +394,44 @@ export default {
     padding: 0.75rem 0.75rem;
     min-width: 3rem;
 }
+@media only screen and (max-width: 1850px) {
+    .background-login {
+        width: 42%;
+    }
 
-@media only screen and (max-width: 1200px) {
+
+}
+@media only screen and (max-width: 1750px) {
+    .background-login {
+        width: 45%;
+    }
+
+
+}
+@media only screen and (max-width: 1580px) {
+    .background-login {
+        width: 50%;
+    }
+
+
+}
+@media only screen and (max-width: 1350px) {
     .background-login {
         margin-left: auto;
         margin-right: auto;
         width: 60%;
         background: #ffffffde;
+    }
+}
+@media only screen and (max-width: 1140px) {
+    .background-login {
+        width: 70%;
+    }
+}
+
+@media only screen and (max-width: 650px) {
+    .background-login {
+        width: 85%;
     }
 }
 

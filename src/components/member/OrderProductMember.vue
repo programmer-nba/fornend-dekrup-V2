@@ -23,15 +23,19 @@
           style="background-color: #da2121"
         >
           <label style="font-size: 18px">ยอดเงินที่ต้องชำระ</label>
-          <label style="font-size: 20px">{{ calculateTotal() }} บาท</label>
-          <label style="font-size: 14px">กดเพื่อชำระเงิน</label>
+          <label style="font-size: 20px;background: #ffff;
+                  border-radius: 15px;
+                  color: red;
+                  padding: 2px;"><strong>{{ calculateTotal() }}</strong> บาท</label>
+
+          <label style="font-size: 14px;color: #ffff;"><Button label="กดเพื่อชำระเงิน" link  @click="visible = true" style="color: #ffff;" /></label>
         </div>
       </div>
     </div>
     <div class="grid px-2">
       <div class="col-12">
         <DataTable :value="orders">
-          <Column header="รายการ">
+          <Column header="รายการ" >
             <template #body="slotProps">
               {{ slotProps.data.product.name }}
             </template>
@@ -51,8 +55,35 @@
               {{ slotProps.data.product.price * slotProps.data.quantity }}
             </template>
           </Column>
+          <Column header="ลบรายการ">
+            <template #body="slotProps">
+                <DelProductMember
+                :product_id="slotProps.data._id"
+                :products ="products"/>
+                
+            </template>
+          </Column>
           
         </DataTable>
+        <Dialog v-model:visible="visible" modal header="ชำระเงิน" >
+          <TabView>
+            <TabPanel header="QR CODE">
+                <p>
+                    QRCODE
+                </p>
+            </TabPanel>
+            <TabPanel header="แนบสลิปการโอนเงิน"  >
+                  <div class="flex justify-content-center">
+                    <Toast />
+                  <FileUpload mode="basic" name="demo[]" url="" accept="image/*" :maxFileSize="1000000" @upload="onUpload" />
+                  </div>
+            </TabPanel>
+        </TabView>
+            <template #footer>
+                <Button label="ปิด" icon="pi pi-times" @click="visible = false" text />
+                <Button label="ยืนยันการชำระเงิน" icon="pi pi-check" @click="visible = false" autofocus />
+            </template>
+        </Dialog>
   
       </div>
     </div>
@@ -63,9 +94,21 @@
 <script>
 import { ref } from "vue";
 import { useStore } from "vuex";
+import DelProductMember from "@/components/member/DelOrderProductMember.vue";
+
+import Dialog from 'primevue/dialog';
+
+const visible = ref(false);
+
 
 export default {
+  components:{
+    DelProductMember,
+    Dialog
+  },
   setup() {
+    
+    const products = ref([]);
     const store = useStore();
     const orders = ref(store.state.orders); 
 
@@ -76,12 +119,19 @@ export default {
       }
       return total.toFixed(2);
     };
-
     return {
       orders,
       calculateTotal,
+      visible,
+      products
+      
     };
   },
+  methods: {
+        onUpload() {
+            this.$toast.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded', life: 3000 });
+        }
+    }
 };
 </script>
 

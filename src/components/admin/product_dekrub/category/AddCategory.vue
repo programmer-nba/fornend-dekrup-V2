@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div>
     <Button label="เพิ่มหมวดหมู่สินค้า" icon="pi pi-plus" @click="(displayAdd = true), (category = '')" />
 
@@ -71,4 +71,4 @@ export default {
     return { displayAdd, fetchProps, addCategory, category };
   },
 };
-</script>
+</script> -->
