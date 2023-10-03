@@ -89,16 +89,7 @@
 
         </DataTable>
 
-        <!-- <Dialog v-model="deleteDialogVisible" :style="{ width: '450px' }" header="ลบสินค้า" :modal="true">
-          <div class="confirmation-content">
-            <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-            <span>ต้องการลบสินค้าชิ้นนี้</span>
-          </div>
-          <template #footer>
-            <Button label="ยกเลิก" icon="pi pi-times" class="p-button-text" @click="deleteDialogVisible = false" />
-            <Button label="ตกลง" icon="pi pi-check" class="p-button-text" @click="handleDelete" />
-          </template>
-        </Dialog> -->
+
       </div>
     </div>
 
@@ -212,39 +203,7 @@ export default {
       });
     };
 
-    const deleteDialogVisible = ref(false);
-    const delProduct = (product_id) => {
-      const product = item_product.value.find((el) => el._id === product_id);
-      if (product.product_stock !== 0) {
-        // สินค้ายังมีอยู่ในสต็อก ไม่ดำเนินการต่อ
-        return false;
-      }
-      const position = item_product.value.findIndex((el) => el._id === product_id);
 
-      // แสดง Dialog ในที่นี้คือ deleteDialogVisible
-      deleteDialogVisible.value = true;
-
-      // เมื่อผู้ใช้คลิก "ตกลง" ใน Dialog
-      const handleDelete = async () => {
-        try {
-          await axios.delete(`${process.env.VUE_APP_DEKRUP}/product/delete/${product_id}`, {
-            headers: {
-              "auth-token": `Bearer ${localStorage.getItem("token")}`,
-            },
-          });
-
-          item_product.value.splice(position, 1);
-          deleteDialogVisible.value = false;
-        } catch (err) {
-          if (err.response.status === 408) {
-            window.location.reload();
-          }
-          deleteDialogVisible.value = false;
-        }
-      };
-
-      return { handleDelete };
-    };
 
     onMounted(() => {
       getData();
@@ -253,14 +212,13 @@ export default {
     return {
       item_product,
       search,
-      category, // เพิ่ม category เข้าไปในการ return
+      category, 
       getData,
       searchData,
       getImage,
-      filtercategory, // เพิ่ม filtercategory เข้าไปในการ return
+      filtercategory, 
       numberFormat,
       numberFormatShort,
-      delProduct,
 
     };
   },

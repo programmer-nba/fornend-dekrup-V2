@@ -22,7 +22,11 @@ routes = [
     name: "admin-product-category",
     component: () => import("../components/admin/product_dekrub/category/CategoryProduct.vue"),
   },
-
+  {
+    path: "/admin/์new_member",
+    name: "admin-new_member",
+    component: () => import("../components/admin/new_member/TableNewMember.vue"),
+  },
   {
     path: "/admin/order",
     name: "admin-order",
