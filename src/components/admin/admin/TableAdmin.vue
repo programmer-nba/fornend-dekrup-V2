@@ -5,7 +5,7 @@
       <div class="col-12 md:col-4">
         <div class="p-inputgroup  flex-1 ">
           <Button icon="pi pi-search" severity="warning" />
-          <InputText v-model="search" placeholder="ค้นหาข้อมูล" @keyup="searchData()" class=" font p-3 " />
+          <InputText v-model="search" placeholder="ค้นหาข้อมูล" @keyup="searchData()"  class=" font p-3 " />
         </div>
       </div>
     </div>
@@ -83,7 +83,9 @@ export default {
   },
   mounted() {
     this.getdata();
+    
   },
+  
   methods: {
     dateformat(date) {
       return dayjs(date).locale("th").add(543, "year").format("DD/MMMM/YYYY");
@@ -107,14 +109,13 @@ export default {
       if (this.search !== "") {
         this.admin = this.admins.filter(
           (el) =>
-            el.admin_name.search(this.search) !== -1 ||
-            el.admin_username.search(this.search) !== -1
+            el.name.search(this.search) !== -1 ||
+            el.username.search(this.search) !== -1
         );
       } else {
         this.admin = this.admins;
       }
     },
-
 
     openD(admin) {
       this.adminDialog = true;
@@ -125,7 +126,7 @@ export default {
     del(admin) {
     this.deleteDailog = true;
     this.delete_id = admin._id;
-    this.delete_name = admin.admin_username; // แสดง username แทน admin_name
+    this.delete_name = admin.admin_username;
   },
     openC() {
       this.confirmDailog = true;

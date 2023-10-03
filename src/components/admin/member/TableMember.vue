@@ -174,18 +174,19 @@ export default {
       this.member = this.members.reverse();
     },
 
-
     searchData() {
       if (this.search !== "") {
         this.member = this.members.filter(
           (el) =>
-            el.member_name.search(this.search) !== -1 ||
-            el.member_username.search(this.search) !== -1
+            el.name.search(this.search) !== -1 ||
+            el.username.search(this.search) !== -1
         );
       } else {
         this.member = this.members;
       }
     },
+
+
 
     openD(member) {
       this.memberDialog = true;

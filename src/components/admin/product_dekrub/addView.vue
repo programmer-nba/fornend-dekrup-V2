@@ -6,21 +6,23 @@
                     <template #header>เกี่ยวกับสินค้า</template>
                     <div class="grid">
                         <div class="col-12 text-center">
-                            <div class="justify-content-center"
+                            <div class="justify-content-center mb-3"
                                 style="display: flex; flex-direction: row; flex-wrap: nowrap;">
                                 <!-- <Image v-for="(preview, index) in imagePreviews" :key="index" :src="preview.url" width="200"
                                     :preview="true" /> -->
-                                <label v-if="!img_preview" class="file-input-label">
-                                    <span>เลือกรูปหน้าปก</span>
-                                    <input type="file" class="input-image" @change="SetImage" />
-                                </label>
-                                <Image v-if="img_preview" :src="img_preview" width="200" height="200" />
+                                <div v-if="img_previews.length > 3" class="alert alert-danger">
+                                    คุณสามารถเพิ่มรูปได้เพียง 3 รูปเท่านั้น
+                                </div>
+                                <template v-for="(preview, index) in img_previews" :key="index">
+                                    <Image v-if="preview" :src="preview" width="200" height="200" />
+                                </template>
                             </div>
-                            <!-- <FileUpload mode="basic" chooseLabel="เลือกรูปสินค้า" :auto="true" @change="SetImage"
-                                :customUpload="true" accept="image/png, image/jpeg, image/jpg" :fileLimit="3"
-                                :maxFileSize="2097152" invalidFileSizeMessage="ขนาดรูปภาพจะต้องไม่เกิน 2 mb"
-                                :disabled="isDisabled" class="border-red-400 mt-3" style="background-color: #C21010;" />
-                            <p><em>(ขนาดจะต้องเป็น 1:1)</em></p> -->
+                            <label class="custom-file-input-label">
+                                <span>เลือกรูปหน้าปก (เลือกได้สูงสุด 3 รูป)</span>
+                                <input type="file" class="input-image" @change="SetImages($event)" multiple />
+                                <span class="custom-button">เลือกไฟล์</span>
+                            </label>
+
                         </div>
                     </div>
 
@@ -89,127 +91,147 @@ import axios from "axios";
 import { Product } from "../../../service/product";
 
 export default {
-    name: "addView",
-    components: {
-        Product,
+  name: "addView",
+  components: {
+    Product,
+  },
+  setup() {
+    const product = new Product();
+    return { product }
+  },
+  data: () => ({
+    loading: false,
+    isloading: false,
+    isDisabled: false,
+    img_previews: [],
+    img_upload: null,
+    img_size: null,
+    dialog_img_warning: false,
+    imagePreviews: [],
+    name: "",
+    categoryid: "",
+    detail: "",
+    price: "",
+    quantity: "",
+    item_category: [],
+  }),
+
+  created() {
+    document.title = "เพิ่มข้อมูลสินค้า";
+    this.fetchProductCategories();
+  },
+  methods: {
+    async fetchProductCategories() {
+      try {
+        const response = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/category/list`, {
+          headers: {
+            token: localStorage.getItem("token"),
+          },
+        });
+        this.item_category = response.data.data;
+      } catch (error) {
+        console.error(error);
+      }
     },
-    setup() {
-        const product = new Product();
-        return { product }
+
+    ResetImage() {
+  this.img_previews = []; // เปลี่ยนเป็น img_previews
+  this.img_upload = null;
+  this.dialog_img_warning = false;
+},
+
+ResetData() {
+  this.name = "";
+  this.categoryid = "";
+  this.detail = "";
+  this.price = "";
+  this.quantity = "";
+},
+
+async addProduct() {
+      this.isloading = true;
+
+      try {
+        const formData = new FormData();
+        formData.append("name", this.name);
+        formData.append("categoryid", this.categoryid);
+        formData.append("detail", this.detail);
+        formData.append("price", this.price);
+        formData.append("quantity", this.quantity);
+
+        for (let i = 0; i < this.img_upload.length; i++) {
+          formData.append("imgCollection[]", this.img_upload[i] || null);
+        }
+
+        const response = await axios.post(
+          `${process.env.VUE_APP_DEKRUP}/product/create`,
+          formData,
+          {
+            headers: {
+              token: localStorage.getItem("token"),
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        if (response) {
+          console.log(response);
+          this.ResetData();
+          this.ResetImage();
+          this.isloading = false;
+          this.$toast.add({
+            severity: "success",
+            summary: "สำเร็จ",
+            detail: "เพิ่มรายการสินค้าสำเร็จ",
+            life: 3000,
+          });
+        }
+      } catch (error) {
+        console.error(error);
+        this.isloading = false;
+        this.$toast.add({
+          severity: "error",
+          summary: "เกิดข้อผิดพลาด",
+          detail: "ไม่สามารถเพิ่มรายการสินค้าได้",
+          life: 3000,
+        });
+      }
     },
-    data: () => ({
-        loading: false,
-        isloading: false,
-        isDisabled: false,
+    
+    SetImages(e) {
+      const files = e.target.files;
+      const maxImages = 3;
+      this.img_upload = [];
 
-        img_preview: null,
-        img_upload: null,
-        img_size: null,
-        dialog_img_warning: false,
+      for (let i = 0; i < files.length; i++) {
+        if (this.img_previews.length < maxImages) {
+          const file = files[i];
+          this.img_size = file.size;
 
-        imagePreviews: [],
+          if (this.img_size > 500000) {
+            this.dialog_img_warning = true;
+            continue;
+          }
 
-        name: '',
-        categoryid: '',
-        detail: '',
-        price: '',
-        quantity: '',
+          const fileReader = new FileReader();
+          fileReader.readAsDataURL(file);
 
-        item_category: [],
-    }),
-
-    created() {
-        document.title = "เพิ่มข้อมูลสินค้า";
-        this.fetchProductCategories();
+          fileReader.addEventListener("load", (event) => {
+            this.img_previews.push(event.target.result);
+            this.img_upload.push(file);
+          });
+        } else {
+          this.dialog_img_warning = true;
+          alert("คุณสามารถเพิ่มรูปได้เพียง 3 รูปเท่านั้น");
+          break;
+        }
+      }
     },
-    methods: {
-
-        async fetchProductCategories() {
-            try {
-                const response = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/category/list`, {
-                    headers: {
-                        token: localStorage.getItem("token"),
-                    },
-                });
-                this.item_category = response.data.data;
-            } catch (error) {
-                console.error(error);
-            }
-        },
-
-        ResetImage() {
-            this.img_preview = null;
-            this.img_upload = null;
-            this.dialog_img_warning = false;
-        },
-
-        ResetData() {
-            this.name = null;
-            this.categoryid = null;
-            this.detail = null;
-            this.price = null;
-            this.quantity = null;
-        },
-
-        async addProduct() {
-            this.loading = true;
-            if (this.img_upload) {
-                const data = {
-                    name: this.name,
-                    categoryid: this.categoryid,
-                    detail: this.detail,
-                    price: this.price,
-                    quantity: this.quantity
-                }
-                const formData = new FormData();
-                formData.append("name", this.name);
-                formData.append("categoryid", this.categoryid);
-                formData.append("detail", this.detail);
-                formData.append("price", this.price);
-                formData.append("quantity", this.quantity);
-                formData.append("imgCollection", this.img_upload[0]);
-
-                console.log(data)
-
-                await this.product.CreateProduct(formData).then(async (result) => {
-
-                    if (result) {
-                        console.log(result);
-                        this.ResetData();
-                        this.ResetImage();
-                        this.loading = false;
-                        this.$toast.add({
-                            severity: "success",
-                            summary: "สำเร็จ",
-                            detail: "เพิ่มรายการสินค้าสำเร็จ",
-                            life: 3000,
-                        })
-                    }
-                })
-            }
-        },
-
-        SetImage(e) {
-            const file = e.target.files;
-            if (file) {
-                this.img_size = file[0].size;
-
-                if (this.img_size > 500000) {
-                    this.dialog_img_warning = true;
-                }
-                const fileReader = new FileReader();
-                fileReader.readAsDataURL(file[0]);
-                fileReader.addEventListener("load", (event) => {
-                    this.img_preview = event.target.result;
-                })
-                this.img_upload = file;
-            }
-        },
-
-
-    },
+  },
 };
 </script>
+
+
 
 
 
@@ -224,5 +246,37 @@ export default {
     background-color: #FFFDE3;
     color: #C21010;
     border: none;
+}
+
+.custom-file-input-label {
+    align-items: center;
+    justify-content: center;
+    background-color: #007BFF;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.input-image {
+    display: none;
+}
+
+.custom-button {
+    background-color: #0056b3;
+    padding: 5px 10px;
+    border-radius: 3px;
+}
+
+.custom-button:hover {
+    background-color: #003c80;
+}
+
+.alert {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 5px;
+    border-radius: 5px;
+    margin-bottom: 10px;
 }
 </style>

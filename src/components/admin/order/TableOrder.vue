@@ -13,7 +13,15 @@
         <span class="p-inputgroup-addon border-none" style="background-color: #C21010;">
           <i class="pi pi-calendar text-white"></i>
         </span>
-        <Calendar inputId="range" class="z-0" selectionMode="range" :manualInput="false" :showButtonBar="true" />
+        <Calendar
+  inputId="singleDate"
+  v-model="date"
+  selectionMode="single" 
+  @date-select="searchDay"
+  :manualInput="false"
+  :showButtonBar="true"
+/>
+
       </div>
     </div>
     <div class="col-12 md:col-1">
@@ -55,47 +63,35 @@
     </Column>
     <Column :exportable="false" style="min-width: 8rem">
       <template #body="rowData">
-        <Button
-          icon="pi pi-print"
-          label="พิมพ์ใบส่งสินค้า"
-          class="p-button-outlined p-button-sm text-sm text-teal-300"
-          @click="showDialog(rowData)"
-        />
+        <Button icon="pi pi-print" label="พิมพ์ใบส่งสินค้า" class="p-button-outlined p-button-sm text-sm text-teal-300"
+          @click="showDialog(rowData)" />
       </template>
     </Column>
   </DataTable>
 
 
-  <Dialog
-    class="dialog-change"
-    v-model:visible="Dialogbill"
-    :style="{ width: '450px' }"
-    header="ใบส่งสินค้า"
-    :modal="true"
-  >
-    <img :src="selectedItemImage" class="product-image" style="width: 200px;"/>
+  <Dialog class="dialog-change" v-model:visible="Dialogbill" :style="{ width: '450px' }" header="ใบส่งสินค้า"
+    :modal="true">
+    <img :src="selectedItemImage" class="product-image" style="width: 200px;" />
     <template #footer>
-      <Button
-        label="ปิด"
-        icon="pi pi-times text-red-600"
-        class="p-button-text text-red-600"
-        @click="closeDialog"
-      />
+      <Button label="ปิด" icon="pi pi-times text-red-600" class="p-button-text text-red-600" @click="closeDialog" />
     </template>
   </Dialog>
-
 </template>
 
 <script>
 import axios from 'axios';
-
-import { onMounted, ref } from 'vue';
+import dayjs from "dayjs";
+import "dayjs/locale/th";
+import { onMounted, ref } from "vue";
 
 export default {
   setup() {
     const orders = ref([]);
     const Dialogbill = ref(false);
     const selectedItemImage = ref('');
+    const date = ref();
+    const item_order = ref([]); // เพิ่มตัวแปรนี้ในส่วน setup ของคุณ
 
     onMounted(async () => {
       try {
@@ -110,6 +106,18 @@ export default {
         console.error(error);
       }
     });
+
+    const searchDay = () => {
+      item_order.value = orders.value.filter(
+        (el) =>
+          dayjs(el.timestamp).format("YYYY-MM-DD") === dayjs(date.value).format("YYYY-MM-DD")
+      );
+    };
+
+    const clear = () => {
+      date.value = [];
+      item_order.value = orders.value;
+    };
 
     const showDialog = (rowData) => {
       selectedItemImage.value = getImage(rowData.data.picture);
@@ -137,6 +145,10 @@ export default {
       closeDialog,
       selectedItemImage,
       Dialogbill,
+      searchDay,
+      clear,
+      date,
+      item_order,
     };
   },
 };

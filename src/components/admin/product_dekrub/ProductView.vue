@@ -79,16 +79,60 @@
           </Column>
           <Column field="category" header="หมวดหมู่" style="min-width: 16rem"></Column>
           <Column header="แก้ไข" style="width: 15%">
-
             <template #body="item">
-              <Button icon="pi pi-pencil" class="p-button-rounded p-button-warning mr-2"
-                @click="editProduct(item.data._id)" />
-           
+              <Button icon="pi pi-pencil" @click="openEditDialog(item.data)" class="p-button-rounded p-button-warning mr-2" />
+
             </template>
           </Column>
 
+
         </DataTable>
 
+
+        <Dialog header="แก้ไขสินค้า" v-model:visible="editDialogVisible"
+          :breakpoints="{ '960px': '75vw', '640px': '90vw' }" :style="{ width: '55vw' }" :modal="true">
+          <div class="grid">
+            <div class="col-12 lg:col-6">
+              <div class="field">
+                <label>ชื่อสินค้า :</label>
+                <InputText v-model="selectedProduct.name" class="font w-full" placeholder="กรอกชื่อสินค้า" :disabled="isDisabled" />
+              </div>
+            </div>
+
+            <div class="col-12 lg:col-6">
+              <div class="field">
+                <label>หมวดหมู่สินค้า :</label>
+                <Dropdown  v-model="selectedProduct.categoryid" :options="item_category" optionLabel="name" optionValue="_id"
+                  placeholder="เลือกหมวดหมู่สินค้า" class="w-full" inputClass="font" :disabled="isDisabled"
+                  :filter="true" />
+              </div>
+            </div>
+            <div class="col-12 lg:col-6">
+              <div class="field">
+                <label>ราคา :</label>
+                <InputNumber  v-model="selectedProduct.price"  class="w-full" inputClass="font" placeholder="กรอกราคาขายสินค้า"
+                  mode="decimal" :minFractionDigits="2" :maxFractionDigits="2" :disabled="isDisabled" />
+              </div>
+            </div>
+            <div class="col-12 lg:col-6">
+              <div class="field">
+                <label>จำนวนสินค้าในสต๊อก<small>(ชิ้น)</small> :</label>
+                <InputNumber  v-model="selectedProduct.quantity" class="w-full" inputClass="font" placeholder="กรอกจำนวนสินค้าในสต๊อก"
+                  mode="decimal" :minFractionDigits="2" :maxFractionDigits="2" :disabled="isDisabled" />
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="field">
+                <label>รายละเอียดสินค้า</label>
+                <Textarea  v-model="selectedProduct.product_detail" autoResize rows="5" cols="30" class="font w-full" :disabled="isDisabled" />
+              </div>
+            </div>
+          </div>
+          <template #footer>
+            <Button label="ยกเลิก" icon="pi pi-times" @click="displayAdd = false" class="p-button-text" />
+            <Button label="บันทึก" icon="pi pi-check" @click="editProduct" autofocus />
+          </template>
+        </Dialog>
         <!-- <Dialog v-model="deleteDialogVisible" :style="{ width: '450px' }" header="ลบสินค้า" :modal="true">
           <div class="confirmation-content">
             <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
@@ -143,11 +187,14 @@ import { onMounted, ref } from "vue";
 import ProductDetail from "../product_dekrub/ProductDetail.vue";
 
 export default {
+
   components: { ProductDetail },
   setup() {
     const item_product = ref([]);
     const search = ref("");
     const category = ref("");
+    const editDialogVisible = ref(false);
+    const selectedProduct = ref({}); // เพิ่มตัวแปร selectedProduct เพื่อเก็บข้อมูลสินค้าที่ถูกเลือก
 
     const getData = async () => {
       try {
@@ -184,9 +231,6 @@ export default {
       }
     };
 
-
-
-
     const filtercategory = () => {
       if (category.value !== "") {
         const _id = category.value;
@@ -212,6 +256,16 @@ export default {
       });
     };
 
+    const openEditDialog = (product) => {
+      // เมื่อคลิกที่ปุ่ม "แก้ไข" ในตารางสินค้า
+      selectedProduct.value = { ...product }; // กำหนดข้อมูลสินค้าที่ถูกเลือกให้กับ selectedProduct
+      editDialogVisible.value = true; // เปิด Dialog แก้ไขสินค้า
+    };
+
+    const closeEditDialog = () => {
+      editDialogVisible.value = false; // ปิด Dialog แก้ไขสินค้า
+    };
+
     const deleteDialogVisible = ref(false);
     const delProduct = (product_id) => {
       const product = item_product.value.find((el) => el._id === product_id);
@@ -220,11 +274,7 @@ export default {
         return false;
       }
       const position = item_product.value.findIndex((el) => el._id === product_id);
-
-      // แสดง Dialog ในที่นี้คือ deleteDialogVisible
       deleteDialogVisible.value = true;
-
-      // เมื่อผู้ใช้คลิก "ตกลง" ใน Dialog
       const handleDelete = async () => {
         try {
           await axios.delete(`${process.env.VUE_APP_DEKRUP}/product/delete/${product_id}`, {
@@ -253,15 +303,18 @@ export default {
     return {
       item_product,
       search,
-      category, // เพิ่ม category เข้าไปในการ return
+      category,
       getData,
       searchData,
       getImage,
-      filtercategory, // เพิ่ม filtercategory เข้าไปในการ return
+      filtercategory,
       numberFormat,
       numberFormatShort,
       delProduct,
-
+      editDialogVisible,
+      selectedProduct,
+      openEditDialog,
+      closeEditDialog,
     };
   },
 };

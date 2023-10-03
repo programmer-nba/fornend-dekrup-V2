@@ -11,7 +11,7 @@
             <div class="field">
               <label>*ชื่อ-นามสกุล :</label>
               <InputText
-              v-model="admin.admin_name"
+              v-model="member.member_name"
                 class="w-full font"
                 type="text"
                 placeholder="กรอกชื่อ-นามสกุลของผู้ดูแลระบบ"
@@ -24,7 +24,7 @@
             <div class="field">
               <label>*ชื่อผู้ใช้งาน :</label>
               <InputText
-              v-model="admin.admin_username"
+              v-model="member.member_username"
                 class="w-full font"
                 type="text"
                 placeholder="ผู้ใช้งาน"
@@ -35,7 +35,7 @@
             <div class="field">
               <label>*รหัสผ่าน :</label>
               <InputText
-              v-model="admin.admin_password"
+              v-model="member.member_password"
                 class="w-full font"
                 type="password"
                 placeholder="รหัสผ่าน"
@@ -66,7 +66,7 @@
           label="Yes"
           icon="pi pi-check text-red-600"
           class="p-button-text text-red-600"
-          @click="addAdmin()"
+          @click="addMember()"
           :loading="isloading"
 
         />
@@ -83,14 +83,12 @@ export default {
   name: "addView",
   data() {
     return {
-      admin: {
-        admin_name: "",
-        admin_username: "",
-        admin_password: "",
-        admin_date_start: dayjs(Date.now()).format(),
-
+      member: {
+        member_name: "",
+        member_username: "",
+        member_password: "",
+        member_date_start: dayjs(Date.now()).format(),
       },
-  
       confirmDialog: false,
       isloading: false,
     };
@@ -98,14 +96,12 @@ export default {
   created() {
     document.title = "เพิ่มข้อมูลผู้ดูแลระบบ";
   },
-
   methods: {
     save() {
       if (
-        this.admin.admin_name === "" ||
-        this.admin.admin_username === "" ||
-        this.admin.admin_password === "" ||
-        this.admin.admin_date_start === ""
+        this.member.member_name === "" ||
+        this.member.member_username === "" ||
+        this.member.member_password === ""
       )
         this.$toast.add({
           severity: "error",
@@ -117,40 +113,49 @@ export default {
         this.confirmDialog = true;
       }
     },
-    async addAdmin() {
-  this.isloading = true;
+    async addMember() {
+      this.isloading = true;
 
-  try {
-    const response = await axios.post(`${process.env.VUE_APP_DEKRUP}/admin`, this.admin, {
-      headers: {
-        "token": localStorage.getItem("token"),
-      },
-    });
+      try {
+        const response = await axios.post(
+          `${process.env.VUE_APP_DEKRUP}/admin`,
+          {
+            name: this.member.member_name,
+            username: this.member.member_username,
+            password: this.member.member_password,
+          },
+          {
+            headers: {
+              token: localStorage.getItem("token"),
+            },
+          }
+        );
 
-    this.isloading = false;
-    this.$toast.add({
-      severity: "success",
-      summary: "สำเร็จ",
-      detail: "เพิ่มข้อมูลผู้ดูแลระบบเรียบร้อย",
-      life: 3000,
-    });
-    this.confirmDialog = false;
-    this.$router.push("/admin");
-  } catch (error) {
-    this.isloading = false;
-    if (error.response && error.response.status === 408) {
-      window.location.reload();
-    }
-    this.$toast.add({
-      severity: "error",
-      summary: "แจ้งเตือน",
-      detail: error.response ? error.response.data.message : "มีข้อผิดพลาดในการส่งข้อมูล",
-      life: 3000,
-    });
-    this.confirmDialog = false;
-  }
-},
-
+        this.isloading = false;
+        this.$toast.add({
+          severity: "success",
+          summary: "สำเร็จ",
+          detail: "เพิ่มข้อมูลผู้ดูแลระบบเรียบร้อย",
+          life: 3000,
+        });
+        this.confirmDialog = false;
+        this.$router.push("/admin/admin");
+      } catch (error) {
+        this.isloading = false;
+        if (error.response && error.response.status === 408) {
+          window.location.reload();
+        }
+        this.$toast.add({
+          severity: "error",
+          summary: "แจ้งเตือน",
+          detail: error.response
+            ? error.response.data.message
+            : "มีข้อผิดพลาดในการส่งข้อมูล",
+          life: 3000,
+        });
+        this.confirmDialog = false;
+      }
+    },
   },
 };
 </script>
