@@ -4,23 +4,31 @@
       <img class="img-logo" src="../assets/img/Deekrub.png">
       <h2 class="text-center font-reset mb-3">เปลี่ยนรหัสผ่านใหม่</h2>
       <div class="grid">
-        <div class="sm:col-6 col-12">
+        <div class=" col-12">
           <div class="p-inputgroup flex-1">
             <span class="p-inputgroup-addon">
               <i class="pi pi-user"></i>
             </span>
-            <InputText v-model="member_number" placeholder="รหัสสมาชิก" class="style-font" />
+            <InputText v-model="member_number" :feedback="false" placeholder="ชื่อผู้ใช้งาน (รหัสสมาชิก)" class="style-font" />
           </div>
         </div>
-        <div class="sm:col-6 col-12">
+        <div class="col-12">
           <div class="p-inputgroup flex-1">
             <span class="p-inputgroup-addon">
               <i class="pi pi-user"></i>
             </span>
-            <InputText v-model="username" placeholder="ชื่อผู้ใช้งาน" class="style-font" />
+            <Password v-model="password" :feedback="false" placeholder="รหัสผ่าน" class="style-font" />
           </div>
         </div>
-        <div class="flex justify-content-center">
+        <div class=" col-12">
+          <div class="p-inputgroup flex-1">
+            <span class="p-inputgroup-addon">
+              <i class="pi pi-key"></i>
+            </span>
+            <Password v-model="confirmpassword" :feedback="false"   placeholder="ยืนยันรหัสผ่าน" class="style-font" />
+          </div>
+        </div>
+        <div class="col-12 flex justify-content-center">
           <Button label="เปลี่ยนรหัสผ่าน" style="font-family: 'Kanit', sans-serif;   width: -webkit-fill-available;"
             class="button-login mt-5" severity="danger" @click="confirm()" />
         </div>
@@ -98,7 +106,8 @@ export default {
 .background-login {
   background: rgb(255, 255, 255);
   margin-left: auto;
-  margin-right: 18%;
+  margin-right: 15%;
+  width: 25%;
   padding: 3%;
   padding-top: 50px;
   padding-bottom: 50px;
@@ -113,11 +122,22 @@ export default {
 
 .img-logo {
   width: 100px;
-  margin-left: 25%;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
   margin-bottom: 5%;
   border-radius: 50%;
   border: 2px solid #fff;
   box-shadow: rgba(255, 255, 255, 0.24) 0px 3px 8px;
+}
+.p-inputgroup-addon {
+    background: #ff0000;
+    color: #ffffff;
+    border-top: 1px solid #ff0000;
+    border-left: 1px solid #ff0000;
+    border-bottom: 1px solid #ff0000;
+    padding: 0.75rem 0.75rem;
+    min-width: 3rem;
 }
 
 @media only screen and (max-width:1200px) {
@@ -129,17 +149,24 @@ export default {
     padding-bottom: 50px;
     border-radius: 25px;
     border: 3px solid #bf1212;
+    width: 35;
   }
 }
 
-@media only screen and (max-width:576px) {
-  .background-login {
+@media only screen and (max-width:922px) {
+ .background-login {
     margin-left: auto;
     margin-right: auto;
     padding: 12%;
     border-radius: 25px;
     border: 3px solid #bf1212;
+    width: 80%;
+    background: #ffffffdb;
   }
+}
+
+@media only screen and (max-width:576px) {
+ 
 
   .font-color {
     color: #db0000;
