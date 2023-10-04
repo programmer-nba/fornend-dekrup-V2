@@ -4,6 +4,8 @@
             <div class="col-12 text-center">
                 <h1 class="mb-0">Package สำหรับสมาชิกใหม่</h1>
                 <p class="mt-0"><strong>ประเภท :</strong> แนบสลิปการโอน</p>
+                <Button class="p-button-danger z-0" label="ออกจากระบบ" icon="pi pi-power-off" @click="logout()" />
+            
             </div>
         </div>
         <div class="grid">
@@ -150,6 +152,24 @@ export default {
                     }
                 })
             }
+        },
+
+        async logout() {
+            this.$store.commit("setLoading", true);
+            await axios
+                .post(`${process.env.VUE_APP_DEKRUP}/logout`, null, {
+                    headers: {
+                        token: this.$store.getters.token,
+                    },
+                })
+                .then(() => {
+                    this.$store.commit("setLoginDefault");
+                    window.location.reload('/');
+                })
+                .catch((err) => {
+                    this.$store.commit("setLoading", false);
+                    this.$toast.error(err.response.data.message);
+                });
         },
     }
 }
