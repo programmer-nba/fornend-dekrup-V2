@@ -45,7 +45,7 @@
     </Column>
     <Column header="สถานะ" style="width: 12%;">
       <template #body="item">
-        <Chip :label="item.data.status[0].status" />
+        <Chip :class="getStatusColor(item.data.status)" :label="item.data.status[item.data.status.length - 1].status" />
       </template>
     </Column>
     <Column field="timestamp" header="วันที่ทำรายการ" style="width: 10%;">
@@ -55,50 +55,38 @@
     </Column>
     <Column :exportable="false" style="min-width: 8rem">
       <template #body="rowData">
-        <Button
-          icon="pi pi-print"
-          label="พิมพ์ใบส่งสินค้า"
-          class="p-button-outlined p-button-sm text-sm text-teal-300 mr-2"
-          @click="showDialog(rowData)"
-        />
-        <Button class=" p-button-warning p-button-sm p-button-icon mr-2" label="ยืนยัน">
-           
-          </Button>
+        <Button icon="pi pi-print" label="พิมพ์ใบส่งสินค้า"
+          class="p-button-outlined p-button-sm text-sm text-teal-300 mr-2" @click="showDialog(rowData)" />
+        <Button class="p-button-warning p-button-sm p-button-icon mr-2" label="ยืนยัน" @click="confirmOrder(rowData.data)"
+          v-if="rowData.data.status[rowData.data.status.length - 1].status === 'รอตรวจสอบ' && rowData.data.status[0].status !== 'ยืนยันออเดอร์'" />
       </template>
     </Column>
   </DataTable>
 
 
-  <Dialog
-    class="dialog-change"
-    v-model:visible="Dialogbill"
-    :style="{ width: '450px' }"
-    header="ใบส่งสินค้า"
-    :modal="true"
-  >
-    <img :src="selectedItemImage" class="product-image" style="width: 200px;"/>
+  <Dialog class="dialog-change" v-model:visible="Dialogbill" :style="{ width: '450px' }" header="ใบส่งสินค้า"
+    :modal="true">
+    <img :src="selectedItemImage" class="product-image" style="width: 200px;" />
     <template #footer>
-      <Button
-        label="ปิด"
-        icon="pi pi-times text-red-600"
-        class="p-button-text text-red-600"
-        @click="closeDialog"
-      />
+      <Button label="ปิด" icon="pi pi-times text-red-600" class="p-button-text text-red-600" @click="closeDialog" />
     </template>
   </Dialog>
-
 </template>
 
 <script>
+import { ConfirmOrder } from '@/components/lib/order';
 import axios from 'axios';
 
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, reactive  } from 'vue';
 
 export default {
   setup() {
     const orders = ref([]);
     const Dialogbill = ref(false);
     const selectedItemImage = ref('');
+
+    const Order = new ConfirmOrder();
+
 
     onMounted(async () => {
       try {
@@ -134,12 +122,64 @@ export default {
       }
     };
 
+
+     // สร้าง reactive property สำหรับเก็บข้อมูล orders
+     const ordersData = reactive({
+      data: [],
+    });
+
+    const confirmOrder = async (item) => {
+  console.log("item:", item);
+
+  if (item.status && item.status.length > 0 && item.status[0].status === 'รอตรวจสอบ') {
+    try {
+      const result = await Order.ConfirmOrder(item._id);
+
+      if (result.success) {
+        item.status[0].status = 'ยืนยันออเดอร์';
+
+        const index = orders.value.findIndex((orderItem) => orderItem._id === item._id);
+
+        if (index !== -1) {
+          orders.value[index].status[0].status = 'ยืนยันออเดอร์';
+        }
+
+        orders.value = [...orders.value];
+
+        console.log(result);
+      } else {
+      }
+    } catch (error) {
+      console.error("Error while making API request:", error);
+    }
+  } else {
+    console.error("ข้อมูลไม่ถูกต้อง");
+  }
+};
+
+
+    const getStatusColor = (statusArray) => {
+      const latestStatus = statusArray[statusArray.length - 1];
+      switch (latestStatus.status) {
+        case 'รอตรวจสอบ':
+          return 'bg-yellow-500 text-white';
+        case 'ยืนยันออเดอร์':
+          return 'bg-green-500 text-white';
+        default:
+          return '';
+      }
+    };
+
     return {
       orders,
       showDialog,
       closeDialog,
       selectedItemImage,
       Dialogbill,
+      confirmOrder,
+      Order,
+      getStatusColor,
+
     };
   },
 };

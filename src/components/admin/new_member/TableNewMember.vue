@@ -101,8 +101,8 @@ export default {
       selectedImage: "",
       display: false,
       itemToCancel: null,
-      selectedItem: null, // เพิ่มตัวแปร selectedItem
-
+      selectedItem: null,
+      
     };
   },
   mounted() {

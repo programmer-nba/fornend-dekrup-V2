@@ -98,6 +98,4 @@ export class ConfirmService {
         return data;
     }
 
-   
-
 }
