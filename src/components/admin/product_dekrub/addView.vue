@@ -5,47 +5,26 @@
                 <Panel class="custom-header-panel">
                     <template #header>เกี่ยวกับสินค้า</template>
                     <div class="grid">
+                        <div v-for="(preview, index) in imagePreviews" :key="index" class="image-preview">
+                            <Image :src="preview" width="200" height="200" />
+                            <button @click="removeImage(index)">ลบรูป</button>
+                        </div>
                         <div class="col-12 text-center">
                             <div class="justify-content-center"
                                 style="display: flex; flex-direction: row; flex-wrap: nowrap;">
-                                <!-- <Image v-for="(preview, index) in imagePreviews" :key="index" :src="preview.url" width="200"
-                                    :preview="true" /> -->
-                                <label v-if="!img_preview1" class="file-input-label">
+                                <label class="file-input-label">
                                     <span>เลือกรูปหน้าปก</span>
-                                    <input type="file" class="input-image" @change="SetImage1" />
+                                    <input type="file" class="input-image" @change="SetImages" multiple />
                                 </label>
-                                <Image v-if="img_preview1" :src="img_preview1" width="200" height="200" />
+
                             </div>
-                            <div class="justify-content-center"
-                                style="display: flex; flex-direction: row; flex-wrap: nowrap;">
-                                <!-- <Image v-for="(preview, index) in imagePreviews" :key="index" :src="preview.url" width="200"
-                                    :preview="true" /> -->
-                                <label v-if="!img_preview2" class="file-input-label">
-                                    <span>เลือกรูปหน้าปก</span>
-                                    <input type="file" class="input-image" @change="SetImage2" />
-                                </label>
-                                <Image v-if="img_preview2" :src="img_preview2" width="200" height="200" />
-                            </div>
-                            <div class="justify-content-center"
-                                style="display: flex; flex-direction: row; flex-wrap: nowrap;">
-                                <!-- <Image v-for="(preview, index) in imagePreviews" :key="index" :src="preview.url" width="200"
-                                    :preview="true" /> -->
-                                <label v-if="!img_preview3" class="file-input-label">
-                                    <span>เลือกรูปหน้าปก</span>
-                                    <input type="file" class="input-image" @change="SetImage3" />
-                                </label>
-                                <Image v-if="img_preview3" :src="img_preview3" width="200" height="200" />
-                            </div>
-                            <!-- <FileUpload mode="basic" chooseLabel="เลือกรูปสินค้า" :auto="true" @change="SetImage"
-                                :customUpload="true" accept="image/png, image/jpeg, image/jpg" :fileLimit="3"
-                                :maxFileSize="2097152" invalidFileSizeMessage="ขนาดรูปภาพจะต้องไม่เกิน 2 mb"
-                                :disabled="isDisabled" class="border-red-400 mt-3" style="background-color: #C21010;" />
-                            <p><em>(ขนาดจะต้องเป็น 1:1)</em></p> -->
+
                         </div>
+
+
                     </div>
 
                     <div class="grid">
-
                         <div class="col-12 lg:col-6">
                             <div class="field">
                                 <label>ชื่อสินค้า :</label>
@@ -66,9 +45,8 @@
                         <div class="col-12 lg:col-4">
                             <div class="field">
                                 <label>ราคาทุน :</label>
-                                <InputNumber v-model="cost" class="w-full" inputClass="font"
-                                    placeholder="กรอกราคาทุนสินค้า" mode="decimal" :minFractionDigits="2"
-                                    :maxFractionDigits="2" :disabled="isDisabled" />
+                                <InputNumber v-model="cost" class="w-full" inputClass="font" placeholder="กรอกราคาทุนสินค้า"
+                                    mode="decimal" :minFractionDigits="2" :maxFractionDigits="2" :disabled="isDisabled" />
                             </div>
                         </div>
 
@@ -131,15 +109,9 @@ export default {
         isloading: false,
         isDisabled: false,
 
-        img_preview1: null,
-        img_upload1: null,
-        img_size1: null,
-        img_preview2: null,
-        img_upload2: null,
-        img_size2: null,
-        img_preview3: null,
-        img_upload3: null,
-        img_size3: null,
+        img_preview: null,
+        img_upload: [],
+        img_size: null,
         dialog_img_warning: false,
 
         imagePreviews: [],
@@ -174,9 +146,7 @@ export default {
         },
 
         ResetImage() {
-            this.img_preview1 = null;
-            this.img_preview2 = null;
-            this.img_preview3 = null;
+            this.img_preview = null;
             this.img_upload = null;
             this.dialog_img_warning = false;
         },
@@ -208,10 +178,22 @@ export default {
                 formData.append("price", this.price);
                 formData.append("quantity", this.quantity);
                 formData.append("imgCollection", this.img_upload[0]);
-                formData.append("imgCollection", this.img_upload[0]);
-                formData.append("imgCollection", this.img_upload[0]);
 
                 console.log(data)
+                console.log('FormData:', formData);
+
+                // ตรวจสอบว่าข้อมูลถูกส่งไปครบหรือไม่
+                console.log('Name:', this.name);
+                console.log('Category ID:', this.categoryid);
+                console.log('Detail:', this.detail);
+                console.log('Cost:', this.cost);
+                console.log('Price:', this.price);
+                console.log('Quantity:', this.quantity);
+
+                // ตรวจสอบรูปที่ถูกส่งไป
+                for (let i = 0; i < this.img_upload.length; i++) {
+                    console.log(`Image ${i + 1}:`, this.img_upload[i]);
+                }
 
                 await this.product.CreateProduct(formData).then(async (result) => {
 
@@ -231,54 +213,43 @@ export default {
             }
         },
 
-        SetImage1(e) {
-            const file = e.target.files;
-            if (file) {
-                this.img_size1 = file[0].size;
+        SetImages(e) {
+            const files = e.target.files;
 
-                if (this.img_size1 > 500000) {
+            if (this.img_upload.length + files.length > 3) {
+                this.dialog_img_warning = true;
+                return; 
+            }
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const fileSize = file.size;
+                if (fileSize > 500000) {
                     this.dialog_img_warning = true;
+                    return; 
                 }
                 const fileReader = new FileReader();
-                fileReader.readAsDataURL(file[0]);
+                fileReader.readAsDataURL(file);
                 fileReader.addEventListener("load", (event) => {
-                    this.img_preview1 = event.target.result;
-                })
-                this.img_upload1 = file;
-            }
-        },
-        SetImage2(e) {
-            const file = e.target.files;
-            if (file) {
-                this.img_size2 = file[0].size;
+                    this.imagePreviews.push(event.target.result);
+                });
+                this.img_upload.push(file);
 
-                if (this.img_size2 > 500000) {
+                if (this.img_upload.length > 3) {
                     this.dialog_img_warning = true;
+                    this.removeImage(this.img_upload.length - 1); 
+                    return;
                 }
-                const fileReader = new FileReader();
-                fileReader.readAsDataURL(file[0]);
-                fileReader.addEventListener("load", (event) => {
-                    this.img_preview2 = event.target.result;
-                })
-                this.img_upload2 = file;
             }
         },
-        SetImage3(e) {
-            const file = e.target.files;
-            if (file) {
-                this.img_size = file[0].size;
 
-                if (this.img_size > 500000) {
-                    this.dialog_img_warning = true;
-                }
-                const fileReader = new FileReader();
-                fileReader.readAsDataURL(file[0]);
-                fileReader.addEventListener("load", (event) => {
-                    this.img_preview = event.target.result;
-                })
-                this.img_upload = file;
-            }
-        },
+        removeImage(index) {
+            this.imagePreviews.splice(index, 1);
+            this.img_upload.splice(index, 1);
+        }
+
+
+
 
 
     },

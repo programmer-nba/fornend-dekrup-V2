@@ -48,7 +48,7 @@
         <Chip :label="item.data.status[0].status" />
       </template>
     </Column>
-    <Column field="timestamp" header="วันที่ทำรายการ" style="width: 15%;">
+    <Column field="timestamp" header="วันที่ทำรายการ" style="width: 10%;">
       <template #body="item">
         {{ new Date(item.data.timestamp).toLocaleString() }}
       </template>
@@ -58,9 +58,12 @@
         <Button
           icon="pi pi-print"
           label="พิมพ์ใบส่งสินค้า"
-          class="p-button-outlined p-button-sm text-sm text-teal-300"
+          class="p-button-outlined p-button-sm text-sm text-teal-300 mr-2"
           @click="showDialog(rowData)"
         />
+        <Button class=" p-button-warning p-button-sm p-button-icon mr-2" label="ยืนยัน">
+           
+          </Button>
       </template>
     </Column>
   </DataTable>

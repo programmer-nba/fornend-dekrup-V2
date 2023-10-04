@@ -62,7 +62,7 @@ export default {
                 {
                     label: "รายการสมาชิกใหม่",
                     icon: 'pi pi-shopping-cart',
-                    to: "/admin/์new_member",
+                    to: "/admin/new_member",
                 },
                 {
                     label: "Order Dekrub",
