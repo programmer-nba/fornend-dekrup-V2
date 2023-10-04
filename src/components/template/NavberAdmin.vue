@@ -70,6 +70,22 @@ export default {
                     to: "/admin/order",
                 },
                 {
+                    label: "รายงาน Commission",
+                    icon: 'pi pi-shopping-cart',
+                    items: [
+                        {
+                            label: "Commission Day",
+                            icon: 'pi pi-user',
+                            to: "/admin/commission/day",
+                        },
+                        {
+                            label: "Commission Week",
+                            icon: 'pi pi-plus',
+                            to: "/admin/commission/week",
+                        },
+                    ],
+                },
+                {
                     label: "จัดการผู้ใช้งาน",
                     icon: 'pi pi-shopping-cart',
                     items: [
