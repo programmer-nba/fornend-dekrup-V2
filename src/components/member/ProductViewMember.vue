@@ -1,7 +1,7 @@
 <template>
   <h1 class="px-3" style="color: #fe0000">สั่งซื้อสินค้า</h1>
   <div class="grid">
-    <div class="col-6 mt-2">
+    <div class="md:col-6 col-12 mt-2">
       <div class="field">
         <div class="p-inputgroup">
           <span class="p-float-label">
@@ -17,7 +17,7 @@
         </div>
       </div>
     </div>
-    <div class="col mt-2">
+    <div class="md:col-6 col-12 mt-2">
       <div class="field">
         <div class="card flex justify-content-start">
           <Dropdown
@@ -34,7 +34,7 @@
 
   <div class="grid">
     <div
-      class="col-6 md:col-4 lg:col-3"
+      class="col-6 md:col-4 xl:col-3 "
       v-for="product in item_product"
       :key="product.id"
     >
@@ -244,93 +244,104 @@ export default {
   }
 };
 
-const addToOrder = () => {
-  if (quantityToOrder.value > 0 && productMember.value) {
-    const product = productMember.value;
-    const quantity = quantityToOrder.value;
-
-    if (checkStock(product, quantity)) {
-      const order = {
-        product: {
-          name: product.name,
-          price: product.price,
-          quantity: product.quantity,
-          category: product.category,
-        },
-        quantity: quantityToOrder.value,
-      };
-      orders.value.push(order);
-
-      // ลดจำนวนสินค้าในสต๊อก
-      product.quantity -= quantityToOrder.value;
-
-      productMember.value = "";
-      quantityToOrder.value = 0;
-      addNumberProduct.value = false;
-      store.commit("addToOrder", order);
-      console.log("Orders:", orders.value);
-    } else {
-      alert("ขออภัยจำนวนสินค้าไม่เพียงพอ");
-    }
-  }
-};
-
 // const addToOrder = () => {
 //   if (quantityToOrder.value > 0 && productMember.value) {
 //     const product = productMember.value;
 //     const quantity = quantityToOrder.value;
 
-//     // ตรวจสอบว่าสินค้าอยู่ในรายการออเดอร์แล้วหรือไม่
-//     const existingOrder = orders.value.find((order) => {
-//       return (
-//         order.product &&
-//         order.product.name === product.name &&
-//         order.product.detail === product.detail
-//       );
-//     });
+//     if (checkStock(product, quantity)) {
+//       const order = {
+//         product: {
+//           name: product.name,
+//           price: product.price,
+//           quantity: product.quantity,
+//           category: product.category,
+//         },
+//         quantity: quantityToOrder.value,
+//       };
+//       orders.value.push(order);
 
-//     if (existingOrder) {
-//       // หากสินค้ามีอยู่ในรายการออเดอร์แล้ว ให้เพิ่มจำนวนสินค้าในรายการเดิม
-//       if (checkStock(product, quantity)) {
-//         existingOrder.quantity += quantityToOrder.value;
+//       // ลดจำนวนสินค้าในสต๊อก
+//       product.quantity -= quantityToOrder.value;
 
-//         // ลดจำนวนสินค้าในสต๊อก
-//         product.quantity -= quantityToOrder.value;
-
-//         productMember.value = "";
-//         quantityToOrder.value = 0;
-//         addNumberProduct.value = false;
-//         console.log("Orders:", orders.value);
-//       } else {
-//         alert("ขออภัยจำนวนสินค้าไม่เพียงพอ");
-//       }
+//       productMember.value = "";
+//       quantityToOrder.value = 0;
+//       addNumberProduct.value = false;
+//       store.commit("addToOrder", order);
+//       console.log("Orders:", orders.value);
 //     } else {
-//       // หากสินค้ายังไม่มีในรายการออเดอร์ ให้สร้างรายการใหม่
-//       if (checkStock(product, quantity)) {
-//         const order = {
-//           product: {
-//             name: product.name,
-//             price: product.price,
-//             quantity: product.quantity,
-//             category: product.category,
-//           },
-//           quantity: quantityToOrder.value,
-//         };
-//         orders.value.push(order);
-
-//         // ลดจำนวนสินค้าในสต๊อก
-//         product.quantity -= quantityToOrder.value;
-
-//         productMember.value = "";
-//         quantityToOrder.value = 0;
-//         addNumberProduct.value = false;
-//         console.log("Orders:", orders.value);
-//       } else {
-//         alert("ขออภัยจำนวนสินค้าไม่เพียงพอ");
-//       }
+//       alert("ขออภัยจำนวนสินค้าไม่เพียงพอ");
 //     }
 //   }
 // };
+
+
+const addToOrder = () => {
+  if (quantityToOrder.value > 0 && productMember.value) {
+    const product = productMember.value;
+    const quantity = quantityToOrder.value;
+
+    // ตรวจสอบว่าสินค้าอยู่ในรายการออเดอร์แล้วหรือไม่
+    const existingOrder = orders.value.find((order) => {
+      return (
+        order.product &&
+        order.product.name === product.name &&
+        order.product.category === product.category
+      );
+    });
+
+    if (existingOrder) {
+      // หากสินค้ามีอยู่ในรายการออเดอร์แล้ว ให้เพิ่มจำนวนสินค้าในรายการเดิม
+      if (checkStock(product, quantity)) {
+        existingOrder.quantity += quantityToOrder.value;
+
+        // ลดจำนวนสินค้าในสต๊อก
+        product.quantity -= quantityToOrder.value;
+
+        productMember.value = "";
+        quantityToOrder.value = 0;
+        addNumberProduct.value = false;
+        console.log("Orders:", orders.value);
+      } else {
+        alert("ขออภัยจำนวนสินค้าไม่เพียงพอ");
+      }
+    } else {
+      // หากสินค้ายังไม่มีในรายการออเดอร์ ให้สร้างรายการใหม่
+      if (checkStock(product, quantity)) {
+        const order = {
+          product: {
+            name: product.name,
+            price: product.price,
+            quantity: product.quantity,
+            category: product.category,
+          },
+          quantity: quantityToOrder.value,
+        };
+        orders.value.push(order);
+
+        // ลดจำนวนสินค้าในสต๊อก
+        product.quantity -= quantityToOrder.value;
+
+        productMember.value = "";
+        quantityToOrder.value = 0;
+        addNumberProduct.value = false;
+        store.commit("addToOrder", order);
+        console.log("Orders:", orders.value);
+      } else {
+        alert("ขออภัยจำนวนสินค้าไม่เพียงพอ");
+      }
+    }
+  }
+};
+
+const editProductQuantity = (product) => {
+      if (product) {
+        productMember.value = product;
+        addNumberProduct.value = true;
+        quantityToOrder.value = product.quantity; // กำหนดจำนวนสินค้าใน Dialog เป็นจำนวนที่มีอยู่ในตาราง
+      }
+    };
+
 
 
 
@@ -406,7 +417,8 @@ const addToOrder = () => {
       selectedQuantity,
       quantityToOrder,
       chooseProductQuantity,
-      checkStock
+      checkStock,
+      editProductQuantity
     };
   },
 };

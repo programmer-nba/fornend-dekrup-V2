@@ -2,13 +2,12 @@
   <div class="card-oder border-red-500 border-2 mt-8">
     <div class="top">
       <div
-        class="title flex align-items-center justify-content-center h-3rem w-full"
-      >
+        class="title flex align-items-center justify-content-center h-3rem w-full">
         ตระกร้าของฉัน
       </div>
     </div>
     <div class="grid py-2 px-2">
-      <div class="col-6">
+      <div class="col-6 md:col-6 lg:col-12 xl:col-6">
         <div
           class="flex flex-column align-items-center justify-content-center h-7rem text-900 border-round m-2"
           style="background-color: #ffae35; font-size: 20px"
@@ -17,7 +16,7 @@
           <div style="font-size: 20px">{{ orders.length }}</div>
         </div>
       </div>
-      <div class="col-6">
+      <div class="col-6 md:col-6 lg:col-12 xl:col-6">
         <div
           class="flex flex-column align-items-center justify-content-center h-7rem font-bold text-white border-round m-2"
           style="background-color: #da2121"
@@ -55,16 +54,17 @@
               {{ slotProps.data.product.price * slotProps.data.quantity }}
             </template>
           </Column>
-          <Column header="ลบรายการ">
+          <Column >
             <template #body="slotProps">
-                <DelProductMember
-                :product_id="slotProps.data._id"
-                :products ="products"/>
-                
+              <div class="flex justify-content-start">
+                <DelProductMember class="px-2"/>
+                <Button icon="pi pi-trash" severity="danger" rounded aria-label="Favorite" @click="deleteProduct(slotProps.data)"  />       
+
+              </div>            
             </template>
           </Column>
-          
         </DataTable>
+
         <Dialog v-model:visible="visible" modal header="ชำระเงิน" >
           <TabView>
             <TabPanel header="QR CODE">
@@ -74,8 +74,22 @@
             </TabPanel>
             <TabPanel header="แนบสลิปการโอนเงิน"  >
                   <div class="flex justify-content-center">
-                    <Toast />
-                  <FileUpload mode="basic" name="demo[]" url="" accept="image/*" :maxFileSize="1000000" @upload="onUpload" />
+                    <div class="field">
+                            <FileUpload mode="basic" :auto="true" chooseLabel="แนบรูปภาพหลักฐานการโอน"
+                                uploadIcon="pi pi-paperclip" @uploader="chooseImage" :customUpload="true"
+                                v-if="slip_img === null" />
+                                <!-- <FileUpload mode="basic" :auto="true" chooseLabel="แนบรูปภาพหลักฐานการโอน"
+                                uploadIcon="pi pi-paperclip"  :customUpload="true"
+                                /> -->
+                        </div>
+                      <div class="" v-if="img_preview !== null">
+                        <div class="col-12 grid justify-content-center">
+                            <Image :src="img_preview"  :preview="true"  width="200" />
+                        </div>
+                        <div class="col-12 text-center">
+                            <Button label="ลบ" @click="clearImage()" icon="pi pi-trash" class="p-button-danger" />
+                        </div>
+                    </div>
                   </div>
             </TabPanel>
         </TabView>
@@ -107,8 +121,7 @@ export default {
     Dialog
   },
   setup() {
-    
-    const products = ref([]);
+    const item_product = ref([]); 
     const store = useStore();
     const orders = ref(store.state.orders); 
 
@@ -119,18 +132,46 @@ export default {
       }
       return total.toFixed(2);
     };
+    
+    const deleteProduct = (product) => {
+      // ตรวจสอบว่ารายการสินค้าถูกเลือกแล้วหรือไม่
+      if (product) {
+        // ลบรายการสินค้าออกจากตะกร้า orders
+        const index = orders.value.indexOf(product);
+        if (index !== -1) {
+          orders.value.splice(index, 1);
+        }
+      }
+    };
+
+    
+
+
+
     return {
       orders,
       calculateTotal,
       visible,
-      products
+      deleteProduct
       
     };
   },
+  data: () => ({
+      slip_img: null,
+        img_preview: null,
+    }),
   methods: {
         onUpload() {
             this.$toast.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded', life: 3000 });
-        }
+        },
+        clearImage() {
+            this.img_preview = null;
+            this.slip_img = null;
+        },
+        chooseImage(event) {
+            this.slip_img = event.files[0];
+            this.img_preview = event.files[0].objectURL;
+        },
     }
 };
 </script>
