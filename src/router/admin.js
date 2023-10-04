@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router";
+import {createRouter, createWebHistory} from "vue-router";
 
 let routes = [];
 routes = [
@@ -10,7 +10,8 @@ routes = [
   {
     path: "/admin/product",
     name: "admin-product",
-    component: () => import("../components/admin/product_dekrub/ProductView.vue"),
+    component: () =>
+      import("../components/admin/product_dekrub/ProductView.vue"),
   },
   {
     path: "/admin/product/add",
@@ -20,12 +21,14 @@ routes = [
   {
     path: "/admin/product/category",
     name: "admin-product-category",
-    component: () => import("../components/admin/product_dekrub/category/CategoryProduct.vue"),
+    component: () =>
+      import("../components/admin/product_dekrub/category/CategoryProduct.vue"),
   },
   {
     path: "/admin/new_member",
     name: "admin-new_member",
-    component: () => import("../components/admin/new_member/TableNewMember.vue"),
+    component: () =>
+      import("../components/admin/new_member/TableNewMember.vue"),
   },
   {
     path: "/admin/order",
@@ -51,6 +54,17 @@ routes = [
     path: "/admin/member/add",
     name: "admin-member-add",
     component: () => import("../components/admin/member/addView.vue"),
+  },
+  {
+    path: "/admin/commission/day",
+    name: "admin-commission-day",
+    component: () => import("../components/admin/commission/CommissionDay.vue"),
+  },
+  {
+    path: "/admin/commission/week",
+    name: "admin-commission-week",
+    component: () =>
+      import("../components/admin/commission/CommissionWeek.vue"),
   },
 ];
 

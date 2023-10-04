@@ -5,21 +5,52 @@
                 <h1 class="mb-0">Package สำหรับสมาชิกใหม่</h1>
                 <p class="mt-0"><strong>ประเภท :</strong> แนบสลิปการโอน</p>
                 <Button class="p-button-danger z-0" label="ออกจากระบบ" icon="pi pi-power-off" @click="logout()" />
-            
+
             </div>
         </div>
         <div class="grid">
             <div class="col-12">
                 <Message><strong>เวลาทำการ : </strong> เวลาทำการตรวจสอบ ทุกวัน เวลา 9.00 น. ถึง 18.00 น.
                     หากนอกเวลาทำการจะทำการตรวจสอบในเวลาทำการของวันถัดไป</Message>
+                <Message><strong>หมายเหตุ : </strong> หากท่านทำการส่งข้อมูลแจ้งชำระเงินเรียบร้อยแล้ว กรุณารอการยืนยันจากเจ้าหน้าที่ 10-15 นาที เพื่อทำการเข้าสู่ระบบ</Message>
             </div>
         </div>
         <div class="grid">
             <div class="col-12 lg:col-3">
                 <Panel header="STEP 1 : Package เริ่มต้น">
                     <div class="grid">
-                        <div class="col-12">
-                            <!-- <Image :src="require('@/assets/img/scb_bank.jpg')" :preview="true" imageClass="w-full" /> -->
+                        <div class="col-12" v-if="this.amount === 0">
+                            <DataView :value="item_product">
+                                <template #list="slotProps">
+                                    <div class="col-12">
+                                        <div class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4">
+                                            <div
+                                                class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
+                                                <div class="flex flex-column align-items-center sm:align-items-start gap-3">
+                                                    <div class="text-2xl font-bold text-900">
+                                                        {{ slotProps.data.name }}
+                                                    </div>
+                                                    <div class="text-1xl font-bold text-500">
+                                                        {{ slotProps.data.detail }}
+                                                    </div>
+                                                </div>
+                                                <div
+                                                    class="flex sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2">
+                                                    <span class="text-2xl font-semibold">${{ slotProps.data.price }}</span>
+                                                    <Button icon="pi pi-shopping-cart"
+                                                        @click="addprice(slotProps.data.price)"></Button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </DataView>
+
+                        </div>
+                        <div v-else>
+                            <Message><strong>หมายเหตุ : </strong>กรุณาแสกน QR Code ด้านล่างเพื่อชำระเงิน พร้อมแนบสลิป
+                            </Message>
+                            <Image :src="require('../../../assets/QRdekrub.jpg')" :preview="true" imageClass="w-full" />
                         </div>
                     </div>
                 </Panel>
@@ -35,12 +66,15 @@
                         <div class="field">
                             <span class="p-float-label">
                                 <InputNumber v-model="amount" inputClass="font" class="w-full" disabled />
-                                <label>จำนวน : </label>
                             </span>
+                            <div class="col-12 text-center" v-if="this.amount !== 0">
+                                <Button label="เปลี่ยนสินค้า" @click="clearprice()" icon="pi pi-trash"
+                                    class="p-button-danger" />
+                            </div>
                         </div>
                     </div>
                     <div class="col-12">
-                        <div class="field">
+                        <div class="field text-center">
                             <FileUpload mode="basic" :auto="true" chooseLabel="แนบรูปภาพหลักฐานการโอน"
                                 uploadIcon="pi pi-paperclip" @uploader="chooseImage" :customUpload="true"
                                 v-if="slip_img === null" />
@@ -105,15 +139,28 @@ export default {
                 window.location.reload();
             }
         })
+        await axios.get(`${process.env.VUE_APP_DEKRUP}/product/member/list`, {
+            headers: {
+                'token': `${localStorage.getItem('token')}`
+            }
+        }).then((res) => {
+            this.item_product = res.data.data;
+        })
+            .catch((err) => {
+                if (err.response.status === 408) {
+                    localStorage.clear();
+                    window.location.reload();
+                }
+            })
         document.title = "ชำระเงิน Package เริ่มต้น"
     },
     data: () => ({
         member_number: '',
-        amount: 399,
+        amount: 0,
         slip_img: null,
         img_preview: null,
-        checked: false
-
+        checked: false,
+        item_product: [],
     }),
     methods: {
         clearImage() {
@@ -124,6 +171,15 @@ export default {
             this.slip_img = event.files[0];
             this.img_preview = event.files[0].objectURL;
         },
+
+        async addprice(item) {
+            this.amount = item;
+        },
+
+        async clearprice() {
+            this.amount = 0;
+        },
+
         async confirm() {
             this.loading = true;
             if (this.slip_img) {
@@ -149,6 +205,8 @@ export default {
                             detail: "แจ้งชำระเงินเรียบร้อย รอการตรวจสอบจากส่วนกลางในวันเวลาทำการภายใน 10-15 นาที",
                             life: 3000,
                         })
+                        this.$store.commit("setLoginDefault");
+                        window.location.reload('/');
                     }
                 })
             }

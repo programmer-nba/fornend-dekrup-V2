@@ -1,11 +1,12 @@
 <template>
     <div class="grid navbar-sticky" style="background: red; ">
-        <div class=" lg:col-10 md:col-2 col-2 flex justify-content-center align-items-center">
+        <div class="xl:col-10 col-7 flex justify-content-center align-items-center">
             <Menubar :model="item_manu"
-                class="custom-menu  border-round-3xl p-0 mt-2  hover:border-2 hover:border-purple-900 flex align-items-center justify-content-center bg-white" >
+                class="custom-menu  border-round-3xl p-0 mt-2  hover:border-2 hover:border-purple-900 flex align-items-center justify-content-center bg-white"
+                style="width: 40%;">
             </Menubar>
         </div>
-        <div class=" lg:col-2 md:col-10 col-10 mt-2 flex justify-content-end px-3">
+        <div class="xl:col-2 col-5 mt-2 flex justify-content-end px-3">
             <Button class="p-button-danger z-0" label="ออกจากระบบ" icon="pi pi-power-off" @click="logout()" />
         </div>
     </div>
@@ -53,7 +54,6 @@ export default {
                     icon: "pi pi-user",
                     to: "/member/profile",
                 },
-                
             ];
         },
         async logout() {
@@ -78,23 +78,16 @@ export default {
 </script>
 
 <style>
-.navbar-sticky{
+.navbar-sticky {
     position: sticky !important;
- top: 0 !important;
- z-index: 100; 
+    top: 0 !important;
+    z-index: 100;
 
 }
+
 .p-menubar .p-submenu-list {
     display: none;
     position: absolute;
     z-index: 150;
-}
-.p-menubar.p-menubar-mobile-active .p-menubar-root-list {
-    display: flex;
-    flex-direction: column;
-    top: 100%;
-    left: 0;
-    z-index: 1;
-    width: 300px;
 }
 </style>

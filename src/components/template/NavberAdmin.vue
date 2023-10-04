@@ -99,6 +99,11 @@ export default {
                             icon: 'pi pi-plus',
                             to: "/admin/admin/add",
                         },
+                        {
+                            label: "ฟังก์ฺชั่นเพิ่มเติม",
+                            icon: 'pi pi-cog',
+                            to: "/admin/function",
+                        },
                     ],
                 },
             ];
