@@ -10,11 +10,31 @@
                                 style="display: flex; flex-direction: row; flex-wrap: nowrap;">
                                 <!-- <Image v-for="(preview, index) in imagePreviews" :key="index" :src="preview.url" width="200"
                                     :preview="true" /> -->
-                                <label v-if="!img_preview" class="file-input-label">
+                                <label v-if="!img_preview1" class="file-input-label">
                                     <span>เลือกรูปหน้าปก</span>
-                                    <input type="file" class="input-image" @change="SetImage" />
+                                    <input type="file" class="input-image" @change="SetImage1" />
                                 </label>
-                                <Image v-if="img_preview" :src="img_preview" width="200" height="200" />
+                                <Image v-if="img_preview1" :src="img_preview1" width="200" height="200" />
+                            </div>
+                            <div class="justify-content-center"
+                                style="display: flex; flex-direction: row; flex-wrap: nowrap;">
+                                <!-- <Image v-for="(preview, index) in imagePreviews" :key="index" :src="preview.url" width="200"
+                                    :preview="true" /> -->
+                                <label v-if="!img_preview2" class="file-input-label">
+                                    <span>เลือกรูปหน้าปก</span>
+                                    <input type="file" class="input-image" @change="SetImage2" />
+                                </label>
+                                <Image v-if="img_preview2" :src="img_preview2" width="200" height="200" />
+                            </div>
+                            <div class="justify-content-center"
+                                style="display: flex; flex-direction: row; flex-wrap: nowrap;">
+                                <!-- <Image v-for="(preview, index) in imagePreviews" :key="index" :src="preview.url" width="200"
+                                    :preview="true" /> -->
+                                <label v-if="!img_preview3" class="file-input-label">
+                                    <span>เลือกรูปหน้าปก</span>
+                                    <input type="file" class="input-image" @change="SetImage3" />
+                                </label>
+                                <Image v-if="img_preview3" :src="img_preview3" width="200" height="200" />
                             </div>
                             <!-- <FileUpload mode="basic" chooseLabel="เลือกรูปสินค้า" :auto="true" @change="SetImage"
                                 :customUpload="true" accept="image/png, image/jpeg, image/jpg" :fileLimit="3"
@@ -111,9 +131,15 @@ export default {
         isloading: false,
         isDisabled: false,
 
-        img_preview: null,
-        img_upload: null,
-        img_size: null,
+        img_preview1: null,
+        img_upload1: null,
+        img_size1: null,
+        img_preview2: null,
+        img_upload2: null,
+        img_size2: null,
+        img_preview3: null,
+        img_upload3: null,
+        img_size3: null,
         dialog_img_warning: false,
 
         imagePreviews: [],
@@ -148,7 +174,9 @@ export default {
         },
 
         ResetImage() {
-            this.img_preview = null;
+            this.img_preview1 = null;
+            this.img_preview2 = null;
+            this.img_preview3 = null;
             this.img_upload = null;
             this.dialog_img_warning = false;
         },
@@ -180,6 +208,8 @@ export default {
                 formData.append("price", this.price);
                 formData.append("quantity", this.quantity);
                 formData.append("imgCollection", this.img_upload[0]);
+                formData.append("imgCollection", this.img_upload[0]);
+                formData.append("imgCollection", this.img_upload[0]);
 
                 console.log(data)
 
@@ -201,7 +231,39 @@ export default {
             }
         },
 
-        SetImage(e) {
+        SetImage1(e) {
+            const file = e.target.files;
+            if (file) {
+                this.img_size1 = file[0].size;
+
+                if (this.img_size1 > 500000) {
+                    this.dialog_img_warning = true;
+                }
+                const fileReader = new FileReader();
+                fileReader.readAsDataURL(file[0]);
+                fileReader.addEventListener("load", (event) => {
+                    this.img_preview1 = event.target.result;
+                })
+                this.img_upload1 = file;
+            }
+        },
+        SetImage2(e) {
+            const file = e.target.files;
+            if (file) {
+                this.img_size2 = file[0].size;
+
+                if (this.img_size2 > 500000) {
+                    this.dialog_img_warning = true;
+                }
+                const fileReader = new FileReader();
+                fileReader.readAsDataURL(file[0]);
+                fileReader.addEventListener("load", (event) => {
+                    this.img_preview2 = event.target.result;
+                })
+                this.img_upload2 = file;
+            }
+        },
+        SetImage3(e) {
             const file = e.target.files;
             if (file) {
                 this.img_size = file[0].size;
