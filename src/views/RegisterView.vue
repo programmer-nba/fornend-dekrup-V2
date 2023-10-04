@@ -43,7 +43,7 @@
                         <span class="p-inputgroup-addon">
                             <i class="pi pi-key"></i>
                         </span>
-                        <Password v-model="member.password" toggleMask placeholder="รหัสผ่าน" class="style-font" />
+                        <Password v-model="member.password" :feedback="false"    placeholder="รหัสผ่าน"/>
                     </div>
                 </div>
                 <div class="sm:col-6 col-12">
@@ -51,8 +51,8 @@
                         <span class="p-inputgroup-addon">
                             <i class="pi pi-key"></i>
                         </span>
-                        <Password v-model="member.confirm_password" toggleMask placeholder="ยืนยันรหัสผ่าน"
-                            class="style-font" />
+                        <Password v-model="member.confirm_password" :feedback="false"   placeholder="ยืนยันรหัสผ่าน"/>
+
                     </div>
                 </div>
                 <div class="sm:col-12 col-12">
@@ -68,8 +68,8 @@
                         <span class="p-inputgroup-addon">
                             <i class="pi pi-map-marker"></i>
                         </span>
-                        <div class="card flex justify-content-center">
-                            <Dropdown v-model="province" class="w-full w-14rem md:w-16rem" inputClass="font"
+                        <div class="card flex justify-content-center" style="width: -webkit-fill-available">
+                            <Dropdown v-model="province"  inputClass="font"
                                 :options="item_province" placeholder="เลือกจังหวัด" optionLabel="name_th" :filter="true"
                                 filterPlaceholder="ค้นหาจังหวัด" @change="chooseProvince" />
                         </div>
@@ -80,8 +80,8 @@
                         <span class="p-inputgroup-addon">
                             <i class="pi pi-map-marker"></i>
                         </span>
-                        <div class="card flex justify-content-center">
-                            <Dropdown v-model="amphure" class="w-full w-14rem md:w-16rem" inputClass="font"
+                        <div class="card flex justify-content-center"  style="width: -webkit-fill-available">
+                            <Dropdown v-model="amphure"  inputClass="font"
                                 :options="item_amphure" placeholder="เลือกเขต/จังหวัด" optionLabel="name_th" :filter="true"
                                 filterPlaceholder="ค้นหาเขต/อำเภอ" @change="chooseAmphure" />
                         </div>
@@ -92,8 +92,8 @@
                         <span class="p-inputgroup-addon">
                             <i class="pi pi-map-marker"></i>
                         </span>
-                        <div class="card flex justify-content-center">
-                            <Dropdown v-model="tambon" class="w-full w-14rem md:w-16rem" inputClass="font"
+                        <div class="card flex justify-content-center" style="width: -webkit-fill-available">
+                            <Dropdown v-model="tambon"  inputClass="font"
                                 :options="item_tambon" placeholder="เลือกตำบล" @change="chooseToDistrict"
                                 optionLabel="name_th" :filter="true" filterPlaceholder="ค้นหาแขวง/ตำบล" />
                         </div>
@@ -104,8 +104,8 @@
                         <span class="p-inputgroup-addon">
                             <i class="pi pi-map-marker"></i>
                         </span>
-                        <div class="card flex justify-content-center">
-                            <InputText v-model="postcode" class="w-full w-14rem md:w-16rem" :disabled="isDisabled"
+                        <div class="card flex justify-content-center"  style="width: -webkit-fill-available">
+                            <InputText v-model="postcode"  :disabled="isDisabled"
                                 placeholder="รหัสไปรษณ์" />
                         </div>
                     </div>
@@ -321,7 +321,7 @@ export default {
 </script>
   
       
-<style scoped>
+<style>
 .style-font {
     font-family: 'Kanit', sans-serif;
 
@@ -378,13 +378,44 @@ export default {
     padding: 0.75rem 0.75rem;
     min-width: 3rem;
 }
+@media only screen and (max-width: 1850px) {
+    .background-login {
+        width: 42%;
+    }
 
-@media only screen and (max-width: 1200px) {
+
+}
+@media only screen and (max-width: 1750px) {
+    .background-login {
+        width: 45%;
+    }
+
+
+}
+@media only screen and (max-width: 1580px) {
+    .background-login {
+        width: 50%;
+    }
+
+
+}
+@media only screen and (max-width: 1350px) {
     .background-login {
         margin-left: auto;
         margin-right: auto;
         width: 60%;
         background: #ffffffde;
+    }
+}
+@media only screen and (max-width: 1140px) {
+    .background-login {
+        width: 70%;
+    }
+}
+
+@media only screen and (max-width: 650px) {
+    .background-login {
+        width: 85%;
     }
 }
 
