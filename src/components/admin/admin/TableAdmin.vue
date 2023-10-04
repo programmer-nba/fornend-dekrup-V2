@@ -125,7 +125,7 @@ export default {
     del(admin) {
     this.deleteDailog = true;
     this.delete_id = admin._id;
-    this.delete_name = admin.admin_username; // แสดง username แทน admin_name
+    this.delete_name = admin.admin_username; 
   },
     openC() {
       this.confirmDailog = true;

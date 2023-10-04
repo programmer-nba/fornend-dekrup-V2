@@ -67,9 +67,15 @@
           <Column field="code" header="รหัสสินค้า" style="width: 15%"></Column>
           <Column field="name" header="ชื่อสินค้า" style="width: 15%"></Column>
           <Column field="detail" header="รายละเอียด" style="width: 15%"></Column>
-          <Column field="price" header="ราคา" style="width: 15%min-width: 8rem">
+          <Column field="price" header="ราคาขาย" style="width: 15%">
+
             <template #body="item">
               {{ numberFormat(item.data.price) }}
+            </template>
+          </Column>
+          <Column field="price" header="ราคาทุน" style="width: 15%">
+            <template #body="item">
+              {{ numberFormat(item.data.cost) }}
             </template>
           </Column>
           <Column field="quantity" header="จำนวนคงเหลือ" style="min-width: 8rem">
@@ -83,7 +89,7 @@
             <template #body="item">
               <Button icon="pi pi-pencil" class="p-button-rounded p-button-warning mr-2"
                 @click="editProduct(item.data._id)" />
-           
+
             </template>
           </Column>
 
@@ -212,11 +218,11 @@ export default {
     return {
       item_product,
       search,
-      category, 
+      category,
       getData,
       searchData,
       getImage,
-      filtercategory, 
+      filtercategory,
       numberFormat,
       numberFormatShort,
 
