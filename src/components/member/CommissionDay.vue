@@ -2,19 +2,17 @@
     <div class="mt-4">
         <h1 class="mdLm-0 text-center">Commision (Day)</h1>
         <p class="mt-0 text-center"><strong>หมายเหตุ : </strong>ค่าคอมมิชชั่นจากการแนะนำผู้สมัคร</p>
-    </div>
-    <div> 
-        test
+        <CommissionDay/>
     </div>
 </template>
     
 <script>
-// import CommissionWeek from "@/components/member/money/HistoryWeek.vue";
+import CommissionDay from "@/components/member/money/HistoryDay.vue";
 
 export default {
 
     components: {
-        // CommissionWeek,
+        CommissionDay,
     },
     async mounted() {
         
@@ -23,7 +21,9 @@ export default {
         document.title = "รายได้คอมมิชชั่นสะสม";
     },
     data: () => ({
-        
+     
+        visible: false
+       
     }),
 
     methods: {

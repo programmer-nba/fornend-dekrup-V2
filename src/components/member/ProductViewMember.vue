@@ -39,10 +39,11 @@
       :key="product.id"
     >
       <div class="card-background">
-        <img
+        <div class="size-img-product"><img
           :src="getImage(product.picture)"
-          class="img-modal-product-preview"
-        />
+          class="img-modal-product-preview img-product"
+        /></div>
+        
         <strong class="txt-head">{{ product.name }}</strong>
         <p class="txt-category">
           หมวดหมู่ <span>{{ product.category }}</span>
@@ -497,6 +498,18 @@ const editProductQuantity = (product) => {
 .img-modal-product-preview {
   width: 100%;
 }
+.size-img-product{
+  width: 100%;
+  height: 200px;
+}
+.img-product{
+  width: 80%;
+  height: auto;
+  object-fit: cover;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
 
 @media only screen and (max-width: 576px) {
   .txt-head {
@@ -524,6 +537,10 @@ const editProductQuantity = (product) => {
     margin-left: auto;
     margin-right: auto;
   }
+  .size-img-product{
+  width: 100%;
+  height: 150px;
+}
 }
 
 @media only screen and (max-width: 380px) {

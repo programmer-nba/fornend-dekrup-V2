@@ -1,80 +1,96 @@
 <template>
-    <v-row class="mt-2">
-        <v-col cols="12">
-            <v-text-field v-model="date" type="month" variant="outlined" density="comfortable" @change="chooseDate()"
-                class="w-100" />
-        </v-col>
-    </v-row>
-    <!-- <v-row class="mb-3">
-        <v-col>
-            <p>ค่าคอมมิชชั่นรวมของท่าน <span style="color:green"> {{ alltime_commission.toFixed(2) }} </span> บาท</p>
-        </v-col>
-    </v-row> -->
-    <!-- <v-list v-if="comission_history.length !== 0"> -->
-    <v-list>
-        <v-divider />
-        <div v-for="(item, index) in comission_history" :key="index">
-            <p>{{ dateformat(item.createdAt) }}</p>
-            <p>คุณได้รับค่า commission จำนวน <span style="color:green;background-color: #fff;border-radius: 5px;"> + {{ item.remainding_commission.toFixed(2) }}  </span>
-                บาท</p>
-            <p><italic>จากรายการ</italic></p>
-            <div v-for="(data, i) in item.orderData[0]" :key="i" class="commision-list mt-0">
-                <p>ชื่อ : {{ data.packagename }}</p>
-                <p>รายละเอียด : {{ data.packagedetail }}</p>
-            </div>
-            <v-divider />
-        </div>
-    </v-list>
-    <v-row>
-        <v-col cols="12">
-            <p class="text-center"><em>--ไม่มีรายการแจ้งเติมเงิน--</em></p>
-        </v-col>
-    </v-row>
-</template>
+   
+    <div class="size-datatable">
+        <DataTable :key="index" paginator :rows="10" :rowsPerPageOptions="[10 ,20 ,50]" tableStyle="min-width: 50rem" :value="dataTableData" style="-webkit-text-stroke: 1px;">
+        <!-- <Column field="_id" header="ไอดี" ></Column> -->
+            <Column field="member_number" header="สมาชิก" ></Column>
+            <Column field="commission" header="ค่าคอมมิชชั่น"></Column>
+            <Column field="vat3percent" header="ค่า vat3%"></Column>
+            <Column field="remainding_commission" header="ค่าคอมมิชชั่น(หลังหักค่า vat3%)"></Column>
+            <Column field="from_member" header="ค่าคอมมิชชั่นจากผู้ใช้"></Column>
+            <Column field="date_comisstion" sortable  header="วันที่ทำรายการ"></Column>
+        </DataTable>
 
+
+
+            <v-row>
+                <v-col cols="12" >
+                    <p class="text-center"><em>--ไม่มีรายการ--</em></p>
+                </v-col>
+            </v-row>
+    </div>
+    
+</template>
 <script>
+import axios from 'axios';
 import dayjs from 'dayjs'
-// import axios from 'axios';
-// import HistoryItemListDetail from './HistoryItemListDetail.vue';
-// import { Point } from "@/services/pointservice";
+
+
+
 
 export default {
-    components: {
-        // HistoryItemListDetail
-    },
-    setup() {
-        // const pointservice = new Point();
+  data() {
+    return {
+      data: [],
+      date: null,
+      dataTableData: [] 
+    };
+  },
+  setup() {
         const dateformat = (date) => {
             return dayjs(date).format("DD/MM/YYYY เวลา HH:mm:ss น.");
-            // return new Date(date).toLocaleDateString('th-TH', { day: '2-digit', month: '2-digit', year: 'numeric' });
         }
-        return { dateformat }
+        return { dateformat}
     },
-    async created() {
-       
-    },
-    data: () => ({
-        
-        date: dayjs(Date.now()).format('YYYY-MM')
-    }),
-    async mounted() {
-        
-        console.log(this.$store.state.user)
-    },
+
     methods: {
-        chooseDate() {
-            this.item_history = this.history.filter((el) => dayjs(el.createdAt).format('YYYY-MM') === dayjs(this.date).format('YYYY-MM'));
-        },
-        
+    filterDataByDate() {
+      this.filteredData = this.data.filter(item => {
+        const selectedDate = dayjs(this.date).format("DD/MM/YYYY");
+        const itemDate = dayjs(item.createdAt).format("DD/MM/YYYY");
+        return itemDate === selectedDate;
+      });
     }
-}
+  },
+
+
+created() {
+  axios.get(`${process.env.VUE_APP_DEKRUP}/commission/day`, {
+    headers: {
+      'token': localStorage.getItem('token'),
+    },
+  })
+  .then((response) => {
+    this.dataTableData = response.data.data.map(item => ({
+    //   _id: item._id,
+      member_number:  item.data[0].member_number ,
+      commission: item.data[0].commission,
+      vat3percent:  item.data[0].vat3percent ,
+      remainding_commission:  item.data[0].remainding_commission ,
+      from_member: item.from_member, 
+      date_comisstion: this.dateformat(item.createdAt ),
+
+    }));
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+},
+
+
+};
 </script>
 
-<style>
-.w-100 {
-    max-width: 15rem;
-}
 
-.commision-list {
-    margin: 1rem 1rem 1rem 1rem;
-}</style>
+<style>
+.size-datatable{
+    width: 80%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+.p-datatable .p-datatable-thead > tr > th {
+    background-color: #d9d9d9 !important;
+    color: #ce0606 !important;
+}
+</style>
