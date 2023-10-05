@@ -74,14 +74,19 @@ export default {
                     icon: 'pi pi-shopping-cart',
                     items: [
                         {
-                            label: "Commission Day",
+                            label: "Commission Register",
                             icon: 'pi pi-user',
-                            to: "/admin/commission/day",
+                            to: "/admin/commission/register",
                         },
                         {
-                            label: "Commission Week",
+                            label: "Commission Adminnister",
                             icon: 'pi pi-plus',
-                            to: "/admin/commission/week",
+                            to: "/admin/commission/administer",
+                        },
+                        {
+                            label: "จัดการ Percent Commission",
+                            icon: 'pi pi-plus',
+                            to: "/admin/commission/percent",
                         },
                     ],
                 },
@@ -94,11 +99,11 @@ export default {
                             icon: 'pi pi-user',
                             to: "/admin/member",
                         },
-                        {
-                            label: "เพิ่มผู้ใช้งานระบบ",
-                            icon: 'pi pi-plus',
-                            to: "/admin/member/add",
-                        },
+                        // {
+                        //     label: "เพิ่มผู้ใช้งานระบบ",
+                        //     icon: 'pi pi-plus',
+                        //     to: "/admin/member/add",
+                        // },
                     ],
                 },
                 {
@@ -115,11 +120,11 @@ export default {
                             icon: 'pi pi-plus',
                             to: "/admin/admin/add",
                         },
-                        {
-                            label: "ฟังก์ฺชั่นเพิ่มเติม",
-                            icon: 'pi pi-cog',
-                            to: "/admin/function",
-                        },
+                        // {
+                        //     label: "ฟังก์ฺชั่นเพิ่มเติม",
+                        //     icon: 'pi pi-cog',
+                        //     to: "/admin/function",
+                        // },
                     ],
                 },
             ];

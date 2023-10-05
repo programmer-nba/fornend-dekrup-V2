@@ -56,15 +56,21 @@ routes = [
     component: () => import("../components/admin/member/addView.vue"),
   },
   {
-    path: "/admin/commission/day",
-    name: "admin-commission-day",
-    component: () => import("../components/admin/commission/CommissionDay.vue"),
+    path: "/admin/commission/register",
+    name: "admin-commission-register",
+    component: () => import("../components/admin/commission/CommissionRegister.vue"),
   },
   {
-    path: "/admin/commission/week",
-    name: "admin-commission-week",
+    path: "/admin/commission/administer",
+    name: "admin-commission-administer",
     component: () =>
-      import("../components/admin/commission/CommissionWeek.vue"),
+      import("../components/admin/commission/CommissionAdminister.vue"),
+  },
+  {
+    path: "/admin/commission/percent",
+    name: "admin-commission-percent",
+    component: () =>
+      import("../components/admin/commission/PercentCommission.vue"),
   },
 ];
 

@@ -5,7 +5,53 @@ export class Withdraw {
   #baseUrl = process.env.VUE_APP_DEKRUP;
   constructor() {}
 
-  //get commission day
+  //get commission withdraw day
+  async GetComiissionDay() {
+    let data;
+    const config = {
+      method: "get",
+      headers: {
+        token: this.#token,
+      },
+      url: `${this.#baseUrl}/commission/admin/day`,
+    };
+    await axios(config)
+      .then((result) => {
+        if (result) {
+          data = result.data;
+        }
+      })
+      .catch((error) => {
+        data = error;
+      });
+
+    return data;
+  }
+
+  //get commission withdraw day
+  async GetComiissionWeek() {
+    let data;
+    const config = {
+      method: "get",
+      headers: {
+        token: this.#token,
+      },
+      url: `${this.#baseUrl}/commission/admin/week`,
+    };
+    await axios(config)
+      .then((result) => {
+        if (result) {
+          data = result.data;
+        }
+      })
+      .catch((error) => {
+        data = error;
+      });
+
+    return data;
+  }
+
+  //get commission withdraw day
   async GetWithdrawDay() {
     let data;
     const config = {
@@ -28,7 +74,7 @@ export class Withdraw {
     return data;
   }
 
-  //get commission Week
+  //get commission withdraw Week
   async GetWithdrawWeek() {
     let data;
     const config = {

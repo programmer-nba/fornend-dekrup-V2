@@ -1,0 +1,114 @@
+<template>
+    <div class="grid">
+        <div class="col-12 text-center">
+            <h1>Commission Week</h1>
+            <small><strong>หมายเหตุ : </strong>ค่าคอมมิชชั่น จากการซื้อสินค้าซ้ำ</small>
+        </div>
+        <div class="col-12 text-right">
+            <Button icon="pi pi-file-export" label="Download" @click="export_data" class="mr-2"></Button>
+            
+        </div>
+    </div>
+    <div class="grid">
+        <div class="col-12">
+            <DataTable :value="item_commission" :paginator="true" :rows="20">
+                <template #empty>
+                    <p class="text-center"><em>-- ไม่พบข้อมูล --</em></p>
+                </template>
+                <Column header="รหัสผู้ใช้">
+                    <template #body="item">
+                        {{ getLastNumber(item.data.data) }}
+                    </template>
+                </Column>
+                <Column header="ค่าคอมมิชชั่น (ก่อนหักภาษี)">
+                    <template #body="item">
+                        {{ getLastCom(item.data.data) }}
+                    </template>
+                </Column>
+                <Column header="ภาษี ณ ที่จ่าย 3%">
+                    <template #body="item">
+                        {{ getLastVat(item.data.data) }}
+                    </template>
+                </Column>
+                <Column header="ค่าคอมมิชชั่น (หลังหักภาษี)">
+                    <template #body="item">
+                        {{ getLastComnet(item.data.data) }}
+                    </template>
+                </Column>
+                <Column header="ได้รับจาก">
+                    <template #body="item">
+                        {{ item.data.from_member }}
+                    </template>
+                </Column>
+                <Column header="วันที่">
+                    <template #body="item">
+                        {{ datetimeFormat(item.data.timestamp) }}
+                    </template>
+                </Column>
+            </DataTable>
+        </div>
+    </div>
+</template>
+
+<script>
+import CommissionDetail from "./CommissionDetail.vue";
+import { Withdraw } from "../../../service/commission.withdraw";
+import dayjs from 'dayjs';
+export default {
+    components: {
+        CommissionDetail,
+    },
+    setup() {
+        const withdrawWeek = new Withdraw();
+        return { withdrawWeek };
+    },
+    created() {
+        document.title = "รายงานการถอน | Commission Day";
+    },
+    data: () => ({
+        item_commission: [],
+        dialogCancel: false,
+    }),
+    async mounted() {
+        await this.getCommissionWeek();
+    },
+
+    methods: {
+        async getCommissionWeek() {
+            this.$store.commit('setLoading', true);
+            await this.withdrawWeek.GetComiissionWeek().then(result => {
+                const order = result.data;
+                this.item_commission = order.reverse();
+            }).catch((err) => {
+                this.$store.commit('setLoading', false);
+                this.$toast.add({ severity: 'error', summary: 'ผิดพลาด', detail: err.response.data.message, life: 3000 })
+            })
+        },
+
+        getLastNumber(item) {
+            const data = item[item.length - 1].member_number;
+            return data
+        },
+
+        getLastCom(item) {
+            const data = item[item.length - 1].commission;
+            return data
+        },
+
+        getLastVat(item) {
+            const data = item[item.length - 1].vat3percent;
+            return data
+        },
+
+        getLastComnet(item) {
+            const data = item[item.length - 1].remainding_commission;
+            return data
+        },
+
+        datetimeFormat(date){
+            return dayjs(date).format("DD/MM/YYYY เวลา HH:mm:ss");
+        },
+    },
+}
+
+</script>
