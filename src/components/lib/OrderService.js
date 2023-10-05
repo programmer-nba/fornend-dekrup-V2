@@ -52,29 +52,7 @@ export class ConfirmService {
         return data;
     }
 
-    async GetOrderCancel(){
-        let data;
-        const config = {
-            method:'get',
-            headers: {
-                'auth-token':this.#token
-            },
-            url:`${this.#baseUrl}orderservice/cancelorder/list`
-        }
-
-        await axios(config).then(result => {
-            if(result){
-                data = result.data
-            }
-        })
-        .catch(error => {
-            data = error;
-        })
-
-        return data;
-    }
-
-    async CanccelOrder(Data,_id){
+    async CancelOrder(Data,_id){
         let data;
         const config = {
             method:'put',
@@ -97,5 +75,4 @@ export class ConfirmService {
 
         return data;
     }
-
 }

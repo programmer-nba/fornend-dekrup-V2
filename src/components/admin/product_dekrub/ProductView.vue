@@ -85,52 +85,19 @@
           </Column>
           <Column field="category" header="หมวดหมู่" style="min-width: 16rem"></Column>
           <Column header="แก้ไข" style="width: 15%">
-
             <template #body="item">
               <Button icon="pi pi-pencil" class="p-button-rounded p-button-warning mr-2"
-                @click="editProduct(item.data._id)" />
-
+                @click="editProduct(item.data)" />
+                <ProductDetail :product="selectedProduct" v-model:displayDialog="displayDialog" @save-edit="saveProduct" />
             </template>
           </Column>
-
         </DataTable>
 
 
       </div>
     </div>
 
-    <!--Dialog-->
-    <!-- <Dialog
-      v-model:visible="dialogStock"
-      :modal="true"
-      :breakpoints="{ '960px': '75vw', '640px': '100vw' }"
-      :style="{ width: '20vw' }"
-    >
-      <template #header>
-        <strong>แก้ไขสต๊อกสินค้า</strong>
-      </template>
-      <div class="grid">
-        <div class="col-12">
-          <div class="field">
-            <label>จำนวนสินค้า :</label>
-            <InputNumber
-              v-model="new_stock"
-              class="w-full"
-              inputClass="font"
-              placeholder="กรอกจำนวนสินค้าในสต๊อก"
-            />
-          </div>
-        </div>
-      </div>
-      <template #footer>
-        <Button
-          label="ยกเลิก"
-          class="p-button-text"
-          @click="dialogStock = false"
-        />
-        <Button label="บันทึก" @click="updateStock" />
-      </template>
-    </Dialog> -->
+
   </div>
 </template>
 
@@ -145,6 +112,8 @@ export default {
     const item_product = ref([]);
     const search = ref("");
     const category = ref("");
+    const selectedProduct = ref(null); // สำหรับเก็บข้อมูลสินค้าที่จะแก้ไข
+  const displayDialog = ref(false); // สำหรับควบคุมการแสดง/ซ่อน Dialog
 
     const getData = async () => {
       try {
@@ -160,7 +129,11 @@ export default {
       }
     };
 
-
+    const editProduct = (product) => {
+    // เรียกใช้งาน Component ProductDetail และส่งข้อมูลสินค้าที่จะแก้ไข
+    selectedProduct.value = { ...product };
+    displayDialog.value = true;
+  };
     const searchData = () => {
       if (search.value === "") {
         getData();
@@ -170,6 +143,7 @@ export default {
         );
       }
     };
+
     const getImage = (item) => {
       if (typeof item === 'string') {
         return `https://drive.google.com/uc?export=view&id=${item}`;
@@ -180,9 +154,6 @@ export default {
         return "";
       }
     };
-
-
-
 
     const filtercategory = () => {
       if (category.value !== "") {
@@ -209,8 +180,6 @@ export default {
       });
     };
 
-
-
     onMounted(() => {
       getData();
     });
@@ -225,7 +194,9 @@ export default {
       filtercategory,
       numberFormat,
       numberFormatShort,
-
+      editProduct,
+ selectedProduct,
+    displayDialog,
     };
   },
 };

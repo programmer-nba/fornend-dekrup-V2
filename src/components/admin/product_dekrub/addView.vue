@@ -1,13 +1,18 @@
 <template>
-    <div style="background-color: #FFDEDE; ">
+    <div v-if="isLoading" class="loading-overlay">
+        <div class="loader"></div>
+    </div>
+    <div >
         <div class="grid px-3">
             <div class="col-12 lg:col-12 mt-2">
                 <Panel class="custom-header-panel">
                     <template #header>เกี่ยวกับสินค้า</template>
-                    <div class="grid">
-                        <div v-for="(preview, index) in imagePreviews" :key="index" class="image-preview">
+                    <div class="grid ">
+                       
+                        <div v-for="(preview, index) in imagePreviews" :key="index" >
                             <Image :src="preview" width="200" height="200" />
                             <button @click="removeImage(index)">ลบรูป</button>
+                       
                         </div>
                         <div class="col-12 text-center">
                             <div class="justify-content-center"
@@ -18,10 +23,7 @@
                                 </label>
 
                             </div>
-
                         </div>
-
-
                     </div>
 
                     <div class="grid">
@@ -93,7 +95,9 @@
 
 <script>
 import axios from "axios";
+import Swal from 'sweetalert2';
 import { Product } from "../../../service/product";
+import { ref } from "vue";
 
 export default {
     name: "addView",
@@ -101,8 +105,10 @@ export default {
         Product,
     },
     setup() {
+        const isLoading = ref(false); 
+
         const product = new Product();
-        return { product }
+        return { product, isLoading  }
     },
     data: () => ({
         loading: false,
@@ -160,65 +166,65 @@ export default {
         },
 
         async addProduct() {
+            this.isLoading = true; 
+
+            // ตรวจสอบว่ามีรูปภาพที่ถูกอัพโหลดหรือไม่
+            if (!this.img_upload.length) {
+                Swal.fire('แจ้งเตือน', 'กรุณาอัพโหลดรูปภาพ', 'warning');
+                return;
+            }
+
+            if (
+                !this.name ||
+                !this.categoryid ||
+                !this.detail ||
+                !this.cost ||
+                !this.price ||
+                !this.quantity
+            ) {
+                Swal.fire('แจ้งเตือน', 'กรุณากรอกข้อมูลให้ครบ', 'warning');
+                return;
+            }
+
             this.loading = true;
-            if (this.img_upload) {
-                const data = {
-                    name: this.name,
-                    categoryid: this.categoryid,
-                    detail: this.detail,
-                    cost: this.cost,
-                    price: this.price,
-                    quantity: this.quantity
+
+            const formData = new FormData();
+            formData.append('name', this.name);
+            formData.append('categoryid', this.categoryid);
+            formData.append('detail', this.detail);
+            formData.append('cost', this.cost);
+            formData.append('price', this.price);
+            formData.append('quantity', this.quantity);
+            formData.append('imgCollection', this.img_upload[0]);
+
+            try {
+                const result = await this.product.CreateProduct(formData);
+
+                if (result) {
+                    this.ResetData();
+                    this.ResetImage();
+                    this.loading = false;
+
+                    Swal.fire('เพิ่มสินค้าสำเร็จ', 'คุณได้เพิ่มรายการสินค้าสำเร็จแล้ว', 'success').then(() => {
+                        this.$router.push('/admin/product');
+                    });
                 }
-                const formData = new FormData();
-                formData.append("name", this.name);
-                formData.append("categoryid", this.categoryid);
-                formData.append("detail", this.detail);
-                formData.append("cost", this.cost);
-                formData.append("price", this.price);
-                formData.append("quantity", this.quantity);
-                formData.append("imgCollection", this.img_upload[0]);
-
-                console.log(data)
-                console.log('FormData:', formData);
-
-                // ตรวจสอบว่าข้อมูลถูกส่งไปครบหรือไม่
-                console.log('Name:', this.name);
-                console.log('Category ID:', this.categoryid);
-                console.log('Detail:', this.detail);
-                console.log('Cost:', this.cost);
-                console.log('Price:', this.price);
-                console.log('Quantity:', this.quantity);
-
-                // ตรวจสอบรูปที่ถูกส่งไป
-                for (let i = 0; i < this.img_upload.length; i++) {
-                    console.log(`Image ${i + 1}:`, this.img_upload[i]);
-                }
-
-                await this.product.CreateProduct(formData).then(async (result) => {
-
-                    if (result) {
-                        console.log(result);
-                        this.ResetData();
-                        this.ResetImage();
-                        this.loading = false;
-                        this.$toast.add({
-                            severity: "success",
-                            summary: "สำเร็จ",
-                            detail: "เพิ่มรายการสินค้าสำเร็จ",
-                            life: 3000,
-                        })
-                    }
-                })
+            } catch (error) {
+                console.error(error);
+                this.loading = false;
+                Swal.fire('เกิดข้อผิดพลาด', 'เกิดข้อผิดพลาดในการเพิ่มสินค้า', 'error');
+            } finally {
+                this.isLoading = false; 
             }
         },
+
 
         SetImages(e) {
             const files = e.target.files;
 
             if (this.img_upload.length + files.length > 3) {
                 this.dialog_img_warning = true;
-                return; 
+                return;
             }
 
             for (let i = 0; i < files.length; i++) {
@@ -226,7 +232,7 @@ export default {
                 const fileSize = file.size;
                 if (fileSize > 500000) {
                     this.dialog_img_warning = true;
-                    return; 
+                    return;
                 }
                 const fileReader = new FileReader();
                 fileReader.readAsDataURL(file);
@@ -237,7 +243,7 @@ export default {
 
                 if (this.img_upload.length > 3) {
                     this.dialog_img_warning = true;
-                    this.removeImage(this.img_upload.length - 1); 
+                    this.removeImage(this.img_upload.length - 1);
                     return;
                 }
             }
@@ -247,10 +253,6 @@ export default {
             this.imagePreviews.splice(index, 1);
             this.img_upload.splice(index, 1);
         }
-
-
-
-
 
     },
 };
@@ -263,11 +265,47 @@ export default {
     background-color: #FFFDE3;
     color: #C21010;
     border-bottom: 1px solid #C21010;
+    border-top: none;
+    border-right: none;
+    border-left: none;
+
 }
 
 .custom-header-panel .p-panel-content {
     background-color: #FFFDE3;
     color: #C21010;
     border: none;
+}
+
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.loader {
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top: 4px solid #3498db;
+    width: 50px;
+    height: 50px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 </style>
