@@ -211,23 +211,52 @@ export default {
       } catch (error) {}
     };
 
-    const getData = async () => {
-      try {
-        const response = await axios.get(
-          `${process.env.VUE_APP_DEKRUP}/product/member/list`,
-          {
-            headers: {
-              token: `${localStorage.getItem("token")}`,
-            },
-          }
-        );
+    const getCategoryData = async () => {
+  try {
+    const response = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/category/member/list`, {
+      headers: {
+        token: localStorage.getItem("token"),
+      },
+    });
 
-        item_product.value = response.data.data.reverse();
-        originalItemProduct.value = [...response.data.data];
-      } catch (error) {
-        console.error(error);
-      }
-    };
+    const categoryData = response.data.data;
+    return categoryData;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+};
+
+
+const getData = async () => {
+  try {
+    const [productResponse, categoryData] = await Promise.all([
+      axios.get(`${process.env.VUE_APP_DEKRUP}/product/member/list`, {
+        headers: {
+          token: localStorage.getItem("token"),
+        },
+      }),
+      getCategoryData(), // เรียกใช้ฟังก์ชัน getCategoryData ที่คุณสร้างขึ้น
+    ]);
+
+    const products = productResponse.data.data.map((product) => ({
+      ...product,
+      category: getCategoryName(product.category, categoryData),
+    }));
+
+    item_product.value = products.reverse();
+    originalItemProduct.value = [...products];
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// ฟังก์ชันสำหรับแปลงรหัสหมวดหมู่เป็นชื่อหมวดหมู่
+const getCategoryName = (categoryId, categories) => {
+  const category = categories.find((category) => category._id === categoryId);
+  return category ? category.name : "";
+};
+
 
     const chooseProductQuantity = (product) => {
       if (product) {
@@ -419,7 +448,8 @@ const editProductQuantity = (product) => {
       quantityToOrder,
       chooseProductQuantity,
       checkStock,
-      editProductQuantity
+      editProductQuantity,
+      getCategoryData
     };
   },
 };
