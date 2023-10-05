@@ -13,17 +13,27 @@
         <span class="p-inputgroup-addon border-none" style="background-color: #C21010;">
           <i class="pi pi-calendar text-white"></i>
         </span>
-        <Calendar inputId="range" class="z-0" selectionMode="range" :manualInput="false" :showButtonBar="true" />
+        <Calendar
+      inputId="range"
+      class="z-0"
+      selectionMode="single"
+      :manualInput="false"
+      :showButtonBar="true"
+      :value="selectedDate"
+      @input="handleDateChange"
+    />
+
+
       </div>
     </div>
     <div class="col-12 md:col-1">
       <Button label="Clear" class="border-red-500" icon="pi pi-refresh" style="background-color: #C21010;"></Button>
     </div>
   </div>
-  <DataTable :value="orders" stripedRows responsiveLayout="scroll" :paginator="true" :rows="20"
-    paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
-    currentPageReportTemplate="แสดง {first} ถึง {last} ใน {totalRecords} รายการ" class=" px-3">
-    <!-- ตรวจสอบว่ามีข้อมูลใบสั่งชื้อหรือไม่ -->
+  <DataTable :value="filteredOrders" :immutable="false" stripedRows responsiveLayout="scroll" :paginator="true" :rows="20"
+      paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
+      currentPageReportTemplate="แสดง {first} ถึง {last} ใน {totalRecords} รายการ" class="px-3">
+      <!-- โค้ดเก่าในส่วนของ template อื่น ๆ ให้เหมือนเดิม -->
     <template #empty>
       <p class="font-italic text-center text-5xl" style="color: #BD1616;">ไม่พบข้อมูลใบสั่งชื้อ</p>
     </template>
@@ -76,31 +86,34 @@
 <script>
 import { ConfirmOrder } from '@/components/lib/order';
 import axios from 'axios';
+import dayjs from "dayjs";
+import "dayjs/locale/th";
 
-import { onMounted, ref, reactive  } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 export default {
   setup() {
     const orders = ref([]);
     const Dialogbill = ref(false);
     const selectedItemImage = ref('');
+    const selectedDate = ref(null);
 
     const Order = new ConfirmOrder();
 
-
     onMounted(async () => {
-      try {
-        const response = await axios.get(`${process.env.VUE_APP_DEKRUP}/order/list`, {
-          headers: {
-            "token": localStorage.getItem("token"),
-          },
-        });
-
-        orders.value = response.data.data;
-      } catch (error) {
-        console.error(error);
-      }
+  try {
+    const response = await axios.get(`${process.env.VUE_APP_DEKRUP}/order/list`, {
+      headers: {
+        "token": localStorage.getItem("token"),
+      },
     });
+
+    orders.value = response.data.data;
+    filteredOrders.value = response.data.data; 
+  } catch (error) {
+    console.error(error);
+  }
+});
 
     const showDialog = (rowData) => {
       selectedItemImage.value = getImage(rowData.data.picture);
@@ -121,13 +134,7 @@ export default {
         return "";
       }
     };
-
-
-     // สร้าง reactive property สำหรับเก็บข้อมูล orders
-     const ordersData = reactive({
-      data: [],
-    });
-
+    
     const confirmOrder = async (item) => {
   console.log("item:", item);
 
@@ -146,8 +153,12 @@ export default {
 
         orders.value = [...orders.value];
 
+        // อัปเดต filteredOrders อีกครั้งเพื่อ DataTable รีเรนเดอร์ทันที
+        filteredOrders.value = [...filteredOrders.value];
+
         console.log(result);
       } else {
+        console.error("Error while confirming order:", result);
       }
     } catch (error) {
       console.error("Error while making API request:", error);
@@ -157,6 +168,35 @@ export default {
   }
 };
 
+
+
+
+    const formatDate = (timestamp) => {
+      if (timestamp) {
+        dayjs.locale('th');
+        const formattedDate = dayjs(timestamp).format('D/M/YYYY HH:mm:ss');
+        return formattedDate;
+      }
+      return '';
+    };
+
+    const formattedSelectedDate = dayjs(selectedDate.value).format('D/M/YYYY HH:mm:ss');
+
+    const filteredOrders = computed(() => {
+      if (!selectedDate.value) {
+        return orders.value;
+      }
+
+      const selectedDateString = formattedSelectedDate;
+
+      return orders.value.filter(order => {
+        if (order.data && order.data.timestamp) {
+          const orderDateString = dayjs(order.data.timestamp).format('D/M/YYYY HH:mm:ss');
+          return orderDateString === selectedDateString;
+        }
+        return false;
+      });
+    });
 
     const getStatusColor = (statusArray) => {
       const latestStatus = statusArray[statusArray.length - 1];
@@ -179,7 +219,10 @@ export default {
       confirmOrder,
       Order,
       getStatusColor,
-
+      selectedDate,
+      filteredOrders,
+      formatDate,
+      
     };
   },
 };
