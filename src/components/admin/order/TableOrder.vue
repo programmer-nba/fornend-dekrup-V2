@@ -8,22 +8,11 @@
         <span class="p-inputgroup-addon border-none" style="background-color: #C21010;">
           <i class="pi pi-search text-white"></i>
         </span>
-        <InputText placeholder="ค้นหาข้อมูล" class="z-0" />
+        <InputText v-model="search" placeholder="ค้นหาข้อมูล" class="z-0" @keyup="searchDataAutomatically()" />
       </div>
     </div>
-    <div class="col-12 md:col-4">
-      <div class="p-inputgroup">
-        <span class="p-inputgroup-addon border-none" style="background-color: #C21010;">
-          <i class="pi pi-calendar text-white"></i>
-        </span>
-        <Calendar inputId="range" class="z-0" selectionMode="single" :manualInput="false" :showButtonBar="true"
-          :value="selectedDate"  />
-
-      </div>
-    </div>
-    <div class="col-12 md:col-1">
-      <Button label="Clear" class="border-red-500" icon="pi pi-refresh" style="background-color: #C21010;"></Button>
-    </div>
+  
+ 
   </div>
   <DataTable :value="orders" :immutable="false" stripedRows responsiveLayout="scroll" :paginator="true" :rows="20"
     paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
@@ -107,6 +96,24 @@ export default {
     onMounted(async () => {
       getOrder();
     });
+
+
+    const searchDataAutomatically = async () => {
+  try {
+    const response = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/list`, {
+      headers: {
+        token: `${localStorage.getItem("token")}`,
+      },
+      params: {
+        query: search.value, // ใช้ค่า search แทน this.search
+      },
+    });
+    orders.value = response.data.data.filter(order => order.name.includes(search.value));
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    // เพิ่มการจัดการข้อผิดพลาดที่นี่
+  }
+};
 
     const getOrder = async () => {
       isLoading.value = true; 
@@ -271,6 +278,7 @@ export default {
       showCancelConfirmation,
       confirmCancel,
       showSuccessAlert,
+      searchDataAutomatically,
     };
   },
 };

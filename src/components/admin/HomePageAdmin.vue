@@ -8,7 +8,7 @@
           <div class="flex justify-content-between mb-3">
             <div>
               <span class="block text-500 font-medium mb-3 text-left">สมาชิกสมัครวันนี้ {{ thisDay }}</span>
-              <div class="text-900 font-medium text-xl ml-3 text-left">{{ todayMemberCount }}</div>
+              <div class="text-900 font-medium text-xl ml-3 text-left">{{ todayMemberCount  }}</div>
             </div>
             <div class="flex align-items-center justify-content-center bg-purple-100 border-round"
               style="width: 2.5rem; height: 2.5rem">
@@ -56,76 +56,83 @@
 
 <script>
 import axios from 'axios';
-import dayjs from 'dayjs';
 import { dateFormat } from '../lib/function';
 
 export default {
-  components: {},
   data() {
     return {
-      thisDay: dateFormat(Date.now()),
-      todayMemberCount: 0,
-      todayOrderCount: 0, 
-      commissionDayData: 0, 
+      thisDay: dateFormat(Date.now()), // ใช้ dateFormat เพื่อแสดงวันที่ในรูปแบบ "วัน/เดือน/ปี"
+      todayOrderCount: 0,
+      todayMemberCount: 0, 
     };
   },
-  async created() {
-  document.title = 'ระบบจัดการ Dekrub-shop';
+  methods: {
+    async fetchMemberData() {
+      try {
+        // ทำการร้องขอ API เพื่อดึงข้อมูลสมาชิกที่สมัครวันนี้
+        const response = await axios.get(`${process.env.VUE_APP_DEKRUP}/order/member/order`, {
+          headers: {
+            'token': ` ${localStorage.getItem('token')}`,
+          },
+        });
 
-  try {
-    // ทำการร้องขอ API เพื่อดึงข้อมูลจำนวนผู้สมัครจากวันนี้
-    const memberResponse = await axios.get(`${process.env.VUE_APP_DEKRUP}/order/member/new/list`, {
-      headers: {
-        "token": localStorage.getItem("token"),
-      },
-    });
+        if (response.status === 200) {
+          const member = response.data.data;
 
-    // ทำการร้องขอ API เพื่อดึงข้อมูลออเดอร์วันนี้
-    const orderResponse = await axios.get(`${process.env.VUE_APP_DEKRUP}/order/list`, {
-      headers: {
-        "token": localStorage.getItem("token"),
-      },
-    });
+          // กรองรายการสมาชิกที่มี timestamp ตรงกับวันนี้
+          const todayMembers = member.filter(
+            (item) => dateFormat(item.timestamp) === this.thisDay
+          );
 
-    // ทำการร้องขอ API เพื่อดึงข้อมูลคอมมิชชั่นวันนี้
-    const commissionResponse = await axios.get(`${process.env.VUE_APP_DEKRUP}/commission/day`, {
-      headers: {
-        "token": localStorage.getItem("token"),
-      },
-    });
-
-    // ตรวจสอบความถูกต้องของข้อมูลที่รับมา
-    console.log("ข้อมูลสมาชิกสมัครวันนี้:", memberResponse.data);
-    console.log("ข้อมูลออเดอร์วันนี้:", orderResponse.data);
-    console.log("ข้อมูล Commission Day วันนี้:", commissionResponse.data);
-
-    if (memberResponse.status === 200 && orderResponse.status === 200 && commissionResponse.status === 200) {
-      const today = dayjs(); 
-
-      // นับจำนวนออเดอร์วันนี้
-      this.todayOrderCount = orderResponse.data.reduce((count, order) => {
-        const timestamp = dayjs(order.timestamp);
-
-        // ตรวจสอบว่า timestamp อยู่ในวันนี้
-        if (timestamp.isSame(today, 'day')) {
-          return count + 1;
+          // นับจำนวนสมาชิกของวันนี้
+          this.todayMemberCount = todayMembers.length; 
+        } else {
+          console.error("Error fetching member data. Status:", response.status);
         }
+      } catch (error) {
+        console.error("Error fetching member data:", error);
+      }
+    },
+    async fetchOrderData() {
+      try {
+        // ทำการร้องขอ API เพื่อดึงข้อมูลออเดอร์ทั้งหมด
+        const response = await axios.get(`${process.env.VUE_APP_DEKRUP}/order/list`, {
+          headers: {
+            'token': ` ${localStorage.getItem('token')}`,
+          },
+        });
 
-        return count;
-      }, 0);
+        if (response.status === 200) {
+          const order = response.data.data;
 
-      // กำหนดค่าข้อมูลคอมมิชชั่นวันนี้
-      this.commissionDayData = commissionResponse.data;
-    } else {
-      console.error("Error fetching data. Status:", response.status);
-    }
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  }
-},
+          // กรองรายการที่มี timestamp ตรงกับวันนี้
+          const todayOrders = order.filter(
+            (item) => dateFormat(item.timestamp) === this.thisDay
+          );
 
+          // นับจำนวนรายการของวันนี้
+          this.todayOrderCount = todayOrders.length; 
+        } else {
+          console.error("Error fetching order data. Status:", response.status);
+        }
+      } catch (error) {
+        console.error("Error fetching order data:", error);
+      }
+    },
+  },
+  async mounted() {
+    this.loading = true;
+
+    await Promise.all([this.fetchMemberData(), this.fetchOrderData()]);
+
+    this.loading = false;
+  },
 };
 </script>
+
+
+
+
 
 
 <style>

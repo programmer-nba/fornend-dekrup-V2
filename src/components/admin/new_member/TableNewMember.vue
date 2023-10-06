@@ -5,12 +5,7 @@
   <div class="mt-4 ">
     <h1 class="md:m-0 text-center">รายงานสมัครสมาชิก</h1>
     <div class="grid p-fluid px-3 justify-content-center mt-3">
-      <div class="col-12 md:col-4">
-        <div class="p-inputgroup  flex-1 ">
-          <Button icon="pi pi-search" severity="warning" />
-          <InputText v-model="search" placeholder="ค้นหาข้อมูล" @keyup="searchData()" class=" font p-3 " />
-        </div>
-      </div>
+     
     </div>
     <DataTable :value="member" :paginator="true" :rows="10" class="px-3 py-3"
       paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink  RowsPerPageDropdown"
@@ -115,6 +110,28 @@ export default {
     dateformat(date) {
       return dayjs(date).locale("th").add(543, "year").format("DD/MMMM/YYYY");
     },
+
+    async searchDataAutomatically() {
+      try {
+        const response = await axios.get(`${process.env.VUE_APP_DEKRUP}/order/member/new/list`, {
+          headers: {
+            token: `${localStorage.getItem("token")}`,
+          },
+          params: {
+            query: this.search,
+          },
+        });
+        this.member = response.data.data.filter(member => member.name.includes(this.search));
+      } catch (error) {
+        this.$toast.add({
+          severity: "error",
+          summary: "ผิดพลาด",
+          detail: error.response.data.message,
+          life: 3000,
+        });
+      }
+    },
+
 
     hideDialog() {
       this.display = false;
@@ -260,17 +277,9 @@ export default {
       this.showImageModal = true;
     },
 
-    searchData() {
-      if (this.search !== "") {
-        this.member = this.members.filter(
-          (el) =>
-            el.member_name.search(this.search) !== -1
-        );
-      } else {
-        this.member = this.members;
-      }
-    },
 
+
+    
 
     getStatusColor(statusArray) {
       const latestStatus = statusArray[statusArray.length - 1];

@@ -224,28 +224,35 @@ export default {
         },
 
         SetImages(e) {
-            const files = e.target.files;
+    const files = e.target.files;
 
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                const fileSizeInBytes = file.size;
-                const maxSizeInBytes = 10000000; // 1 MB
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const fileSizeInBytes = file.size;
+        const maxSizeInBytes = 10000000; // 10 MB
+        const allowedFileTypes = ['image/jpeg', 'image/png']; // ยอมรับไฟล์ JPEG และ PNG
 
-                if (fileSizeInBytes > maxSizeInBytes) {
-                    Swal.fire('แจ้งเตือน', 'ขนาดของรูปภาพใหญ่เกินกำหนด (มากกว่า 10 MB)', 'warning');
-                    return;
-                }
+        if (!allowedFileTypes.includes(file.type)) {
+            Swal.fire('แจ้งเตือน', 'รูปภาพต้องเป็นไฟล์ประเภท JPEG หรือ PNG เท่านั้น', 'warning');
+            return;
+        }
 
-                const fileReader = new FileReader();
-                fileReader.readAsDataURL(file);
+        if (fileSizeInBytes > maxSizeInBytes) {
+            Swal.fire('แจ้งเตือน', 'ขนาดของรูปภาพใหญ่เกินกำหนด (มากกว่า 10 MB)', 'warning');
+            return;
+        }
 
-                fileReader.addEventListener("load", (event) => {
-                    this.imagePreviews.push(event.target.result);
-                });
+        const fileReader = new FileReader();
+        fileReader.readAsDataURL(file);
 
-                this.img_upload.push(file);
-            }
-        },
+        fileReader.addEventListener("load", (event) => {
+            this.imagePreviews.push(event.target.result);
+        });
+
+        this.img_upload.push(file);
+    }
+},
+
 
 
         removeImage(index) {

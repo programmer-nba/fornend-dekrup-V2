@@ -5,7 +5,7 @@
       <div class="col-12 md:col-4">
         <div class="p-inputgroup  flex-1 ">
           <Button icon="pi pi-search" severity="warning" />
-          <InputText v-model="search" placeholder="ค้นหาข้อมูล" @keyup="searchData()" class=" font p-3 " />
+          <InputText v-model="search" placeholder="ค้นหาข้อมูล" @keyup="searchDataAutomatically()" class=" font p-3 " />
         </div>
       </div>
     </div>
@@ -157,6 +157,27 @@ export default {
   methods: {
     dateformat(date) {
       return dayjs(date).locale("th").add(543, "year").format("DD/MMMM/YYYY");
+    },
+
+    async searchDataAutomatically() {
+      try {
+        const response = await axios.get(`${process.env.VUE_APP_DEKRUP}/member`, {
+          headers: {
+            token: `${localStorage.getItem("token")}`,
+          },
+          params: {
+            query: this.search,
+          },
+        });
+        this.member = response.data.data.filter(member => member.name.includes(this.search));
+      } catch (error) {
+        this.$toast.add({
+          severity: "error",
+          summary: "ผิดพลาด",
+          detail: error.response.data.message,
+          life: 3000,
+        });
+      }
     },
 
     async getdata() {
