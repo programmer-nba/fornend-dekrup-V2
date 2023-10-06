@@ -24,13 +24,15 @@
   </div>
 
   <div class="grid">
-    <div class="col-6 md:col-4 xl:col-3 " v-for="product in item_product" :key="product.id">
+    <div class="col-6 md:col-4 xl:col-3" v-for="product in item_product" :key="product.id">
       <div class="card-background">
-        <div class="size-img-product"><img :src="getImage(product.picture)"
-            class="img-modal-product-preview img-product" /></div>
+        
+        <div class="size-img-product">
+          <img :src="getImage(product.picture)" class="img-modal-product-preview img-product" />
+        </div>
         <strong class="txt-head">{{ product.name }}</strong>
         <p class="txt-category">
-          หมวดหมู่ <span>{{ product.category }}</span>
+          หมวดหมู่  <span>{{ getCategoryName(product.category) }}</span>
         </p>
         <p class="txt-category">
           จำนวน <span>{{ product.quantity }}</span>
@@ -55,98 +57,117 @@
     </template>
   </Dialog>
 
-  <Dialog v-model:visible="DialogchooseProduct" :modal="true" header="สินค้าของเรา" style="width: 100vh">
-    <div class="grid">
-      <div class="md:col-4 col-12">
-        <Image alt="Image" preview>
-          <template #indicatoricon>
-            <i class="pi pi-eye"></i>
-          </template>
-          <template #image>
-            <img :src="getImage(productMember.picture)" class="img-modal-product" alt="image" />
-          </template>
-          <template #preview="slotProps">
-            <img :src="getImage(productMember.picture)" class="img-modal-product-preview" alt="preview"
-              :style="slotProps.style" @click="slotProps.onClick" />
-          </template>
-        </Image>
-      </div>
+  <Dialog v-model:visible="DialogChooseProduct" :modal="true" header="สินค้าของเรา" style="width: 100vh">
+  <div class="grid">
+    <div class="md:col-4 col-12 flex justify-content-center">
+      <Image alt="Image" preview>
+        <template #indicatoricon>
+          <i class="pi pi-eye"></i>
+        </template>
+        <template #image>
+          <img :src="imgSrc" class="img-modal-product" alt="image" />
+        </template>
+        <template #preview="slotProps">
+          <img :src="imgSrc" class="img-modal-product-preview" alt="preview"
+            :style="slotProps.style" @click="slotProps.onClick" />
+        </template>
+      </Image>
     </div>
-    <div class="card-head">
-      <p class="text-red-500 text-xl" style="-webkit-text-stroke: 1px">
-        {{ productMember.name }}
-      </p>
-      <small class="text-600" style="font-size: 14px; -webkit-text-stroke: 1px">หมวดหมู่: {{ productMember.category
-      }}</small>
-      <br />
-      <small class="text-600" style="font-size: 14px; -webkit-text-stroke: 1px">จำนวน {{ productMember.quantity }}</small>
-    </div>
-    <div class="my-2">
-      <label class="text-700" for="" style="font-size: 20px; -webkit-text-stroke: 1px">รายละเอียดสินค้า</label>
-    </div>
-    <small class="text-700" for="" style="font-size: 18px">
-      {{ productMember.detail }}</small>
-    <div class="my-2">
-      <label class="text-red-500" for="" style="font-size: 24px; -webkit-text-stroke: 1px">ราคา {{ productMember.price }}
-        บาท</label>
-    </div>
-    <template #footer>
-      <Button label="ปิด" icon="pi pi-times" @click="dialogChooseProduct = false" text />
-    </template>
-  </Dialog>
+  </div>
+  <div class="card-head">
+    <p class="text-red-500 text-xl" style="-webkit-text-stroke: 1px">
+      {{ productMember.name }}
+    </p>
+    <small class="text-600" style="font-size: 14px; -webkit-text-stroke: 1px">หมวดหมู่: {{ getCategoryName(productMember.category) }} </small>
+    <br />
+    <small class="text-600" style="font-size: 14px; -webkit-text-stroke: 1px">จำนวน {{ productMember.quantity }}</small>
+  </div>
+  <div class="my-2">
+    <label class="text-700" for="" style="font-size: 20px; -webkit-text-stroke: 1px">รายละเอียดสินค้า</label>
+  </div>
+  <small class="text-700" for="" style="font-size: 18px">
+    {{ productMember.detail }}
+  </small>
+  <div class="my-2">
+    <label class="text-red-500" for="" style="font-size: 24px; -webkit-text-stroke: 1px">ราคา {{ productMember.price }} บาท</label>
+  </div>
+  <template #footer>
+    <Button label="ปิด" icon="pi pi-times" @click="clearData()" text />
+  </template>
+</Dialog>
+
 </template>
 
 <script>
 import Image from "primevue/image";
 import axios from "axios";
-
 export default {
   components: {
     Image,
   },
 
+
+
   data: () => ({
     DialogaddAmount: false,
     DialogChooseProduct: false,
 
-    category: '',
-    product: '',
-    item_product: '',
+    category: "",
+    product: "",
+    item_product: "",
 
-    data: '',
+    data: "",
     amount: 0,
-
-    
   }),
 
   async mounted() {
-    this.$store.commit('setLoading', true);
-    await axios.get(`${process.env.VUE_APP_DEKRUP}/product/category/member/list`, {
+  this.$store.commit("setLoading", true);
+  try {
+    const categoryResponse = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/category/member/list`, {
       headers: {
-        'token': `${localStorage.getItem('token')}`
-      }
-    }).then((res) => {
-      this.category = res.data.data;
-      this.$store.commit('setLoading', false);
-    }).catch((err) => {
-      this.$store.commit('setLoading', false);
-      this.$toast.add({ severity: 'error', summary: 'ผิดพลาด', detail: err.response.data.message, life: 3000 });
-    })
-    await axios.get(`${process.env.VUE_APP_DEKRUP}/product/member/list`, {
+        token: `${localStorage.getItem("token")}`,
+      },
+    });
+    this.category = categoryResponse.data.data;
+  } catch (error) {
+    this.$store.commit("setLoading", false);
+    this.$toast.add({
+      severity: "error",
+      summary: "ผิดพลาด",
+      detail: error.response.data.message,
+      life: 3000,
+    });
+  }
+
+  try {
+    const productResponse = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/member/list`, {
       headers: {
-        'token': `${localStorage.getItem('token')}`
-      }
-    }).then((res) => {
-      const product = res.data.data;
-      this.item_product = product.reverse();
-      this.$store.commit('setLoading', false);
-    }).catch((err) => {
-      this.$store.commit('setLoading', false);
-      this.$toast.add({ severity: 'error', summary: 'ผิดพลาด', detail: err.response.data.message, life: 3000 });
-    })
-  },
+        token: `${localStorage.getItem("token")}`,
+      },
+    });
+    const product = productResponse.data.data;
+    this.item_product = product.reverse();
+  } catch (error) {
+    this.$store.commit("setLoading", false);
+    this.$toast.add({
+      severity: "error",
+      summary: "ผิดพลาด",
+      detail: error.response.data.message,
+      life: 3000,
+    });
+  }
+
+  this.$store.commit("setLoading", false);
+},
+
 
   methods: {
+
+     getCategoryName(categoryId) {
+      const foundCategory = this.category.find(cat => cat._id === categoryId);
+      return foundCategory ? foundCategory.name : '';
+    },
+
     getImage(item) {
       return "https://drive.google.com/uc?export=view&id=" + item;
     },
@@ -157,22 +178,28 @@ export default {
     },
 
     chooseProduct(item) {
-      this.DialogchooseProduct = true;
-      console.log(item);
-    },
+  this.productMember = item; // เก็บข้อมูลสินค้าที่เลือกไว้ในตัวแปร productMember
+  this.imgSrc = this.getImage(item.picture); // กำหนดรูปภาพของสินค้าในตัวแปร imgSrc
+  this.DialogChooseProduct = true; // แสดง DialogChooseProduct
+},
 
     async addCart() {
-      this.$store.commit('setLoading', false);
+      this.$store.commit("setLoading", false);
       this.total = this.data.price * this.amount;
 
       if (this.amount > this.data.quantity) {
-        return this.$toast.add({ severity: 'danger', summary: 'ไม่สำเร็จ', detail: 'รายการสินค้าไม่เพียงพอ', life: 3000 });
+        return this.$toast.add({
+          severity: "danger",
+          summary: "ไม่สำเร็จ",
+          detail: "รายการสินค้าไม่เพียงพอ",
+          life: 3000,
+        });
       }
 
       const order = {
         product_id: this.data._id,
         quantity: this.amount,
-      }
+      };
 
       const order_detail = {
         category: this.data.category,
@@ -180,25 +207,31 @@ export default {
         code: this.data.code,
         price: this.total,
         quantity: this.amount,
-      }
-      
+      };
+
       const cus = {
         member_number: this.member_number,
         name: this.name,
         tel: this.tel,
         address: this.address,
         line: this.line,
-      }
+      };
 
-      this.$store.commit('setCus', cus);
-      this.$store.dispatch('addOrder', order);
-      this.$store.dispatch('addOrderDetail', order_detail);
-      this.$toast.add({ severity: 'success', summary: 'สำเร็จ', detail: 'เพิ่มรายการเรียบร้อยแล้ว', life: 3000 });
+      this.$store.commit("setCus", cus);
+      this.$store.dispatch("addOrder", order);
+      this.$store.dispatch("addOrderDetail", order_detail);
+      this.$toast.add({
+        severity: "success",
+        summary: "สำเร็จ",
+        detail: "เพิ่มรายการเรียบร้อยแล้ว",
+        life: 3000,
+      });
       this.clearData();
     },
 
     async clearData() {
       this.DialogaddAmount = false;
+      this.DialogChooseProduct = false;
       this.amount = 0;
     },
   },
@@ -269,22 +302,22 @@ export default {
 
 .img-modal-product {
   width: 100%;
+  display: block;
+  justify-content: center;
 }
 
-.img-modal-product {
-  width: 50%;
-}
 
 .img-modal-product-preview {
-  width: 100%;
+  width: 50%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
-
-.size-img-product {
+.size-img-product{
   width: 100%;
   height: 200px;
 }
-
-.img-product {
+.img-product{
   width: 80%;
   height: auto;
   object-fit: cover;
@@ -295,7 +328,7 @@ export default {
 
 @media only screen and (max-width: 576px) {
   .txt-head {
-    font-size: 16px;
+    font-size: 15px;
   }
 
   .txt-category {
@@ -319,11 +352,13 @@ export default {
     margin-left: auto;
     margin-right: auto;
   }
-
-  .size-img-product {
-    width: 100%;
-    height: 150px;
-  }
+  .size-img-product{
+  width: 100%;
+  height: 150px;
+}
+.img-modal-product-preview {
+  width: 100%;
+}
 }
 
 @media only screen and (max-width: 380px) {

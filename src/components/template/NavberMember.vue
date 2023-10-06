@@ -90,4 +90,12 @@ export default {
     position: absolute;
     z-index: 150;
 }
+.p-menubar.p-menubar-mobile-active .p-menubar-root-list {
+    display: flex;
+    flex-direction: column;
+    top: 100%;
+    left: 0;
+    z-index: 1;
+    width: 300px;
+    }
 </style>

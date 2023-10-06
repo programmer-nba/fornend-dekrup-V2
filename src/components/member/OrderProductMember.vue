@@ -23,13 +23,13 @@
                   color: red;
                   padding: 2px;"><strong></strong>{{ $store.getters.order_total }} บาท</label>
 
-          <label style="font-size: 14px;color: #ffff;"><Button label="กดเพื่อชำระเงิน" link @click="calFinal()"
+          <label style="font-size: 14px;color: #ffff;"><Button label="กดเพื่อชำระเงิน" link @click="visible = true"
               style="color: #ffff;" /></label>
         </div>
       </div>
     </div>
     <div class="grid px-2">
-      <div class="col-12 justify-context-center">
+      <div class="col-12  justify-context-center">
         <DataTable :value="$store.getters.order_detail" :row="10">
           <template #empty>
             <p class="p-0 m-0 text-center"><em style="color: #3A1078;">-- ไม่มีรายการสั่ง --</em></p>
@@ -57,11 +57,30 @@
           <Column header="ราคา" style="width: 30%;">
             <template #body="item">
               {{ item.data.price }}
+              
             </template>
           </Column>
+          
         </DataTable>
+
+        <Button label="ยืนยันการสั่งออเดอร์" icon="pi pi-external-link" @click="visible = true" style="width: -webkit-fill-available;" />
+        <Dialog v-model:visible="visible"  header="ยอดเงินที่ต้องชำระ">
+            <div class="flex justify-content-center">
+              <label style="font-size: 35px;text-align: center; text-align: center;">{{ $store.getters.order_total }} บาท</label>
+            </div>
+            <template #footer>
+                <Button label="ปิด" icon="pi pi-times" @click="visible = false" text />
+                <Button label="กดเพื่อแนบสลิปชำระเงิน" @click="confirm()"  icon="pi pi-check" autofocus  />
+            </template>
+        </Dialog>
       </div>
+
+      
+
       <div class="col-12">
+
+      
+       
 
         <Dialog v-model:visible="DialogPayment" header="ชำระเงิน">
           <TabView>
@@ -75,8 +94,11 @@
                 <div class="field">
                   <Image :src="require('../../assets/QRdekrub.jpg')" :preview="true" width="300"
                     v-if="img_preview === null" />
-                  <!-- <FileUpload mode="basic" :auto="true" chooseLabel="แนบรูปภาพหลักฐานการโอน" uploadIcon="pi pi-paperclip"
-                    @change="SetImage" :customUpload="true" v-if="img_preview === null" /> -->
+                  <!-- <label v-if="!img_preview" class="file-input-label">
+                    <FileUpload mode="basic" :auto="true" chooseLabel="แนบรูปภาพหลักฐานการโอน" uploadIcon="pi pi-paperclip"
+                    class="input-image" @change="SetImage"/>
+                  </label> -->
+                  
                   <label v-if="!img_preview" class="file-input-label">
                     <span>แนบรูป</span>
                     <input type="file" class="input-image" @change="SetImage" />
@@ -95,7 +117,7 @@
           </TabView>
           <template #footer>
             <Button label="ปิด" icon="pi pi-times" @click="clearData()" text />
-            <Button label="ยืนยันการชำระเงิน" icon="pi pi-check" @click="confirm()" autofocus />
+            <Button label="ยืนยันการชำระเงิน" icon="pi pi-check" @click="moneySlip()" autofocus />
           </template>
         </Dialog>
 
@@ -118,8 +140,11 @@ export default {
     return { product };
   },
   data: () => ({
+    visible:false,
+
     slip_img: null,
     DialogPayment: false,
+   
 
     img_preview: null,
     img_upload: [],
@@ -166,9 +191,9 @@ export default {
       this.img_preview = event.files[0].objectURL;
     },
 
-    calFinal() {
-      this.DialogPayment = true;
-    },
+    // calFinal() {
+    //   this.DialogPayment = true;
+    // },
 
     SetImage(e) {
       const file = e.target.files;
@@ -186,6 +211,7 @@ export default {
 
 
     async confirm() {
+      this.DialogPayment = true;
       this.loading = true;
       if (this.img_upload) {
         const data = {
@@ -197,7 +223,7 @@ export default {
           product_detail: this.$store.getters.order,
           picture: this.img_upload,
         }
-        // console.log(data)
+        console.log(data)
         await this.product.PreOrder(data).then(async (result) => {
           if (result) {
             console.log(result);
@@ -212,6 +238,12 @@ export default {
       }
     },
 
+    async moneySlip(){
+      this.DialogPayment = false;
+      this.visible = false;
+      alert('ชำระเงินเรียบร้อย')
+    }
+
   }
 };
 </script>
@@ -220,9 +252,7 @@ export default {
 .card-oder {
   border-radius: 16px;
   max-width: 100%;
-  /* ขยาย card ให้เต็มขนาดของ container */
   margin: 0 auto;
-  /* จัดตำแหน่งกลาง */
 }
 
 .top {
