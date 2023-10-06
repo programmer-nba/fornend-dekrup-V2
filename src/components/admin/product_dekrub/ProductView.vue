@@ -116,18 +116,38 @@ export default {
     const displayDialog = ref(false); // สำหรับควบคุมการแสดง/ซ่อน Dialog
 
     const getData = async () => {
-      try {
-        const response = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/list`, {
-          headers: {
-            "token": `${localStorage.getItem("token")}`,
-          },
-        });
+  try {
+    const productResponse = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/list`, {
+      headers: {
+        "token": `${localStorage.getItem("token")}`,
+      },
+    });
 
-        item_product.value = response.data.data.reverse();
-      } catch (error) {
-        console.error(error);
+    const categoryResponse = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/category/list`, {
+      headers: {
+        "token": `${localStorage.getItem("token")}`,
+      },
+    });
+
+    const categories = {}; // สร้างอ็อบเจ็กต์เพื่อเก็บข้อมูลหมวดหมู่
+
+    // นำข้อมูลหมวดหมู่มาเก็บในอ็อบเจ็กต์ categories โดยใช้ _id เป็น key และ name เป็น value
+    categoryResponse.data.data.forEach(category => {
+      categories[category._id] = category.name;
+    });
+
+    // นำข้อมูลสินค้ามาแปลงหมวดหมู่จากรหัสเป็นชื่อ
+    item_product.value = productResponse.data.data.reverse().map(item => {
+      if (item.category && categories[item.category]) {
+        return { ...item, category: categories[item.category] };
       }
-    };
+      return item;
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 
     const editProduct = (product) => {
       // เรียกใช้งาน Component ProductDetail และส่งข้อมูลสินค้าที่จะแก้ไข
