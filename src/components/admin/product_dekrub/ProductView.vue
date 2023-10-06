@@ -25,22 +25,17 @@
         </div> -->
       </div>
 
-      <div class="col-12 lg:col-2 mt-2">
+      <div class="col-12 lg:col-4 mt-2">
         <div class="field">
           <div class="p-inputgroup">
             <span class="p-inputgroup-addon border-red-400" style="background-color: #C21010;">
               <i class="pi pi-search text-white"></i>
             </span>
-            <InputText v-model="search" class="w-full font z-0" placeholder="ค้นหาสินค้า เช่น ชื่อสินค้า " />
+            <InputText v-model="search" @keyup="searchDataAutomatically()" class="w-full font z-0" placeholder="ค้นหาสินค้า เช่น ชื่อสินค้า " />
           </div>
         </div>
       </div>
-      <div class="col-12 lg:col-1 mt-2">
-        <div class="field">
-          <Button label="Clear All" style="background-color: #BD1616;" class=" w-full border-red-400 z-0"
-            @click="refiltertype()" />
-        </div>
-      </div>
+     
       <div class="col-12 lg:col-2 mt-2">
         <div class="field">
           <Button label="Add product" style="background-color: #E60965;" class="border-red-400"
@@ -114,6 +109,27 @@ export default {
     const category = ref("");
     const selectedProduct = ref(null); // สำหรับเก็บข้อมูลสินค้าที่จะแก้ไข
     const displayDialog = ref(false); // สำหรับควบคุมการแสดง/ซ่อน Dialog
+
+
+
+const searchDataAutomatically = async () => {
+  try {
+    const response = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/list`, {
+      headers: {
+        token: `${localStorage.getItem("token")}`,
+      },
+      params: {
+        query: search.value, // ใช้ค่า search แทน this.search
+      },
+    });
+    item_product.value = response.data.data.filter(product => product.name.includes(search.value));
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    // เพิ่มการจัดการข้อผิดพลาดที่นี่
+  }
+};
+
+
 
     const getData = async () => {
   try {
@@ -217,6 +233,8 @@ export default {
       editProduct,
       selectedProduct,
       displayDialog,
+      searchDataAutomatically,
+
     };
   },
 };
