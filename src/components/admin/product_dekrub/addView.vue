@@ -171,7 +171,6 @@ export default {
         },
 
         async addProduct() {
-            this.isLoading = true;
 
             // ตรวจสอบว่ามีรูปภาพที่ถูกอัพโหลดหรือไม่
             if (!this.img_upload.length) {
