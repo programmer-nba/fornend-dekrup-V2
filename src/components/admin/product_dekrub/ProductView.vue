@@ -88,7 +88,7 @@
             <template #body="item">
               <Button icon="pi pi-pencil" class="p-button-rounded p-button-warning mr-2"
                 @click="editProduct(item.data)" />
-                <ProductDetail :product="selectedProduct" v-model:displayDialog="displayDialog" @save-edit="saveProduct" />
+              <ProductDetail :product="selectedProduct" v-model:displayDialog="displayDialog" @save-edit="saveProduct" />
             </template>
           </Column>
         </DataTable>
@@ -113,7 +113,7 @@ export default {
     const search = ref("");
     const category = ref("");
     const selectedProduct = ref(null); // สำหรับเก็บข้อมูลสินค้าที่จะแก้ไข
-  const displayDialog = ref(false); // สำหรับควบคุมการแสดง/ซ่อน Dialog
+    const displayDialog = ref(false); // สำหรับควบคุมการแสดง/ซ่อน Dialog
 
     const getData = async () => {
       try {
@@ -130,10 +130,10 @@ export default {
     };
 
     const editProduct = (product) => {
-    // เรียกใช้งาน Component ProductDetail และส่งข้อมูลสินค้าที่จะแก้ไข
-    selectedProduct.value = { ...product };
-    displayDialog.value = true;
-  };
+      // เรียกใช้งาน Component ProductDetail และส่งข้อมูลสินค้าที่จะแก้ไข
+      selectedProduct.value = { ...product };
+      displayDialog.value = true;
+    };
     const searchData = () => {
       if (search.value === "") {
         getData();
@@ -195,8 +195,8 @@ export default {
       numberFormat,
       numberFormatShort,
       editProduct,
- selectedProduct,
-    displayDialog,
+      selectedProduct,
+      displayDialog,
     };
   },
 };

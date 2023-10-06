@@ -74,4 +74,28 @@ export class Product {
 
     return data;
   }
+
+  //order
+  async PreOrder(packageData) {
+    let data;
+    const config = {
+      method: "post",
+      headers: {
+        token: this.#token,
+      },
+      url: `${this.#baseUrl}/product/order`,
+      data: packageData,
+    };
+    await axios(config)
+      .then((result) => {
+        if (result) {
+          data = result.data;
+        }
+      })
+      .catch((error) => {
+        data = error;
+      });
+
+    return data;
+  }
 }

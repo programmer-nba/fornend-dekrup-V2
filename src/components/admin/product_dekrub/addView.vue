@@ -219,33 +219,17 @@ export default {
         },
 
 
-        SetImages(e) {
-            const files = e.target.files;
+        SetImage(e) {
+            const file = e.target.files;
+            if (file) {
+                this.img_size = file[0].size;
 
-            if (this.img_upload.length + files.length > 3) {
-                this.dialog_img_warning = true;
-                return;
-            }
-
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                const fileSize = file.size;
-                if (fileSize > 500000) {
-                    this.dialog_img_warning = true;
-                    return;
-                }
                 const fileReader = new FileReader();
-                fileReader.readAsDataURL(file);
+                fileReader.readAsDataURL(file[0]);
                 fileReader.addEventListener("load", (event) => {
-                    this.imagePreviews.push(event.target.result);
-                });
-                this.img_upload.push(file);
-
-                if (this.img_upload.length > 3) {
-                    this.dialog_img_warning = true;
-                    this.removeImage(this.img_upload.length - 1);
-                    return;
-                }
+                    this.img_preview = event.target.result;
+                })
+                this.img_upload = file;
             }
         },
 
