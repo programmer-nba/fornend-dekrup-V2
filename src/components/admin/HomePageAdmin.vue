@@ -1,5 +1,5 @@
 <template>
-  <h1 class="text-center">ระบบจัดการ Dekrub-shop || Home Page Admin</h1>
+  <h1 class="text-center">ระบบจัดการ Dekrub-shop </h1>
   <div class="px-4 py-5 md:px-6 lg:px-8">
  
     <div class="grid mt-3">
