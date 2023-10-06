@@ -1,14 +1,14 @@
 import "./assets/main.css";
 
-import {createApp} from "vue";
+import { createApp } from "vue";
 
+import jwtDecode from "jwt-decode";
+import PrimeVue from "primevue/config";
 import App from "./App.vue";
 import router from "./router";
 import routerAdmin from "./router/admin";
 import routerMember from "./router/member";
 import store from "./store";
-import PrimeVue from "primevue/config";
-import jwtDecode from "jwt-decode";
 
 import "primeicons/primeicons.css"; //icons
 import "primevue/resources/primevue.min.css"; //core css
@@ -18,10 +18,10 @@ import "primevue/resources/themes/lara-light-purple/theme.css"; //theme
 import "primeflex/primeflex.css";
 
 // component PrimVue ตัวเสริมที่ใช้บ่อยๆ ให้อัพที่นี่
-import ToastService from "primevue/toastservice";
 import ConfirmationService from "primevue/confirmationservice";
 import ConfirmDialog from "primevue/confirmdialog";
 import Toast from "primevue/toast";
+import ToastService from "primevue/toastservice";
 // import Badge from "primevue/badge";
 import Button from "primevue/button";
 import Calendar from "primevue/calendar";
@@ -67,7 +67,7 @@ import Textarea from "primevue/textarea";
 import ConfirmPopup from "primevue/confirmpopup";
 import Editor from "primevue/editor";
 import OrganizationChart from "primevue/organizationchart";
-import JsonCSV from 'vue-json-csv';
+// import JsonCSV from 'vue-json-csv';
 
 const app = createApp(App);
 
@@ -139,6 +139,6 @@ app.component("SelectButton", SelectButton);
 app.component("OrganizationChart", OrganizationChart);
 app.component("Editor", Editor);
 app.component("ConfirmPopup", ConfirmPopup);
-app.component("downloadCsv", JsonCSV);
+// app.component("downloadCsv", JsonCSV);
 
 app.mount("#app");

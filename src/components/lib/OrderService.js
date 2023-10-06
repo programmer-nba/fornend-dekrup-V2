@@ -52,7 +52,7 @@ export class ConfirmService {
         return data;
     }
 
-    async CancelOrder(Data,_id){
+    async CancelOrder(_id){
         let data;
         const config = {
             method:'put',
@@ -60,9 +60,7 @@ export class ConfirmService {
             headers:{
                 'token': this.#token,
             },
-            url:`${this.#baseUrl}/order/member/new/cancel/${_id}`,
-            data:Data
-       
+            url:`${this.#baseUrl}/order/member/new/cancel/${_id}`,       
         }
         await axios(config).then(result=>{
             if(result){

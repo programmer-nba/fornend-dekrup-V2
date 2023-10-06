@@ -45,16 +45,12 @@
 
           <Button class="p-button-rounded p-button-danger p-button-icon" @click="showCancelConfirmation(item.data)"
             v-if="item.data.status[item.data.status.length - 1].status === 'รอตรวจสอบ' && item.data.status[0].status !== 'ยกเลิกออเดอร์' && item.data._id">
-            <i class="pi pi-ban"></i>
+            <i class="pi pi-times"></i>
           </Button>
-
-
 
 
         </template>
       </Column>
-
-
     </DataTable>
 
 
@@ -68,8 +64,6 @@
           @click="showImageModal = false" />
       </div>
     </Dialog>
-
-
 
 
   </div>
@@ -122,7 +116,6 @@ export default {
       return dayjs(date).locale("th").add(543, "year").format("DD/MMMM/YYYY");
     },
 
-
     hideDialog() {
       this.display = false;
       this.itemToCancel = null;
@@ -142,38 +135,52 @@ export default {
     },
 
     showCancelConfirmation(item) {
-      Swal.fire({
-        title: 'ยืนยันการยกเลิกออเดอร์?',
-        text: 'คุณต้องการยกเลิกออเดอร์นี้หรือไม่?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'ยืนยัน',
-        cancelButtonText: 'ยกเลิก',
-      }).then((result) => {
-        if (result.isConfirmed) {
-          this.confirmCancel(item);
-        }
-      });
-    },
+  Swal.fire({
+    title: 'ยืนยันการยกเลิกออเดอร์?',
+    text: 'คุณต้องการยกเลิกออเดอร์นี้หรือไม่?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'ยืนยัน',
+    cancelButtonText: 'ปิด',
+    confirmButtonColor: '#C70039', // กำหนดสีของปุ่มยืนยัน
+    cancelButtonColor: '#96B6C5', // กำหนดสีของปุ่มยกเลิก
+  }).then((result) => {
+    if (result.isConfirmed) {
+      this.confirmCancel(item);
+    }
+  });
+},
+
 
     async confirmCancel(itemData) {
       if (itemData && itemData._id) {
+        console.log("ข้อมูลที่จะถูกส่งไปยัง API สำหรับยกเลิกออเดอร์:", itemData);
+
         try {
-          await this.OrderService.CancelOrder(itemData._id);
+          const response = await this.OrderService.CancelOrder(itemData._id);
 
-          const index = this.member.findIndex((memberItem) => memberItem._id === itemData._id);
+          if (response) {
+            console.log("API ตอบกลับ:", response);
 
-          if (index !== -1) {
-            this.member[index].status[0].status = 'ยกเลิกออเดอร์';
+            const index = this.member.findIndex((memberItem) => memberItem._id === itemData._id);
+
+            if (index !== -1) {
+              this.member[index].status[0].status = 'ยกเลิกออเดอร์';
+
+              // ลบรายการที่ถูกยกเลิกออเดอร์ออกจาก this.member
+              this.member.splice(index, 1);
+            }
+
+            Swal.fire({
+              title: 'ยกเลิกสำเร็จ!',
+              text: 'ออเดอร์ได้รับการยกเลิกเรียบร้อยแล้ว',
+              icon: 'success',
+              showConfirmButton: false,
+              timer: 1500,
+            });
+          } else {
+            console.error("API ตอบกลับไม่ถูกต้อง");
           }
-
-          Swal.fire({
-            title: 'ยกเลิกสำเร็จ!',
-            text: 'ออเดอร์ได้รับการยกเลิกเรียบร้อยแล้ว',
-            icon: 'success',
-            showConfirmButton: false,
-            timer: 1500,
-          });
         } catch (error) {
           console.error("เกิดข้อผิดพลาดในการยกเลิกออเดอร์:", error);
           Swal.fire({
@@ -188,9 +195,6 @@ export default {
     },
 
 
-
-
-
     async getOrder() {
       try {
         const result = await this.OrderService.GetOrder();
@@ -200,7 +204,7 @@ export default {
 
           if (this.name !== '') {
             this.getorder = this.order.filter(
-              (item) => item.servicename === this.name
+              (item) => item.servicename === this.name && item.status[item.status.length - 1].status !== 'ยกเลิกออเดอร์'
             );
             this.member = this.getorder.reverse();
           }
@@ -213,19 +217,6 @@ export default {
         this.$toast.add({ severity: 'error', summary: 'ผิดพลาด', detail: err.response?.data?.message || 'เกิดข้อผิดพลาดในการเรียก API', life: 3000 });
       }
     },
-
-
-    getImage(item) {
-      if (typeof item === 'string') {
-        return `https://drive.google.com/uc?export=view&id=${item}`;
-      } else if (Array.isArray(item) && item.length > 0) {
-        const firstImageId = item[0];
-        return `https://drive.google.com/uc?export=view&id=${firstImageId}`;
-      } else {
-        return "";
-      }
-    },
-
 
     async confirmOrder(item) {
       this.isLoading = true;
@@ -253,6 +244,16 @@ export default {
       }
     },
 
+    getImage(item) {
+      if (typeof item === 'string') {
+        return `https://drive.google.com/uc?export=view&id=${item}`;
+      } else if (Array.isArray(item) && item.length > 0) {
+        const firstImageId = item[0];
+        return `https://drive.google.com/uc?export=view&id=${firstImageId}`;
+      } else {
+        return "";
+      }
+    },
 
     openImageModal(imageUrl) {
       this.selectedImage = imageUrl;

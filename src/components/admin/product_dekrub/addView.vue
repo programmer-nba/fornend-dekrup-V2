@@ -96,8 +96,8 @@
 <script>
 import axios from "axios";
 import Swal from 'sweetalert2';
-import { Product } from "../../../service/product";
 import { ref } from "vue";
+import { Product } from "../../../service/product";
 
 export default {
     name: "addView",
