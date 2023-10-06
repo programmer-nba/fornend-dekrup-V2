@@ -128,6 +128,7 @@
     </Dialog>
   </div>
 </template>
+
 <script>
 import axios from "axios";
 import dayjs from "dayjs";
@@ -174,18 +175,24 @@ export default {
       this.member = this.members.reverse();
     },
 
-
     searchData() {
-      if (this.search !== "") {
-        this.member = this.members.filter(
-          (el) =>
-            el.member_name.search(this.search) !== -1 ||
-            el.member_username.search(this.search) !== -1
-        );
-      } else {
-        this.member = this.members;
-      }
-    },
+  if (this.search !== "") {
+    this.member = this.members.filter((el) => {
+      // ตรวจสอบค่าที่ไม่ใช่ string
+      const memberName = el.member_name || '';
+      const memberUsername = el.member_username || '';
+      
+      return (
+        memberName.toString().toLowerCase().includes(this.search.toLowerCase()) ||
+        memberUsername.toString().toLowerCase().includes(this.search.toLowerCase())
+      );
+    });
+  } else {
+    this.member = this.members;
+  }
+},
+
+
 
     openD(member) {
       this.memberDialog = true;

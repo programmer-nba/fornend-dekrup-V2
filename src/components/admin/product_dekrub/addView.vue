@@ -2,29 +2,34 @@
     <div v-if="isLoading" class="loading-overlay">
         <div class="loader"></div>
     </div>
-    <div >
+    <div>
         <div class="grid px-3">
             <div class="col-12 lg:col-12 mt-2">
                 <Panel class="custom-header-panel">
                     <template #header>เกี่ยวกับสินค้า</template>
-                    <div class="grid ">
-                       
-                        <div v-for="(preview, index) in imagePreviews" :key="index" >
-                            <Image :src="preview" width="200" height="200" />
-                            <button @click="removeImage(index)">ลบรูป</button>
-                       
-                        </div>
-                        <div class="col-12 text-center">
-                            <div class="justify-content-center"
-                                style="display: flex; flex-direction: row; flex-wrap: nowrap;">
-                                <label class="file-input-label">
-                                    <span>เลือกรูปหน้าปก</span>
-                                    <input type="file" class="input-image" @change="SetImages" multiple />
-                                </label>
 
+                    <div class="grid ">
+                        <div class="col-12">
+                            <div class="flex justify-content-center">
+                                <div v-for="(preview, index) in imagePreviews" :key="index" class=" ">
+                                    <Image :src="preview" width="200" height="200" class="mr-2" />
+                                    <div class="col-12">
+                                        <Button @click="removeImage(index)" class="p-button-danger p-mt-2">ลบรูป</Button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="flex justify-content-center ">
+                                <label for="file" class="p-button p-button-secondary">
+                                    <span>เลือกรูปหน้าปก</span>
+                                </label>
+                                <input id="file" type="file" @change="SetImages" multiple class="p-d-none" />
                             </div>
                         </div>
                     </div>
+
+
 
                     <div class="grid">
                         <div class="col-12 lg:col-6">
@@ -48,7 +53,7 @@
                             <div class="field">
                                 <label>ราคาทุน :</label>
                                 <InputNumber v-model="cost" class="w-full" inputClass="font" placeholder="กรอกราคาทุนสินค้า"
-                                    mode="decimal" :minFractionDigits="2" :maxFractionDigits="2" :disabled="isDisabled" />
+                                    mode="decimal" :disabled="isDisabled" />
                             </div>
                         </div>
 
@@ -56,8 +61,7 @@
                             <div class="field">
                                 <label>ราคาขาย :</label>
                                 <InputNumber v-model="price" class="w-full" inputClass="font"
-                                    placeholder="กรอกราคาขายสินค้า" mode="decimal" :minFractionDigits="2"
-                                    :maxFractionDigits="2" :disabled="isDisabled" />
+                                    placeholder="กรอกราคาขายสินค้า" mode="decimal" :disabled="isDisabled" />
                             </div>
                         </div>
 
@@ -65,10 +69,11 @@
                             <div class="field">
                                 <label>จำนวนสินค้าในสต๊อก<small>(ชิ้น)</small> :</label>
                                 <InputNumber v-model="quantity" class="w-full" inputClass="font"
-                                    placeholder="กรอกจำนวนสินค้าในสต๊อก" mode="decimal" :minFractionDigits="2"
-                                    :maxFractionDigits="2" :disabled="isDisabled" />
+                                    placeholder="กรอกจำนวนสินค้าในสต๊อก" mode="decimal" :disabled="isDisabled" />
                             </div>
                         </div>
+
+
                         <div class="col-12">
                             <div class="field">
                                 <label>รายละเอียดสินค้า</label>
@@ -105,10 +110,10 @@ export default {
         Product,
     },
     setup() {
-        const isLoading = ref(false); 
+        const isLoading = ref(false);
 
         const product = new Product();
-        return { product, isLoading  }
+        return { product, isLoading }
     },
     data: () => ({
         loading: false,
@@ -166,7 +171,7 @@ export default {
         },
 
         async addProduct() {
-            this.isLoading = true; 
+            this.isLoading = true;
 
             // ตรวจสอบว่ามีรูปภาพที่ถูกอัพโหลดหรือไม่
             if (!this.img_upload.length) {
@@ -214,24 +219,34 @@ export default {
                 this.loading = false;
                 Swal.fire('เกิดข้อผิดพลาด', 'เกิดข้อผิดพลาดในการเพิ่มสินค้า', 'error');
             } finally {
-                this.isLoading = false; 
+                this.isLoading = false;
             }
         },
 
+        SetImages(e) {
+            const files = e.target.files;
 
-        SetImage(e) {
-            const file = e.target.files;
-            if (file) {
-                this.img_size = file[0].size;
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const fileSizeInBytes = file.size;
+                const maxSizeInBytes = 5000000; // 1 MB
+
+                if (fileSizeInBytes > maxSizeInBytes) {
+                    Swal.fire('แจ้งเตือน', 'ขนาดของรูปภาพใหญ่เกินกำหนด (มากกว่า 5 MB)', 'warning');
+                    return;
+                }
 
                 const fileReader = new FileReader();
-                fileReader.readAsDataURL(file[0]);
+                fileReader.readAsDataURL(file);
+
                 fileReader.addEventListener("load", (event) => {
-                    this.img_preview = event.target.result;
-                })
-                this.img_upload = file;
+                    this.imagePreviews.push(event.target.result);
+                });
+
+                this.img_upload.push(file);
             }
         },
+
 
         removeImage(index) {
             this.imagePreviews.splice(index, 1);
@@ -259,6 +274,72 @@ export default {
     background-color: #FFFDE3;
     color: #C21010;
     border: none;
+}
+
+
+.container {
+    height: 300px;
+    width: 300px;
+    border-radius: 10px;
+    box-shadow: 4px 4px 30px rgba(0, 0, 0, .2);
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    gap: 5px;
+    background-color: rgba(0, 110, 255, 0.041);
+}
+
+.header {
+    flex: 1;
+    width: 100%;
+    border: 2px dashed royalblue;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.header svg {
+    height: 100px;
+}
+
+.header p {
+    text-align: center;
+    color: black;
+}
+
+.footer {
+    background-color: rgba(0, 110, 255, 0.075);
+    width: 100%;
+    height: 40px;
+    padding: 8px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    color: black;
+    border: none;
+}
+
+.footer svg {
+    height: 130%;
+    fill: royalblue;
+    background-color: rgba(70, 66, 66, 0.103);
+    border-radius: 50%;
+    padding: 2px;
+    cursor: pointer;
+    box-shadow: 0 2px 30px rgba(0, 0, 0, 0.205);
+}
+
+.footer p {
+    flex: 1;
+    text-align: center;
+}
+
+#file {
+    display: none;
 }
 
 .loading-overlay {
@@ -293,3 +374,4 @@ export default {
     }
 }
 </style>
+

@@ -1,4 +1,7 @@
 <template>
+  <div v-if="isLoading" class="">
+    <span class="loader"></span>
+  </div>
   <div class="grid p-fluid px-3 justify-content-center">
     <div class="col-12 md:col-4">
       <div class="p-inputgroup">
@@ -14,8 +17,7 @@
           <i class="pi pi-calendar text-white"></i>
         </span>
         <Calendar inputId="range" class="z-0" selectionMode="single" :manualInput="false" :showButtonBar="true"
-          :value="selectedDate" @input="handleDateChange" />
-
+          :value="selectedDate"  />
 
       </div>
     </div>
@@ -61,9 +63,9 @@
         <Button icon="pi pi-print" label="พิมพ์ใบส่งสินค้า"
           class="p-button-outlined p-button-sm text-sm text-teal-300 mr-2" @click="showDialog(rowData)" />
 
-        <Button class="p-button-rounded p-button-warning p-button-icon mr-2" @click="confirmOrder(rowData.data)"
+        <Button class=" p-button-success p-button-icon mr-2" @click="confirmOrder(rowData.data)"
           v-if="rowData.data.status[rowData.data.status.length - 1].status === 'รอตรวจสอบ' && rowData.data.status[0].status !== 'ยืนยันออเดอร์'">
-          <i class="pi pi-check"></i> <!-- ไอคอนถูก -->
+          <i class="pi pi-check"></i>
         </Button>
 
         <Button class=" p-button-danger p-button-icon" @click="showCancelConfirmation(rowData.data)"
@@ -87,7 +89,6 @@
 
 <script>
 import { ConfirmOrder } from '@/components/lib/order';
-import dayjs from "dayjs";
 import "dayjs/locale/th";
 import Swal from 'sweetalert2';
 
@@ -108,26 +109,25 @@ export default {
     });
 
     const getOrder = async () => {
+      isLoading.value = true; 
+
       try {
         const result = await Order.GetOrder();
 
         if (result && result.data) {
-          orders.value = result.data;
+          // กรองรายการที่ไม่มีสถานะเป็น 'ยกเลิกออเดอร์'
+          orders.value = result.data.filter(
+            (item) => item.status[item.status.length - 1].status !== 'ยกเลิกออเดอร์'
+          );
         } else {
           console.error("API response is missing data property.");
         }
       } catch (err) {
         console.error("Error while fetching orders:", err);
+      } finally {
         isLoading.value = false;
-        Swal.fire({
-          title: 'ผิดพลาด!',
-          text: err.response?.data?.message || 'เกิดข้อผิดพลาดในการเรียก API',
-          icon: 'error',
-          timer: 3000,
-        });
       }
     };
-
 
 
     const showDialog = (rowData) => {
@@ -163,25 +163,26 @@ export default {
     };
 
     const confirmOrder = async (item) => {
-      isLoading.value = true;
+  isLoading.value = true;
 
-      if (item.status && item.status.length > 0 && item.status[0].status === 'รอตรวจสอบ') {
-        try {
-          await Order.ConfirmOrder(item._id);
-          item.status[0].status = 'ยืนยันออเดอร์';
-          isLoading.value = false;
-          showSuccessAlert();
-        } catch (error) {
-          console.error("เกิดข้อผิดพลาดในการยืนยันออเดอร์:", error);
-          isLoading.value = false;
-        }
-      } else {
-        console.error("ข้อมูลไม่ถูกต้อง");
-        isLoading.value = false;
-      }
-    };
+  if (item.status && item.status.length > 0 && item.status[0].status === 'รอตรวจสอบ') {
+    try {
+      const response = await Order.ConfirmOrder(item._id);
+      console.log("ข้อมูลที่รับมาจาก API:", response); // เพิ่มบรรทัดนี้
 
+      item.status[0].status = 'ยืนยันออเดอร์';
 
+      showSuccessAlert();
+    } catch (error) {
+      console.error("เกิดข้อผิดพลาดในการยืนยันออเดอร์:", error);
+    } finally {
+      isLoading.value = false;
+    }
+  } else {
+    console.error("ข้อมูลไม่ถูกต้อง");
+    isLoading.value = false;
+  }
+};
 
 
     const showCancelConfirmation = (itemData) => {
@@ -200,47 +201,49 @@ export default {
     };
 
     const confirmCancel = async (itemData) => {
-  if (itemData && itemData._id) {
-    console.log("ข้อมูลที่จะถูกส่งไปยัง API สำหรับยกเลิกออเดอร์:", itemData);
+      isLoading.value = true;
 
-    try {
-      const response = await Order.CancelOrder(itemData._id);
+      if (itemData && itemData._id) {
+        console.log("ข้อมูลที่จะถูกส่งไปยัง API สำหรับยกเลิกออเดอร์:", itemData);
 
-      if (response) {
-        console.log("API ตอบกลับ:", response);
+        try {
+          const response = await Order.CancelOrder(itemData._id);
 
-        const index = orders.value.findIndex((orderItem) => orderItem._id === itemData._id);
+          if (response) {
+            console.log("API ตอบกลับ:", response);
 
-        if (index !== -1) {
-          orders.value.splice(index, 1); // ลบข้อมูลที่ถูกยกเลิกออกจาก orders array
+            const index = orders.value.findIndex((orderItem) => orderItem._id === itemData._id);
+
+            if (index !== -1) {
+              orders.value.splice(index, 1); 
+            }
+
+            Swal.fire({
+              title: 'ยกเลิกสำเร็จ!',
+              text: 'ออเดอร์ได้รับการยกเลิกเรียบร้อยแล้ว',
+              icon: 'success',
+              showConfirmButton: false,
+              timer: 1500,
+            });
+          } else {
+            console.error("API ตอบกลับไม่ถูกต้อง");
+          }
+        } catch (error) {
+          console.error("เกิดข้อผิดพลาดในการยกเลิกออเดอร์:", error);
+          Swal.fire({
+            title: 'เกิดข้อผิดพลาด!',
+            text: 'ไม่สามารถยกเลิกออเดอร์ได้ในขณะนี้',
+            icon: 'error',
+          });
+        } finally {
+          isLoading.value = false;
         }
-
-        Swal.fire({
-          title: 'ยกเลิกสำเร็จ!',
-          text: 'ออเดอร์ได้รับการยกเลิกเรียบร้อยแล้ว',
-          icon: 'success',
-          showConfirmButton: false,
-          timer: 1500,
-        });
       } else {
-        console.error("API ตอบกลับไม่ถูกต้อง");
+        console.error("ข้อมูลไม่ถูกต้องหรือไม่มีคุณสมบัติ _id");
+        isLoading.value = false;
+
       }
-    } catch (error) {
-      console.error("เกิดข้อผิดพลาดในการยกเลิกออเดอร์:", error);
-      Swal.fire({
-        title: 'เกิดข้อผิดพลาด!',
-        text: 'ไม่สามารถยกเลิกออเดอร์ได้ในขณะนี้',
-        icon: 'error',
-      });
-    }
-  } else {
-    console.error("ข้อมูลไม่ถูกต้องหรือไม่มีคุณสมบัติ _id");
-  }
-};
-
-
-
-
+    };
 
     const getStatusColor = (statusArray) => {
       const latestStatus = statusArray[statusArray.length - 1];
@@ -255,6 +258,7 @@ export default {
     };
 
     return {
+      isLoading,
       orders,
       showDialog,
       closeDialog,
@@ -310,6 +314,37 @@ export default {
   margin-top: 1.5rem;
   border-radius: 40px;
 }
+.loader {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        position: relative;
+        animation: rotate 1s linear infinite
+      }
+      .loader::before , .loader::after {
+        content: "";
+        box-sizing: border-box;
+        position: absolute;
+        inset: 0px;
+        border-radius: 50%;
+        border: 5px solid #FFF;
+        animation: prixClipFix 2s linear infinite ;
+      }
+      .loader::after{
+        transform: rotate3d(90, 90, 0, 180deg );
+        border-color: #FF3D00;
+      }
+
+      @keyframes rotate {
+        0%   {transform: rotate(0deg)}
+        100%   {transform: rotate(360deg)}
+      }
+
+      @keyframes prixClipFix {
+          0%   {clip-path:polygon(50% 50%,0 0,0 0,0 0,0 0,0 0)}
+          50%  {clip-path:polygon(50% 50%,0 0,100% 0,100% 0,100% 0,100% 0)}
+          75%, 100%  {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,100% 100%,100% 100%)}
+      }
 </style>
 
 

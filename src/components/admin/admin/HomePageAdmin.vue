@@ -2,6 +2,7 @@
   <div>
     <NavberAdmin />
     <router-view /> <!-- ส่วนของเนื้อหาหน้า HomePageAdmin ไว้ที่นี่ -->
+    
   </div>
   </template>
 

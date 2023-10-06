@@ -135,21 +135,21 @@ export default {
     },
 
     showCancelConfirmation(item) {
-  Swal.fire({
-    title: 'ยืนยันการยกเลิกออเดอร์?',
-    text: 'คุณต้องการยกเลิกออเดอร์นี้หรือไม่?',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonText: 'ยืนยัน',
-    cancelButtonText: 'ปิด',
-    confirmButtonColor: '#C70039', // กำหนดสีของปุ่มยืนยัน
-    cancelButtonColor: '#96B6C5', // กำหนดสีของปุ่มยกเลิก
-  }).then((result) => {
-    if (result.isConfirmed) {
-      this.confirmCancel(item);
-    }
-  });
-},
+      Swal.fire({
+        title: 'ยืนยันการยกเลิกออเดอร์?',
+        text: 'คุณต้องการยกเลิกออเดอร์นี้หรือไม่?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'ยืนยัน',
+        cancelButtonText: 'ปิด',
+        confirmButtonColor: '#C70039', // กำหนดสีของปุ่มยืนยัน
+        cancelButtonColor: '#96B6C5', // กำหนดสีของปุ่มยกเลิก
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.confirmCancel(item);
+        }
+      });
+    },
 
 
     async confirmCancel(itemData) {

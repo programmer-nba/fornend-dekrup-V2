@@ -9,6 +9,7 @@
     "deploy:production": "scp -r dist/* root@143.198.207.85:/var/www/shop.dekrubshop.com"
   },
   "dependencies": {
+    "@uiball/loaders": "^1.3.0",
     "@vue/cli-plugin-router": "^5.0.8",
     "@vueup/vue-quill": "^1.2.0",
     "axios": "^1.5.1",
