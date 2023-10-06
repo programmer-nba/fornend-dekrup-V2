@@ -1,7 +1,7 @@
 <template>
    
     <div class="size-datatable">
-        <DataTable :key="index" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]" tableStyle="min-width: 50rem" :value="dataTableData" style="-webkit-text-stroke: 1px;">
+        <DataTable :key="index" paginator :rows="10" :rowsPerPageOptions="[ 10, 20, 30, 50]" tableStyle="min-width: 50rem" :value="dataTableData" style="-webkit-text-stroke: 1px;">
         <!-- <Column field="_id" header="ไอดี" ></Column> -->
             <Column field="member_number" header="สมาชิก" ></Column>
             <Column field="commission" header="ค่าคอมมิชชั่น"></Column>
@@ -10,9 +10,6 @@
             <Column field="from_member" header="ค่าคอมมิชชั่นจากผู้ใช้"></Column>
             <Column field="date_comisstion" header="วันที่ทำรายการ"></Column>
         </DataTable>
-
-
-
             <v-row>
                 <v-col cols="12" >
                     <p class="text-center"><em>--ไม่มีรายการ--</em></p>
@@ -55,28 +52,33 @@ export default {
   },
 
 
-created() {
+  created() {
+  // ดึงข้อมูล commission จาก API
   axios.get(`${process.env.VUE_APP_DEKRUP}/commission/week`, {
     headers: {
       'token': localStorage.getItem('token'),
     },
   })
   .then((response) => {
-    this.dataTableData = response.data.data.map(item => ({
-    //   _id: item._id,
-      member_number:  item.data[0].member_number ,
-      commission: item.data[0].commission,
-      vat3percent:  item.data[0].vat3percent ,
-      remainding_commission:  item.data[0].remainding_commission ,
-      from_member: item.from_member, 
-      date_comisstion: this.dateformat(item.createdAt ),
-
-    }));
+    const loggedInMemberNumber = "DK96900000001"; // ค่า "member_number" ของสมาชิกที่ล็อกอิน เปลี่ยนเป็นค่าที่เหมาะสมตามการล็อกอินจริง
+    this.dataTableData = response.data.data
+      .filter(item => item.data[0].member_number === loggedInMemberNumber)
+      .map(item => ({
+        member_number:  item.data[0].member_number,
+        commission: item.data[0].commission,
+        vat3percent:  item.data[0].vat3percent,
+        remainding_commission:  item.data[0].remainding_commission,
+        from_member: item.from_member,
+        date_comisstion: this.dateformat(item.createdAt),
+      }));
   })
   .catch((error) => {
     console.error(error);
   });
 },
+
+
+
 
 
 };

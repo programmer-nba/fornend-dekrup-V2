@@ -7,14 +7,20 @@
         </div>
         <div class="grid ml-2">
             <div class="col-12 lg:col-6">
-                <Panel header="ข้อมูลทั่วไป" class="custom-header-panel">
-                    <p><strong>ยูสเซอร์เนม :</strong></p>
-                    <Divider type="dashed"></Divider>
+                <Panel header="ข้อมูลทั่วไป" class="custom-header-panel font-profile">
+                    <p><strong>ยูสเซอร์เนม : </strong>{{ username }}</p>
+                    <p><strong>รหัสสมาชิก : </strong>{{ member_number }}</p>
                     <p><strong>ชื่อ-นามสกุล :</strong> {{ name }}</p>
-                    <Divider type="dashed"></Divider>
-                    <p><strong>เบอร์โทร : </strong></p>
-                    <Divider type="dashed"></Divider>
-
+                    <p><strong>เบอร์โทร : </strong>{{ tel }}</p>
+                    <p><strong>ที่อยู่ : </strong>{{ address }} {{ subdistrict }} {{ district }} {{ province }} {{ postcode }}</p>
+                    <p><strong>รายได้ค่าคอมมิชชั่น : </strong>{{ commission_day }}</p>
+                    <p><strong>รายได้ค่าบริหาร : </strong>{{ commission_week }}</p>
+                    <p><strong>สถานะผู้ใช้ : </strong>{{ position }}</p>
+                  
+                 
+                    
+                    
+                    
                 </Panel>
             </div>
             <div class="col-12 lg:col-6">
@@ -72,14 +78,36 @@ export default ({
                 const decode = await jwtDecode(localStorage.getItem("token"));
                 const data_login = {
                     logedIn: true,
-                    position: res.data.data.position,
+                    username:res.data.data.username,
                     name: res.data.data.name,
+                    member_number: res.data.data.member_number,
+                    tel: res.data.data.tel,
+                    address: res.data.data.address,
+                    subdistrict: res.data.data.subdistrict,
+                    district: res.data.data.district,
+                    province: res.data.data.province,
+                    postcode: res.data.data.postcode,
+                    commission_day: res.data.data.commission_day,
+                    commission_week: res.data.data.commission_week,
+                    position: res.data.data.position,
+
                     id: decode._id,
                 };
                 this.$store.commit("setLogin", data_login);
                 this.$store.commit('setLoading', false);
                 console.log(data_login);
                 this.name = data_login.name;
+                this.username = data_login.username;
+                this.member_number = data_login.member_number;
+                this.tel = data_login.tel;
+                this.address = data_login.address;
+                this.subdistrict = data_login.subdistrict;
+                this.district = data_login.district;
+                this.province = data_login.province;
+                this.postcode = data_login.postcode;
+                this.commission_day = data_login.commission_day;
+                this.commission_week = data_login.commission_week;
+                this.position = data_login.position;
             })
             .catch(() => {
                 localStorage.clear();
@@ -91,6 +119,17 @@ export default ({
 
     data: () => ({
         name: '',
+        username:'',
+        member_number:'',
+        tel:'',
+        address:'',
+        subdistrict:'',
+        district:'',
+        province:'',
+        postcode:'',
+        commission_day:'',
+        commission_week:'',
+        position:'',
 
         password: null,
         confirm_password: null,
@@ -143,6 +182,9 @@ export default ({
     border: none;
 }
 
+.font-profile{
+    -webkit-text-stroke: 1px;color: rgb(95, 93, 93);
+}
 /* .custom-header-panel .p-panel-content {
     color: #FE0000;
 } */

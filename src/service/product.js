@@ -98,4 +98,29 @@ export class Product {
 
     return data;
   }
+
+
+  //image slip
+  async MoneySlip(_id){
+    let data;
+    const config = {
+        method:'put',
+        maxBodyLength: Infinity,
+        headers:{
+            'token': this.#token,
+        },
+        url:`${this.#baseUrl}/product/order/updatepicture/${_id}`, 
+        data: packageData,      
+    }
+    await axios(config).then(result=>{
+        if(result){
+            data = result.data;
+        }
+    })
+    .catch(error=>{
+        data = error
+    })
+
+    return data;
+}
 }

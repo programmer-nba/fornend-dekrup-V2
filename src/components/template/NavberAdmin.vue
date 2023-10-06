@@ -1,11 +1,11 @@
 <template>
     <div class="grid mb-3" style="background: red;">
-        <div class="lg:col-9 md:col-6 col-6">
+        <div class="lg:col-10 md:col-6 col-6">
             <Menubar :model="item_manu"
                 class="custom-menu  border-round-3xl p-0 mt-2 w-auto hover:border-2 hover:border-purple-900 flex align-items-center justify-content-center bg-white">
             </Menubar>
         </div>
-        <div class="lg:col-3 md:col-6 col-6 mt-2 flex justify-content-end px-3">
+        <div class="lg:col-2 md:col-6 col-6 mt-2 flex justify-content-end px-3">
             <Button class="p-button-danger z-0" label="ออกจากระบบ" icon="pi pi-power-off" @click="logout()" />
         </div>
     </div>
