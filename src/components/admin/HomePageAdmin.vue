@@ -1,5 +1,5 @@
 <template>
-  <p>ระบบจัดการ Dekrub-shop || Home Page Admin</p>
+  <h1 class="text-center">ระบบจัดการ Dekrub-shop || Home Page Admin</h1>
   <div class="px-4 py-5 md:px-6 lg:px-8">
  
     <div class="grid mt-3">
@@ -60,43 +60,72 @@ import dayjs from 'dayjs';
 import { dateFormat } from '../lib/function';
 
 export default {
+  components: {},
   data() {
     return {
       thisDay: dateFormat(Date.now()),
-      todayOrderCount: 0,
       todayMemberCount: 0,
-      commissionDayData: 0,
+      todayOrderCount: 0, 
+      commissionDayData: 0, 
     };
   },
   async created() {
-    document.title = 'ระบบจัดการ Dekrub-shop';
+  document.title = 'ระบบจัดการ Dekrub-shop';
 
-    try {
-      // ทำการร้องขอ API เพื่อดึงข้อมูลออเดอร์ทั้งหมด
-      const orderResponse = await axios.get(`${process.env.VUE_APP_DEKRUP}/order/list`, {
-        headers: {
-          "token": localStorage.getItem("token"),
-        },
-      });
+  try {
+    // ทำการร้องขอ API เพื่อดึงข้อมูลจำนวนผู้สมัครจากวันนี้
+    const memberResponse = await axios.get(`${process.env.VUE_APP_DEKRUP}/order/member/new/list`, {
+      headers: {
+        "token": localStorage.getItem("token"),
+      },
+    });
 
-      if (orderResponse.status === 200) {
-        // นับจำนวนออเดอร์วันนี้
-        this.todayOrderCount = orderResponse.data.filter((item) => {
-          const orderDate = dayjs(item.timestamp).format('YYYY-MM-DD');
-          
-          // เปรียบเทียบว่า orderDate ตรงกับวันที่ปัจจุบัน
-          return orderDate === this.thisDay;
-        }).length;
-      } else {
-        console.error("Error fetching data. Status:", response.status);
-      }
-    } catch (error) {
-      console.error("Error fetching data:", error);
+    // ทำการร้องขอ API เพื่อดึงข้อมูลออเดอร์วันนี้
+    const orderResponse = await axios.get(`${process.env.VUE_APP_DEKRUP}/order/list`, {
+      headers: {
+        "token": localStorage.getItem("token"),
+      },
+    });
+
+    // ทำการร้องขอ API เพื่อดึงข้อมูลคอมมิชชั่นวันนี้
+    const commissionResponse = await axios.get(`${process.env.VUE_APP_DEKRUP}/commission/day`, {
+      headers: {
+        "token": localStorage.getItem("token"),
+      },
+    });
+
+    // ตรวจสอบความถูกต้องของข้อมูลที่รับมา
+    console.log("ข้อมูลสมาชิกสมัครวันนี้:", memberResponse.data);
+    console.log("ข้อมูลออเดอร์วันนี้:", orderResponse.data);
+    console.log("ข้อมูล Commission Day วันนี้:", commissionResponse.data);
+
+    if (memberResponse.status === 200 && orderResponse.status === 200 && commissionResponse.status === 200) {
+      const today = dayjs(); 
+
+      // นับจำนวนออเดอร์วันนี้
+      this.todayOrderCount = orderResponse.data.reduce((count, order) => {
+        const timestamp = dayjs(order.timestamp);
+
+        // ตรวจสอบว่า timestamp อยู่ในวันนี้
+        if (timestamp.isSame(today, 'day')) {
+          return count + 1;
+        }
+
+        return count;
+      }, 0);
+
+      // กำหนดค่าข้อมูลคอมมิชชั่นวันนี้
+      this.commissionDayData = commissionResponse.data;
+    } else {
+      console.error("Error fetching data. Status:", response.status);
     }
-  },
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+},
+
 };
 </script>
-
 
 
 <style>
