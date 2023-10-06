@@ -10,7 +10,7 @@
         <div class="flex flex-column align-items-center justify-content-center h-7rem text-900 border-round m-2"
           style="background-color: #ffae35; font-size: 20px">
           <label style="font-size: 20px">สินค้า/รายการ</label>
-          <div style="font-size: 20px">{{ orders.length }}</div>
+          <div style="font-size: 20px">{{ $store.getters.order_detail.length }}</div>
         </div>
       </div>
       <div class="col-6 md:col-6 lg:col-12 xl:col-6">
@@ -21,49 +21,49 @@
           <label style="font-size: 20px;background: #ffff;
                   border-radius: 15px;
                   color: red;
-                  padding: 2px;"><strong>{{ calculateTotal() }}</strong> บาท</label>
+                  padding: 2px;"><strong></strong>{{ $store.getters.order_total }} บาท</label>
 
-          <label style="font-size: 14px;color: #ffff;"><Button label="กดเพื่อชำระเงิน" link @click="visible = true"
+          <label style="font-size: 14px;color: #ffff;"><Button label="กดเพื่อชำระเงิน" link @click="calFinal()"
               style="color: #ffff;" /></label>
         </div>
       </div>
     </div>
     <div class="grid px-2">
-      <div class="col-12">
-        <DataTable :value="orders">
-          <Column header="รายการ">
-            <template #body="slotProps">
-              {{ slotProps.data.product.name }}
+      <div class="col-12 justify-context-center">
+        <DataTable :value="$store.getters.order_detail" :row="10">
+          <template #empty>
+            <p class="p-0 m-0 text-center"><em style="color: #3A1078;">-- ไม่มีรายการสั่ง --</em></p>
+          </template>
+          <Column header="รายการ" style="width: 30%;">
+            <template #body="item">
+              {{ item.index + 1 }}
             </template>
           </Column>
-          <Column header="ราคา">
-            <template #body="slotProps">
-              {{ slotProps.data.product.price }}
+          <Column header="รหัสสินค้า" style="width: 30%;">
+            <template #body="item">
+              {{ item.data.code }}
             </template>
           </Column>
-          <Column header="จำนวนสั่งซื้อ">
-            <template #body="slotProps">
-              {{ slotProps.data.quantity }}
+          <Column header="ประเภท" style="width: 30%;">
+            <template #body="item">
+              {{ item.data.category }}
             </template>
           </Column>
-          <Column header="ราคารวม">
-            <template #body="slotProps">
-              {{ slotProps.data.product.price * slotProps.data.quantity }}
+          <Column header="จำนวน" style="width: 30%;">
+            <template #body="item">
+              {{ item.data.quantity }}
             </template>
           </Column>
-          <Column>
-            <template #body="slotProps">
-              <div class="flex justify-content-start">
-                <DelProductMember class="px-2" />
-                <Button icon="pi pi-trash" severity="danger" rounded aria-label="Favorite"
-                  @click="deleteProduct(slotProps.data)" />
-
-              </div>
+          <Column header="ราคา" style="width: 30%;">
+            <template #body="item">
+              {{ item.data.price }}
             </template>
           </Column>
         </DataTable>
+      </div>
+      <div class="col-12">
 
-        <Dialog v-model="visible" modal header="ชำระเงิน">
+        <Dialog v-model:visible="DialogPayment" header="ชำระเงิน">
           <TabView>
             <TabPanel header="QR CODE">
               <p>
@@ -74,12 +74,13 @@
               <div class="flex justify-content-center">
                 <div class="field">
                   <Image :src="require('../../assets/QRdekrub.jpg')" :preview="true" width="300"
-                    v-if="slip_img === null" />
-                  <FileUpload mode="basic" :auto="true" chooseLabel="แนบรูปภาพหลักฐานการโอน" uploadIcon="pi pi-paperclip"
-                    @uploader="chooseImage" :customUpload="true" v-if="slip_img === null" />
-                  <!-- <FileUpload mode="basic" :auto="true" chooseLabel="แนบรูปภาพหลักฐานการโอน"
-                                uploadIcon="pi pi-paperclip"  :customUpload="true"
-                                /> -->
+                    v-if="img_preview === null" />
+                  <!-- <FileUpload mode="basic" :auto="true" chooseLabel="แนบรูปภาพหลักฐานการโอน" uploadIcon="pi pi-paperclip"
+                    @change="SetImage" :customUpload="true" v-if="img_preview === null" /> -->
+                  <label v-if="!img_preview" class="file-input-label">
+                    <span>แนบรูป</span>
+                    <input type="file" class="input-image" @change="SetImage" />
+                  </label>
                 </div>
                 <div class="text-center" v-if="img_preview !== null">
                   <div class="col-12 grid justify-content-center">
@@ -105,116 +106,112 @@
 
 
 <script>
-import { ref } from "vue";
-import { useStore } from "vuex";
-import DelProductMember from "@/components/member/DelOrderProductMember.vue";
-
 import Dialog from 'primevue/dialog';
-
-const visible = ref(false);
-
-
+import { Product } from '../../service/product';
+import axios from 'axios';
 export default {
   components: {
-    DelProductMember,
     Dialog
   },
   setup() {
-    // const item_product = ref([]);
-    const store = useStore();
-    const orders = ref(store.state.orders);
-
-    const calculateTotal = () => {
-      let total = 0;
-      for (const order of orders.value) {
-        total += order.product.price * order.quantity;
-      }
-      return total.toFixed(2);
-    };
-
-    const deleteProduct = (product) => {
-      // ตรวจสอบว่ารายการสินค้าถูกเลือกแล้วหรือไม่
-      if (product) {
-        // ลบรายการสินค้าออกจากตะกร้า orders
-        const index = orders.value.indexOf(product);
-        if (index !== -1) {
-          orders.value.splice(index, 1);
-        }
-      }
-    };
-
-    return {
-      orders,
-      calculateTotal,
-      visible,
-      deleteProduct
-
-    };
+    const product = new Product();
+    return { product };
   },
   data: () => ({
     slip_img: null,
+    DialogPayment: false,
+
     img_preview: null,
-    visible: false,
+    img_upload: [],
+    img_size: null,
+    dialog_img_warning: false,
+
+    member_number: '',
+    name: '',
+    tel: '',
+    address: '',
+    line: '',
   }),
+
+  async mounted() {
+    await axios.get(`${process.env.VUE_APP_DEKRUP}/me`, {
+      headers: {
+        'token': `${localStorage.getItem('token')}`
+      }
+    }).then((res) => {
+      this.member_number = res.data.data.member_number;
+      this.name = res.data.data.name;
+      this.tel = res.data.data.tel;
+      this.address = `${res.data.data.address}, แขวง/ตำบล: ${res.data.data.subdistrict}, เขต/อำเภอ: ${res.data.data.district}, จังหวัด: ${res.data.data.provice}`
+      this.line = `ไม่มี`;
+    })
+  },
   methods: {
     onUpload() {
       this.$toast.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded', life: 3000 });
     },
+
     clearImage() {
       this.img_preview = null;
       this.slip_img = null;
     },
+
+    clearData() {
+      this.DialogPayment = false;
+      this.clearImage();
+    },
+
     chooseImage(event) {
       this.slip_img = event.files[0];
       this.img_preview = event.files[0].objectURL;
     },
 
-    clearData(){
-      this.$store.state.orders = '';
-      this.visible = false;
+    calFinal() {
+      this.DialogPayment = true;
     },
 
-    // async confirm() {
-    //   this.$confirm.require({
-    //     message: 'ต้องการบันทึกข้อมูล',
-    //     header: 'ยืนยันการสั่งสินค้า',
-    //     icon: 'pi pi-exclamation-triangle',
-    //     acceptLabel: 'ตกลง',
-    //     rejectLabel: 'ยกเลิก',
-    //     accept: async () => {
-    //       this.$store.commit('setLoading', true);
-    //       const data = {
-    //         member_number: ,
-    //         customer_name: ,
-    //         customer_tel: ,
-    //         customer_address: ,
-    //         customer_line: ,
-    //         product_detail: ,
-    //       }
-    //       await axios.post(`${process.env.VUE_APP_DEKRUP}/product/order`, data, {
-    //         headers: {
-    //           'token': `${this.$store.getters.token}`
-    //         }
-    //       }).then((res) => {
-    //         this.$store.commit('setLoading', false);
-    //         this.visible = true;
-    //         this.$toast.add({
-    //           severity: "success",
-    //           summary: "สำเร็จ",
-    //           detail: "ทำรายการสำเร็จ",
-    //           life: 3000,
-    //         });
-    //       }).catch((err) => {
-    //         if (err.response.status === 408) {
-    //           window.location.reload();
-    //         }
-    //         this.$store.commit('setLoading', false);
-    //         this.$toast.add({ severity: 'error', summary: 'ไม่สำเร็จ', detail: err.response.data.message, life: 3000 });
-    //         this.$router.push('/');
-    //       })
-    //     }
-    //   })
-    // }
+    SetImage(e) {
+      const file = e.target.files;
+      if (file) {
+        this.img_size = file[0].size;
+
+        const fileReader = new FileReader();
+        fileReader.readAsDataURL(file[0]);
+        fileReader.addEventListener("load", (event) => {
+          this.img_preview = event.target.result;
+        })
+        this.img_upload = file;
+      }
+    },
+
+
+    async confirm() {
+      this.loading = true;
+      if (this.img_upload) {
+        const data = {
+          member_number: this.member_number,
+          customer_name: this.name,
+          customer_tel: this.tel,
+          customer_address: this.address,
+          customer_line: this.line,
+          product_detail: this.$store.getters.order,
+          picture: this.img_upload,
+        }
+        // console.log(data)
+        await this.product.PreOrder(data).then(async (result) => {
+          if (result) {
+            console.log(result);
+            this.loading = false;
+            this.$toast.add({
+              severity: "success",
+              summary: "สำเร็จ",
+              life: 3000,
+            })
+          }
+        })
+      }
+    },
+
   }
 };
 </script>

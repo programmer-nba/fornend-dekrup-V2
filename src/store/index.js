@@ -13,6 +13,17 @@ export default createStore({
     member_number: "",
     orders: [],
     status: false,
+
+    order_total: 0,
+    order: [],
+    order_detail: [],
+    cus: {
+      member_number: "",
+      name: "",
+      tel: "",
+      address: "",
+      line: "",
+    }
   },
   getters: {
     isFooter : (state)=>state.isFooter,
@@ -32,6 +43,21 @@ export default createStore({
     id: (state)=>state.id,
     member_number: (state)=>state.member_number,
     status: (state)=>state.status,
+
+
+    order: (state) => state.order,
+    order_detail: (state) => state.order_detail,
+    order_total: (state) => state.order_detail.reduce((sum, order) => sum + order.price, 0),
+    cus(state) {
+      const data = {
+        member_number: state.member_number,
+        name: state.cus.name,
+        tel: state.cus.tel,
+        address: state.cus.address,
+        line: state.cus.line,
+      }
+      return data;
+    },
   },
   mutations: {
     setFooter(state,item){
@@ -67,7 +93,43 @@ export default createStore({
     clearOrders(state) {
       state.orders = [];
     },
+
+    setCus(state, item){
+      state.cus.member_number = item.member_number;
+      state.cus.name = item.cus_name;
+      state.cus.tel = item.cus_tel;
+      state.cus.address = item.cus_address;
+      state.cus.line = item.cus_line;
+    },
+
+    pushOrder(state, item){
+      state.order.push(item);
+    },
+    pushOrderDetail(state, item){
+      state.order_detail.push(item);
+    },
+
+    delOrder(state, position){
+      state.order.splice(position, 1);
+    },
+
+    updateTotal(state){
+      const total = state.order_detail.reduce((sum, el) => sum + el.price, 0);
+      localStorage.setItem('order_total', total);
+    },
   },
-  actions: {},
+  actions: {
+    deOrder(context, value){
+      context.commit('delOrder', value);
+      context.commit('updateTotal');
+    },
+    addOrder(context, value){
+      context.commit('pushOrder', value);
+    },
+    addOrderDetail(context, value){
+      context.commit('pushOrderDetail', value);
+      context.commit('updateTotal');
+    },
+  },
   modules: {},
 });
