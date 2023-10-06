@@ -229,10 +229,10 @@ export default {
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
                 const fileSizeInBytes = file.size;
-                const maxSizeInBytes = 5000000; // 1 MB
+                const maxSizeInBytes = 10000000; // 1 MB
 
                 if (fileSizeInBytes > maxSizeInBytes) {
-                    Swal.fire('แจ้งเตือน', 'ขนาดของรูปภาพใหญ่เกินกำหนด (มากกว่า 5 MB)', 'warning');
+                    Swal.fire('แจ้งเตือน', 'ขนาดของรูปภาพใหญ่เกินกำหนด (มากกว่า 10 MB)', 'warning');
                     return;
                 }
 
