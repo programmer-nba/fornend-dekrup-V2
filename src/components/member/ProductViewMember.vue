@@ -7,7 +7,7 @@
           <span class="p-float-label">
             <InputText v-model="search"
               class="w-4rem font border-red-700 input-search-sercice border-round-3xl text-red-800"
-              style="background-color: #ffe5e5" @keyup="searchData()" @keydown.delete.prevent="deleteLastCharacter" />
+              style="background-color: #ffe5e5" @keyup="searchDataAutomatically()" />
             <label class="text-red-800 px-3">ค้นหา</label>
           </span>
         </div>
@@ -107,7 +107,6 @@ export default {
   },
 
 
-
   data: () => ({
     DialogaddAmount: false,
     DialogChooseProduct: false,
@@ -162,6 +161,8 @@ export default {
 
 
   methods: {
+
+   
 
      getCategoryName(categoryId) {
       const foundCategory = this.category.find(cat => cat._id === categoryId);
@@ -234,7 +235,33 @@ export default {
       this.DialogChooseProduct = false;
       this.amount = 0;
     },
+
+    async searchDataAutomatically() {
+      try {
+        const response = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/member/list`, {
+          headers: {
+            token: `${localStorage.getItem("token")}`,
+          },
+          params: {
+            query: this.search,
+          },
+        });
+        this.item_product = response.data.data.filter(product => product.name.includes(this.search));
+      } catch (error) {
+        this.$toast.add({
+          severity: "error",
+          summary: "ผิดพลาด",
+          detail: error.response.data.message,
+          life: 3000,
+        });
+      }
+    },
+
+  
   },
+
+
+  
 };
 </script>
 
