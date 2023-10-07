@@ -17,7 +17,7 @@
       <Column field="amount" header="จำนวนเงิน"></Column>
       <Column header="หลักฐานการโอน">
         <template #body="item">
-          <img :src="getImage(item.data.slip_img)" class="product-image" style="width: 200px"
+          <img :src="getImage(item.data.slip_img)" class="product-image" style="width: 200px; height: 200px; object-fit: cover;" 
             @click="openImageModal(getImage(item.data.slip_img))" /> </template>
       </Column>
       <Column header="สถานะ">
@@ -50,9 +50,9 @@
 
 
 
-    <Dialog :visible="showImageModal" :modal="true" :baseZIndex="10000" @hide="showImageModal = false">
+    <Dialog header="รูปภาพเต็ม" :visible="showImageModal" :modal="true" :baseZIndex="10000" @hide="showImageModal = false">
       <div class="p-fluid">
-        <img :src="selectedImage" alt="รูปภาพ" style="width: 100%;" />
+        <img :src="selectedImage" alt="รูปภาพ" style="width: 450px;" />
       </div>
       <div class="flex justify-content-center">
         <Button label="ปิด" icon="pi pi-times" class="justify-content-center p-button-danger mr-2"
@@ -99,7 +99,6 @@ export default {
       selectedImage: "",
       display: false,
       itemToCancel: null,
-      selectedItem: null,
 
     };
   },
@@ -167,7 +166,6 @@ export default {
         }
       });
     },
-
 
     async confirmCancel(itemData) {
       if (itemData && itemData._id) {

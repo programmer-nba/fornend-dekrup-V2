@@ -8,23 +8,6 @@
       <!---->
     </div>
     <div class="grid  z-0 justify-content-center">
-      <div class="col-12 lg:col-2 mt-2">
-        <!-- <div class="field">
-          <Dropdown v-model="filter_type" class="w-full z-0" inputClass="font" :options="type" optionLabel="type_name"
-            optionValue="_id" :filter="true" filterPlaceholder="ค้นหาตามคีย์เวิร์ด" placeholder="FILTER"
-            :autoFilterFocus="true" @change="filtertype()">
-          </Dropdown>
-        </div> -->
-      </div>
-      <div class="col-12 lg:col-2 mt-2">
-        <!-- <div class="field">
-          <Dropdown v-model="filter_brand" class="w-full z-0" inputClass="font" :options="brand" optionLabel="brand_name"
-            optionValue="_id" :filter="true" filterPlaceholder="ค้นหาตามคีย์เวิร์ด" placeholder="Brand"
-            :autoFilterFocus="true" @change="filterbrand()">
-          </Dropdown>
-        </div> -->
-      </div>
-
       <div class="col-12 lg:col-4 mt-2">
         <div class="field">
           <div class="p-inputgroup">
@@ -54,32 +37,32 @@
             <p class="font-italic text-center text-5xl" style="color: #BD1616;">ไม่พบข้อมูลสินค้า</p>
           </template>
 
-          <Column header="รูป" style="width: 15%">
+          <Column header="รูป" style="width: 10%">
             <template #body="item">
-              <img :src="getImage(item.data.picture)" class="product-image" />
+              <img :src="getImage(item.data.picture)"  @click="openImageModal(getImage(item.data.picture))" class="product-image" />
             </template>
           </Column>
-          <Column field="code" header="รหัสสินค้า" style="width: 15%"></Column>
-          <Column field="name" header="ชื่อสินค้า" style="width: 15%"></Column>
-          <Column field="detail" header="รายละเอียด" style="width: 15%"></Column>
-          <Column field="price" header="ราคาขาย" style="width: 15%">
+          <Column field="code" header="รหัสสินค้า" style="width: 10%"></Column>
+          <Column field="name" header="ชื่อสินค้า" style="width: 10%"></Column>
+          <Column field="detail" header="รายละเอียด" style="width: 25%"></Column>
+          <Column field="price" header="ราคาขาย" style="width: 10%">
 
             <template #body="item">
               {{ numberFormat(item.data.price) }}
             </template>
           </Column>
-          <Column field="price" header="ราคาทุน" style="width: 15%">
+          <Column field="price" header="ราคาทุน" >
             <template #body="item">
               {{ numberFormat(item.data.cost) }}
             </template>
           </Column>
-          <Column field="quantity" header="จำนวนคงเหลือ" style="min-width: 8rem">
+          <Column field="quantity" header="จำนวนคงเหลือ" >
             <template #body="item">
               {{ numberFormatShort(item.data.quantity) }}
             </template>
           </Column>
-          <Column field="category" header="หมวดหมู่" style="min-width: 16rem"></Column>
-          <Column header="แก้ไข" style="width: 15%">
+          <Column field="category" header="หมวดหมู่" ></Column>
+          <Column header="แก้ไข" style="width: 10%">
             <template #body="item">
               <Button icon="pi pi-pencil" class="p-button-rounded p-button-warning mr-2"
                 @click="editProduct(item.data)" />
@@ -92,6 +75,15 @@
       </div>
     </div>
 
+    <Dialog :visible="showImageModal" header="รูปภาพเต็ม" :modal="true" :baseZIndex="10000" @hide="showImageModal = false" >
+      <div class="p-fluid">
+        <img :src="selectedImage" alt="รูปภาพ" style="width: 450px;" />
+      </div>
+      <div class="flex justify-content-center">
+        <Button label="ปิด" icon="pi pi-times" class="justify-content-center p-button-danger mr-2"
+          @click="showImageModal = false" />
+      </div>
+    </Dialog>
 
   </div>
 </template>
@@ -107,69 +99,62 @@ export default {
     const item_product = ref([]);
     const search = ref("");
     const category = ref("");
-    const selectedProduct = ref(null); // สำหรับเก็บข้อมูลสินค้าที่จะแก้ไข
-    const displayDialog = ref(false); // สำหรับควบคุมการแสดง/ซ่อน Dialog
+    const selectedProduct = ref(null);
+    const displayDialog = ref(false);
+    const selectedImage = ref("");
+    const showImageModal = ref(false);
 
-
-
-const searchDataAutomatically = async () => {
-  try {
-    const response = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/list`, {
-      headers: {
-        token: `${localStorage.getItem("token")}`,
-      },
-      params: {
-        query: search.value, // ใช้ค่า search แทน this.search
-      },
-    });
-    item_product.value = response.data.data.filter(product => product.name.includes(search.value));
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    // เพิ่มการจัดการข้อผิดพลาดที่นี่
-  }
-};
-
-
+    const searchDataAutomatically = async () => {
+      try {
+        const response = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/list`, {
+          headers: {
+            token: localStorage.getItem("token"),
+          },
+          params: {
+            query: search.value,
+          },
+        });
+        item_product.value = response.data.data.filter(product => product.name.includes(search.value));
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
 
     const getData = async () => {
-  try {
-    const productResponse = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/list`, {
-      headers: {
-        "token": `${localStorage.getItem("token")}`,
-      },
-    });
+      try {
+        const productResponse = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/list`, {
+          headers: {
+            token: localStorage.getItem("token"),
+          },
+        });
 
-    const categoryResponse = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/category/list`, {
-      headers: {
-        "token": `${localStorage.getItem("token")}`,
-      },
-    });
+        const categoryResponse = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/category/list`, {
+          headers: {
+            token: localStorage.getItem("token"),
+          },
+        });
 
-    const categories = {}; // สร้างอ็อบเจ็กต์เพื่อเก็บข้อมูลหมวดหมู่
+        const categories = {};
+        categoryResponse.data.data.forEach(category => {
+          categories[category._id] = category.name;
+        });
 
-    // นำข้อมูลหมวดหมู่มาเก็บในอ็อบเจ็กต์ categories โดยใช้ _id เป็น key และ name เป็น value
-    categoryResponse.data.data.forEach(category => {
-      categories[category._id] = category.name;
-    });
-
-    // นำข้อมูลสินค้ามาแปลงหมวดหมู่จากรหัสเป็นชื่อ
-    item_product.value = productResponse.data.data.reverse().map(item => {
-      if (item.category && categories[item.category]) {
-        return { ...item, category: categories[item.category] };
+        item_product.value = productResponse.data.data.reverse().map(item => {
+          if (item.category && categories[item.category]) {
+            return { ...item, category: categories[item.category] };
+          }
+          return item;
+        });
+      } catch (error) {
+        console.error(error);
       }
-      return item;
-    });
-  } catch (error) {
-    console.error(error);
-  }
-};
-
+    };
 
     const editProduct = (product) => {
-      // เรียกใช้งาน Component ProductDetail และส่งข้อมูลสินค้าที่จะแก้ไข
       selectedProduct.value = { ...product };
       displayDialog.value = true;
     };
+
     const searchData = () => {
       if (search.value === "") {
         getData();
@@ -216,6 +201,16 @@ const searchDataAutomatically = async () => {
       });
     };
 
+    const openImageModal = (imageUrl) => {
+      selectedImage.value = imageUrl;
+      showImageModal.value = true;
+    };
+
+    const closeImageModal = () => {
+      showImageModal.value = false;
+      selectedImage.value = "";
+    };
+
     onMounted(() => {
       getData();
     });
@@ -234,11 +229,15 @@ const searchDataAutomatically = async () => {
       selectedProduct,
       displayDialog,
       searchDataAutomatically,
-
+      openImageModal,
+      closeImageModal,
+      selectedImage,
+      showImageModal,
     };
   },
 };
 </script>
+
 
 
 
