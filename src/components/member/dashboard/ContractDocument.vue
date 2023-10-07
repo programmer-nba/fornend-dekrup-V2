@@ -81,6 +81,28 @@
                         </div>
                     </div>
                 </Panel>
+                <Panel class="mt-3" header="STEP 2 : กรอกข้อมูลเลขบัญชีธนาคาร และ รหัส 13 ตัวบัตรประชาชน">
+                    <div class="grid">
+                        <div class="col-12">
+                            <!-- <Image :src="require('@/assets/img/scb_bank.jpg')" :preview="true" imageClass="w-full" /> -->
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="field">
+                            <span class="p-float-label">
+                                <div>เลือกบัญชีธนาคารธนาคาร</div>
+                                <div class="card flex justify-content-start">
+                                    <Dropdown v-model="selectedCity" :options="cities" optionLabel="name" placeholder="เลือกบัญชีธนาคาร" class="w-full md:w-14rem" />
+                                </div>
+                                <div>กรอกเลขบัญชี</div>
+                                <InputText  inputClass="font" class="w-full" placeholder="กรอกเลขบัญชี"  />
+                                <div>กรอกเลขบัตรประชาชน 13 หลัก</div>
+                                <InputText  inputClass="font" class="w-full" placeholder="กรอกเลขบัตรประชาชน"  />
+                            </span>
+                        </div>
+                    </div>
+                </Panel>
+
             </div>
             <div class="col-12 lg:col-3">
                 <Panel header="STEP 3 : รูปภาพหลักฐานการโอน">
@@ -162,6 +184,20 @@ export default {
         img_preview: null,
         checked: false,
         item_product: [],
+        selectedCity: null,
+            cities: [
+            { name: 'กสิกรไทย' },
+                { name: 'ไทยพาณิชย์' },
+                { name: 'กรุงศรีอยุธยา' },
+                { name: 'กรุงเทพ' },
+                { name: 'กรุงไทย' },
+                { name: 'เกียรตินาคินภัทร' },
+                { name: 'ทิสโก้' },
+                { name: 'ทหารไทยธนชาต' },
+                { name: 'ยูโอบี' },
+                { name: 'ไอซีบีซี (ไทย)' },
+                { name: 'ซีไอเอ็มบี ไทย' },
+            ],
     }),
     methods: {
         clearImage() {

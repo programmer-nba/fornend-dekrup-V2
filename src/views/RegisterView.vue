@@ -301,12 +301,7 @@ export default {
                 if (result) {
                     console.log(result);
                     this.loading = false;
-                    this.$toast.add({
-                        severity: "success",
-                        summary: "สำเร็จ",
-                        detail: "สมัครสมาชิกสำเร็จ",
-                        life: 3000,
-                    })
+                    this.toast.success("สมัครสมาชิกสำเร็จ");
                     window.location.reload('/');
                 }
             })
