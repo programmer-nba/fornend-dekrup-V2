@@ -44,11 +44,16 @@
               {{ item.data.code }}
             </template>
           </Column>
-          <Column header="ประเภท" style="width: 30%;">
+          <Column header="สินค้า" style="width: 30%;">
+            <template #body="item">
+              {{ item.data.name }}
+            </template>
+          </Column>
+          <!-- <Column header="ประเภท" style="width: 30%;">
             <template #body="item">
               {{ item.data.category }}
             </template>
-          </Column>
+          </Column> -->
           <Column header="จำนวน" style="width: 30%;">
             <template #body="item">
               {{ item.data.quantity }}
@@ -60,7 +65,6 @@
               
             </template>
           </Column>
-          
         </DataTable>
 
         <Button label="ยืนยันการสั่งออเดอร์" icon="pi pi-external-link" @click="visible = true" style="width: -webkit-fill-available;" />
@@ -237,6 +241,11 @@ export default {
         })
       }
     },
+
+    getCategoryName(categoryId) {
+    const foundCategory = this.category.find(cat => cat._id === categoryId);
+    return foundCategory ? foundCategory.name : '';
+  },
 
     async moneySlip(){
       this.DialogPayment = false;

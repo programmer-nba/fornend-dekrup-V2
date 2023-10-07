@@ -16,7 +16,7 @@
     <div class="md:col-6 col-12 mt-2">
       <div class="field">
         <div class="card flex justify-content-start">
-          <Dropdown v-model="selectedCategory" :options="category" optionLabel="name" placeholder="Select a Category"
+          <Dropdown v-model="selectedCategory" :options="category" optionLabel="name" placeholder="เลือกหมวดหมู่"
             class="w-full md:w-14rem" />
         </div>
       </div>
@@ -30,7 +30,7 @@
         <div class="size-img-product">
           <img :src="getImage(product.picture)" class="img-modal-product-preview img-product" />
         </div>
-        <strong class="txt-head">{{ truncateText( product.name , 25) }}</strong>
+        <strong class="txt-head">{{ truncateText(product.name, 25) }}</strong>
         <p class="txt-category">
           หมวดหมู่  <span>{{ getCategoryName(product.category) }}</span>
         </p>
@@ -75,7 +75,7 @@
     </div>
   </div>
   <div class="card-head">
-    <p class="text-red-500 text-xl" style="-webkit-text-stroke: 1px;">
+    <p class="text-red-500 text-xl" style="-webkit-text-stroke: 1px">
       {{ productMember.name }}
     </p>
     <small class="text-600" style="font-size: 14px; -webkit-text-stroke: 1px">หมวดหมู่: {{ getCategoryName(productMember.category) }} </small>
@@ -117,6 +117,7 @@ export default {
 
     data: "",
     amount: 0,
+
   }),
 
   async mounted() {
@@ -164,7 +165,7 @@ export default {
 
    
 
-     getCategoryName(categoryId) {
+    getCategoryName(categoryId) {
       const foundCategory = this.category.find(cat => cat._id === categoryId);
       return foundCategory ? foundCategory.name : '';
     },
@@ -236,6 +237,12 @@ export default {
       this.amount = 0;
     },
 
+    truncateText(text, maxLength) {
+      if (text.length > maxLength) {
+        return text.substring(0, maxLength) + '...';
+      }
+      return text;
+    },
     async searchDataAutomatically() {
       try {
         const response = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/member/list`, {
@@ -246,7 +253,11 @@ export default {
             query: this.search,
           },
         });
-        this.item_product = response.data.data.filter(product => product.name.includes(this.search));
+        const searchLower = this.search.toLowerCase(); // แปลงค่าที่ใส่เข้ามาใน search เป็นตัวพิมพ์เล็กทั้งหมด
+        this.item_product = response.data.data.filter(product => {
+          const productNameLower = product.name.toLowerCase(); // แปลงชื่อสินค้าให้เป็นตัวพิมพ์เล็กทั้งหมด
+          return productNameLower.includes(searchLower) || productNameLower.includes(this.search);
+        });
       } catch (error) {
         this.$toast.add({
           severity: "error",
@@ -257,12 +268,6 @@ export default {
       }
     },
 
-    truncateText(text, maxLength) {
-      if (text.length > maxLength) {
-        return text.substring(0, maxLength) + '...';
-      }
-      return text;
-    },
 
   
   },
