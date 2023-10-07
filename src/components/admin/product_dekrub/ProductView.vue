@@ -76,7 +76,7 @@
       </div>
     </div>
 
-    <Dialog :visible="showImageModal" header="รูปภาพเต็ม" :modal="true" :baseZIndex="10000" @hide="showImageModal = false" >
+    <Dialog v-model:visible="showImageModal" header="รูปภาพเต็ม" :modal="true" :baseZIndex="10000" @hide="showImageModal = false" >
       <div class="p-fluid">
         <img :src="selectedImage" alt="รูปภาพ" style="width: 450px;" />
       </div>
