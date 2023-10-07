@@ -14,8 +14,9 @@
             <span class="p-inputgroup-addon border-red-400" style="background-color: #C21010;">
               <i class="pi pi-search text-white"></i>
             </span>
-            <InputText v-model="search" @keyup="searchDataAutomatically()" class="w-full font z-0" placeholder="ค้นหาสินค้า เช่น ชื่อสินค้า " />
+            <InputText v-model="search" @keyup="searchDataAutomatically()" class="w-full font z-0" placeholder="ค้นหาสินค้า เช่น ชื่อสินค้า รหัสสินค้า " />
           </div>
+          
         </div>
       </div>
      
@@ -105,20 +106,24 @@ export default {
     const showImageModal = ref(false);
 
     const searchDataAutomatically = async () => {
-      try {
-        const response = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/list`, {
-          headers: {
-            token: localStorage.getItem("token"),
-          },
-          params: {
-            query: search.value,
-          },
-        });
-        item_product.value = response.data.data.filter(product => product.name.includes(search.value));
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
+  try {
+    const response = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/list`, {
+      headers: {
+        token: localStorage.getItem("token"),
+      },
+      params: {
+        query: search.value, // ค้นหาด้วยชื่อสินค้า
+        code: search.value, // ค้นหารหัสสินค้าด้วยค่าเดียวกัน
+      },
+    });
+    item_product.value = response.data.data.filter(product => 
+      product.name.includes(search.value) || product.code.includes(search.value)
+    );
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+};
+
 
     const getData = async () => {
       try {
