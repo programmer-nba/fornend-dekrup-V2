@@ -241,7 +241,8 @@ export default {
     async moneySlip(){
       this.DialogPayment = false;
       this.visible = false;
-      alert('ชำระเงินเรียบร้อย')
+      alert('ชำระเงินเรียบร้อย');
+      window.location.reload();
     }
 
   }
