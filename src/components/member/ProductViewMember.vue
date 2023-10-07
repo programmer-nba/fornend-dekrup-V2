@@ -30,7 +30,7 @@
         <div class="size-img-product">
           <img :src="getImage(product.picture)" class="img-modal-product-preview img-product" />
         </div>
-        <strong class="txt-head">{{ product.name }}</strong>
+        <strong class="txt-head">{{ truncateText( product.name , 25) }}</strong>
         <p class="txt-category">
           หมวดหมู่  <span>{{ getCategoryName(product.category) }}</span>
         </p>
@@ -75,7 +75,7 @@
     </div>
   </div>
   <div class="card-head">
-    <p class="text-red-500 text-xl" style="-webkit-text-stroke: 1px">
+    <p class="text-red-500 text-xl" style="-webkit-text-stroke: 1px;">
       {{ productMember.name }}
     </p>
     <small class="text-600" style="font-size: 14px; -webkit-text-stroke: 1px">หมวดหมู่: {{ getCategoryName(productMember.category) }} </small>
@@ -257,6 +257,13 @@ export default {
       }
     },
 
+    truncateText(text, maxLength) {
+      if (text.length > maxLength) {
+        return text.substring(0, maxLength) + '...';
+      }
+      return text;
+    },
+
   
   },
 
@@ -342,12 +349,12 @@ export default {
 }
 .size-img-product{
   width: 100%;
-  height: 200px;
+  height: 180px;
 }
 .img-product{
   width: 80%;
-  height: auto;
-  object-fit: cover;
+  height: 80%;
+  object-fit: contain;
   display: block;
   margin-left: auto;
   margin-right: auto;

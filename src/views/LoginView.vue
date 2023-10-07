@@ -81,12 +81,7 @@ export default {
         })
         .catch(() => {
           this.isLoading = false;
-          this.$toast.add({
-            severity: "error",
-            summary: "ไม่สำเร็จ",
-            detail: "ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง",
-            life: 3000,
-          });
+          this.toast.warning("ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง");
         });
     }
 

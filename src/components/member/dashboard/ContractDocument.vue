@@ -119,6 +119,7 @@
 
 <script>
 import axios from 'axios';
+import Swal from 'sweetalert2';
 import { Member } from "../../../service/member";
 export default {
     components: {
@@ -180,37 +181,46 @@ export default {
             this.amount = 0;
         },
 
-        async confirm() {
-            this.loading = true;
-            if (this.slip_img) {
-                const data = {
-                    member_number: this.$store.getters.member_number,
-                    name: this.$store.getters.name,
-                    amount: this.amount,
-                }
-                const formData = new FormData();
-                formData.append('member_number', this.$store.getters.member_number);
-                formData.append('name', this.$store.getters.name);
-                formData.append('amount', this.amount);
-                formData.append('imgCollection', this.slip_img);
-                console.log(data)
-                await this.members.orderNewMember(formData).then(async (result) => {
+                async confirm() {
+        this.loading = true;
 
-                    if (result) {
-                        console.log(result);
-                        this.loading = false;
-                        this.$toast.add({
-                            severity: "success",
-                            summary: "สำเร็จ",
-                            detail: "แจ้งชำระเงินเรียบร้อย รอการตรวจสอบจากส่วนกลางในวันเวลาทำการภายใน 10-15 นาที",
-                            life: 3000,
-                        })
-                        this.$store.commit("setLoginDefault");
-                        window.location.reload('/');
-                    }
-                })
+        if (!this.slip_img) {
+            // ถ้ายังไม่มีรูปภาพแนบ
+            Swal.fire('แจ้งเตือน', 'กรุณาแนบรูปภาพหลักฐานการโอน', 'warning');
+            this.loading = false;
+            return;
+        }
+
+        const data = {
+            member_number: this.$store.getters.member_number,
+            name: this.$store.getters.name,
+            amount: this.amount,
+        };
+
+        const formData = new FormData();
+        formData.append('member_number', this.$store.getters.member_number);
+        formData.append('name', this.$store.getters.name);
+        formData.append('amount', this.amount);
+        formData.append('imgCollection', this.slip_img);
+
+        await this.members.orderNewMember(formData).then(async (result) => {
+            if (result) {
+            console.log(result);
+            this.loading = false;
+            this.$store.commit('setLoginDefault');
+
+            Swal.fire({
+                title: 'แจ้งชำระเงินเรียบร้อย',
+                text:
+                'รอการตรวจสอบจากส่วนกลางในวันเวลาทำการภายใน 10-15 นาที',
+                showConfirmButton: true,
+            }).then(() => {
+                window.location.reload('/');
+            });
             }
+        });
         },
+
 
         async logout() {
             this.$store.commit("setLoading", true);

@@ -123,6 +123,7 @@
 import Dropdown from 'primevue/dropdown';
 import Password from "primevue/password";
 import Button from "primevue/button";
+import { useToast } from "vue-toastification";
 import { Member } from "../service/member";
 
 import axios from 'axios';
@@ -159,7 +160,8 @@ export default {
     },
     setup() {
         const members = new Member();
-        return { members }
+        const toast = useToast();
+        return { members ,toast }
     },
     data: () => ({
         isLoading: false,
@@ -266,12 +268,7 @@ export default {
                 this.amphure === null ||
                 this.tambon === null 
             ) {
-                this.$toast.add({
-                    severity: "warn",
-                    summary: "แจ้งเตือน",
-                    detail: "กรุณากรอกข้อมูลทั่วไปให้ครบถ้วน",
-                    life: 3000,
-                });
+                this.toast.warning( "กรุณากรอกข้อมูลทั่วไปให้ครบถ้วน");
                 return false;
             }
             if (this.member.password.length < 8) {

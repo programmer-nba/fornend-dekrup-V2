@@ -13,6 +13,8 @@ import store from "./store";
 import "primeicons/primeicons.css"; //icons
 import "primevue/resources/primevue.min.css"; //core css
 import "primevue/resources/themes/lara-light-purple/theme.css"; //theme
+import VueToast from 'vue-toastification';
+import 'vue-toastification/dist/index.css';
 
 //prime flex
 import "primeflex/primeflex.css";
@@ -71,6 +73,7 @@ import OrganizationChart from "primevue/organizationchart";
 
 const app = createApp(App);
 
+app.use(VueToast);
 app.use(store);
 app.use(ConfirmationService);
 app.use(ToastService);
