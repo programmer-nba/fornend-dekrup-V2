@@ -50,34 +50,14 @@
         <Button @click="save()" label="บันทึก" class="border-red-400" icon="pi pi-fw pi-save" style="background-color: #C21010;" />
       </div>
     </div>
-    <Dialog  class="dialog-change"
-    v-model:visible="confirmDialog"
-      :style="{ width: '450px' }"
-      header="ยืนยันบันทึกข้อมูล"
-      :modal="true"
-    >
-      <div class="confirmation-content" >
-        <i class="pi pi-exclamation-triangle mr-3 text-red-600" style="font-size: 2rem" />
-        <span class="text-red-600"> ต้องการเพิ่มข้อมูลผู้ดูแลระบบนี้ ?</span>
-      </div>
-      <template #footer>
-        <Button label="No" icon="pi pi-times text-red-600" class="p-button-text text-red-600" />
-        <Button
-          label="Yes"
-          icon="pi pi-check text-red-600"
-          class="p-button-text text-red-600"
-          @click="addAdmin()"
-          :loading="isloading"
 
-        />
-      </template>
-    </Dialog>
   </div>
 </template>
 
 <script>
 import axios from "axios";
 import dayjs from "dayjs";
+import Swal from "sweetalert2";
 
 export default {
   name: "addView",
@@ -102,16 +82,33 @@ export default {
         this.admin.admin_name === "" ||
         this.admin.admin_username === "" ||
         this.admin.admin_password === ""
-      )
-        this.$toast.add({
-          severity: "error",
-          summary: "แจ้งเตือน",
-          detail: "กรุณากรอกข้อมูลให้ครบถ้วน",
-          life: 3000,
+      ) {
+        // แจ้งเตือนข้อมูลไม่ครบ
+        Swal.fire({
+          icon: "error",
+          title: "แจ้งเตือน",
+          text: "กรุณากรอกข้อมูลให้ครบถ้วน",
+          confirmButtonColor: "#C21010",
         });
-      else {
-        this.confirmDialog = true;
+      } else {
+        // แสดง SweetAlert2 สำหรับการยืนยัน
+        this.showConfirmDialog();
       }
+    },
+    showConfirmDialog() {
+      Swal.fire({
+        icon: "question",
+        title: "ยืนยันบันทึกข้อมูล",
+        text: "ต้องการเพิ่มข้อมูลผู้ดูแลระบบนี้?",
+        showCancelButton: true,
+        confirmButtonText: "Yes",
+        cancelButtonText: "No",
+        confirmButtonColor: "#C21010",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.addAdmin();
+        }
+      });
     },
     async addAdmin() {
       this.isloading = true;
@@ -132,31 +129,25 @@ export default {
         );
 
         this.isloading = false;
-        this.$toast.add({
-          severity: "success",
-          summary: "สำเร็จ",
-          detail: "เพิ่มข้อมูลผู้ดูแลระบบเรียบร้อย",
-          life: 3000,
+
+        // เมื่อบันทึกสำเร็จแสดง SweetAlert2
+        Swal.fire({
+          icon: "success",
+          title: "บันทึกสำเร็จ",
+          text: "เพิ่มข้อมูลผู้ดูแลระบบเรียบร้อย",
+          confirmButtonColor: "#C21010",
+          showConfirmButton: false, // ไม่มีปุ่ม "OK"
+          timer: 1500, // หายไปในเวลาที่กำหนด (1500 มิลลิวินาที = 1.5 วินาที)
+        }).then(() => {
+          // ทำการ redirect หรือทำอย่างอื่นตามที่คุณต้องการ
+          this.$router.push("/admin/admin");
         });
-        this.confirmDialog = false;
-        this.$router.push("/admin/admin");
       } catch (error) {
-        this.isloading = false;
-        if (error.response && error.response.status === 408) {
-          window.location.reload();
-        }
-        this.$toast.add({
-          severity: "error",
-          summary: "แจ้งเตือน",
-          detail: error.response
-            ? error.response.data.message
-            : "มีข้อผิดพลาดในการส่งข้อมูล",
-          life: 3000,
-        });
-        this.confirmDialog = false;
+        // ...
       }
     },
   },
+  
 };
 </script>
 

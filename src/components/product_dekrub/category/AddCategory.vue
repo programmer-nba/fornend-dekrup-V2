@@ -1,23 +1,13 @@
 <template>
   <div>
-    <Button label="เพิ่มหมวดหมู่สินค้า" icon="pi pi-plus" @click="(displayAdd = true), (category = '')" />
+    <Button label="เพิ่มหมวดหมู่สินค้า" class="border-none"  icon="pi pi-plus" @click="showAddCategoryAlert" style="background-color: #F31559;" />
 
-    <Dialog header="เพิ่มหมวดหมู่สินค้า" v-model:visible="displayAdd" :breakpoints="{ '960px': '75vw', '640px': '90vw' }"
-      :style="{ width: '35vw' }" :modal="true">
-      <span class="p-float-label m-0 mt-5">
-        <InputText id="category" type="text" v-model="category" class="w-full" />
-        <label for="category">หมวดหมู่สินค้า</label>
-      </span>
-      <template #footer>
-        <Button label="ยกเลิก" icon="pi pi-times" @click="displayAdd = false" class="p-button-text" />
-        <Button label="บันทึก" icon="pi pi-check" @click="addCategory" autofocus />
-      </template>
-    </Dialog>
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import Swal from "sweetalert2";
 import { ref } from "vue";
 
 export default {
@@ -26,49 +16,73 @@ export default {
   },
   setup(props) {
     const category = ref("");
-    const displayAdd = ref(false);
     const categorys = ref([]);
+
     const fetchProps = () => {
       categorys.value = props.categorys;
     };
 
-    const addCategory = async () => {
-      if (category.value !== "") {
-        try {
-          await postCategory();
-        } catch (error) {
-          console.error("เกิดข้อผิดพลาดในการเพิ่มหมวดหมู่สินค้า:", error);
-        }
-      }
-    };
+    const showAddCategoryAlert = () => {
+  Swal.fire({
+    title: "เพิ่มหมวดหมู่สินค้า",
+    input: "text",
+    inputPlaceholder: "กรอกชื่อหมวดหมู่สินค้า",
+    showCancelButton: true,
+    confirmButtonText: "บันทึก",
+    cancelButtonText: "ยกเลิก",
+    confirmButtonColor: "#C21010",
+    customClass: {
+      title: "text-red-600", // เปลี่ยนสี title เป็นสีแดง
+    },
+  }).then((result) => {
+    if (result.isConfirmed && result.value) {
+      category.value = result.value;
+      addCategory();
+    }
+  });
+};
 
-    const postCategory = async () => {
-      try {
-        const response = await axios.post(
-          `${process.env.VUE_APP_DEKRUP}/product/category/create`,
-          {
-            name: category.value,
+
+const addCategory = async () => {
+  if (category.value !== "") {
+    try {
+      const response = await axios.post(
+        `${process.env.VUE_APP_DEKRUP}/product/category/create`,
+        {
+          name: category.value,
+        },
+        {
+          headers: {
+            token: localStorage.getItem("token"),
           },
-          {
-            headers: {
-              "token": localStorage.getItem("token"),
-            },
-          }
-        );
-
-        if (response.data && response.data.status === true) {
-          categorys.value.push(response.data.data);
-          displayAdd.value = false;
-          location.reload();
-        } else {
-          console.error("API คืนข้อมูลที่ไม่ถูกต้อง:", response.data);
         }
-      } catch (error) {
-        console.error("เกิดข้อผิดพลาดในการเรียก API:", error);
-      }
-    };
+      );
 
-    return { displayAdd, fetchProps, addCategory, category };
+      if (response.data && response.data.status === true) {
+        // เพิ่มข้อมูลใหม่ลงใน categorys ทันที
+        categorys.value.push(response.data.data);
+        Swal.fire({
+          icon: "success",
+          title: "เพิ่มหมวดหมู่สินค้าสำเร็จ",
+          showConfirmButton: false,
+          timer: 1500,
+        }).then(() => {
+          // รีโหลดหน้าเว็บใหม่
+          window.location.reload();
+        });
+      } else {
+        console.error("API คืนข้อมูลที่ไม่ถูกต้อง:", response.data);
+      }
+    } catch (error) {
+      console.error("เกิดข้อผิดพลาดในการเรียก API:", error);
+    }
+  }
+};
+
+
+
+
+    return { fetchProps, showAddCategoryAlert };
   },
 };
 </script>
