@@ -24,12 +24,12 @@
           {{ datetimeFormat(Props.data.timestamp) }}
         </template>
       </Column>
-      <!-- <Column :exportable="false" style="min-width: 8rem">
-        <template #body="Props">
-          <Button icon="pi pi-list" class="p-button-outlined" @click="openD(Props.data)" /> &nbsp;
-          <Button icon="pi pi-trash" class="p-button-outlined p-button-danger" @click="del(Props.data)" />
-        </template>
-      </Column> -->
+      <Column field="address" header="ที่อยู่">
+  <template #body="{data}">
+    <Button @click="openAddressDialog(data)" class="p-button-text">ดูที่อยู่</Button>
+  </template>
+</Column>
+
     </DataTable>
 
     <!-- <Dialog v-model:visible="memberDialog" :style="{ width: '900px' }" header="รายละเอียดข้อมูลผู้ใช้งาน" :modal="true"
@@ -106,6 +106,16 @@
       </div>
     </Dialog> -->
 
+    <Dialog v-model:visible="memberDialog" :breakpoints="{ '960px': '75vw', '640px': '90vw' }"
+    :style="{ width: '45vw' }" class="dialog-change" header="ที่อยู่สมาชิก">
+  <div>
+    <label>ที่อยู่: {{ member_detail.address }}  </label> <br>
+    <label>ตำบล: {{ member_detail.subdistrict }} </label>  <br>
+    <label>อำเภอ:{{ member_detail.district }}</label>   <br>
+     <label> จังหวัด: {{ member_detail.province }}</label>  <br>
+     <label>รหัสไปรษณีย์: {{ member_detail.postcode }}</label>
+  </div>
+</Dialog>
 
     <Dialog :style="{ width: '450px' }" header="แก้ไขข้อมูล" :modal="true">
       <div class="confirmation-content">
@@ -180,7 +190,11 @@ export default {
     this.member = this.members;
   }
     },
-
+    openAddressDialog(member) {
+    this.memberDialog = true;
+    this.member_detail = member;
+    console.log(this.member_detail); // แสดงข้อมูลในคอนโซล
+  },
     async getdata() {
       let res = await axios
         .get(`${process.env.VUE_APP_DEKRUP}/member`, {
@@ -359,6 +373,24 @@ export default {
   padding: 0;
   margin-top: 1.5rem;
   border-radius: 40px;
+}
+.dialog-change .p-dialog-content {
+    background: #FFFDE3;
+}
+
+.dialog-change .p-dialog-header {
+    background-color: #FFFDE3;
+    color: #C21010;
+    /* เปลี่ยนสีตัวหนังสือที่นี่ */
+    padding: 0.7rem;
+    /* สีเส้นขอบล่าง */
+}
+.dialog-change .p-dialog-footer {
+    background-color: #FFFDE3;
+    color: #C21010;
+    /* เปลี่ยนสีตัวหนังสือที่นี่ */
+    padding: 0.7rem;
+    /* สีเส้นขอบล่าง */
 }
 </style>
 
