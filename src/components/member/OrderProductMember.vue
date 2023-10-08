@@ -22,7 +22,7 @@
                   border-radius: 15px;
                   color: red;
                   padding: 2px;"><strong></strong>{{ $store.getters.order_total }} บาท</label>
-
+          
           <label style="font-size: 14px;color: #ffff;"><Button label="กดเพื่อชำระเงิน" link @click="visible = true"
               style="color: #ffff;" /></label>
         </div>
@@ -30,11 +30,14 @@
     </div>
     <div class="grid px-2">
       <div class="col-12  justify-context-center">
+        <div class="flex justify-content-end">
+          <Button label="ล้างตระกร้าสินค้า" severity="danger" @click="clearCart()" raised  v-if="$store.getters.order_detail.length > 0" />
+        </div>
         <DataTable :value="$store.getters.order_detail" :row="10">
           <template #empty>
             <p class="p-0 m-0 text-center"><em style="color: #3A1078;">-- ไม่มีรายการสั่ง --</em></p>
           </template>
-          <Column header="รายการ" style="width: 30%;">
+          <Column header="รายการ" style="width: 10%;">
             <template #body="item">
               {{ item.index + 1 }}
             </template>
@@ -67,7 +70,7 @@
           </Column>
         </DataTable>
 
-        <Button label="กดเพื่อชำระเงิน" icon="pi pi-external-link" @click="visible = true" style="width: -webkit-fill-available;" />
+        <Button label="กดเพื่อชำระเงิน" icon="pi pi-external-link" @click="visible = true" style="width: -webkit-fill-available;" v-if="$store.getters.order_detail.length > 0" />
         <Dialog v-model:visible="visible"  header="ยอดเงินที่ต้องชำระ">
             <div class="flex justify-content-center">
               <label style="font-size: 35px;text-align: center; text-align: center;">{{ $store.getters.order_total }} บาท</label>
@@ -247,6 +250,10 @@ export default {
       this.DialogPayment = false;
       this.visible = false;
       alert('ชำระเงินเรียบร้อย');
+      window.location.reload();
+    },
+
+    clearCart(){
       window.location.reload();
     }
 

@@ -17,8 +17,8 @@
       <div class="field">
         <div class="card flex justify-content-start">
       <Dropdown v-model="selectedCategory" :options="category" optionValue="_id" optionLabel="name" placeholder="เลือกหมวดหมู่"
-              class="w-full md:w-14rem" @change="searchDataAutomatically()" />
-              <Button class="bg-red-500 p-button-sm text-white text-teal-300 ml-2 border-none" @click="resetDropdown">สินค้าทั้งหมด</Button>
+              class=" responsive-dropdown" @change="searchDataAutomatically()" />
+              <Button style="margin-left: 5px;" label="สินค้าทั้งหมด" severity="danger" rounded  @click="resetDropdown"/>
 
         </div>
       </div>
@@ -245,6 +245,7 @@ export default {
       this.amount = 0;
     },
 
+    // fix ตัวหนังสือชื่อสินค้าให้แสดงกี่ตัว
     truncateText(text, maxLength) {
       if (text.length > maxLength) {
         return text.substring(0, maxLength) + '...';
@@ -252,46 +253,44 @@ export default {
       return text;
     },
 
+    //สำหรับค้นหาข้อมูลสินค้า
     async searchDataAutomatically() {
-  try {
-    console.log("Selected Category:", this.selectedCategory); // เพิ่มบรรทัดนี้
-    
-    const response = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/member/list`, {
-      headers: {
-        token: `${localStorage.getItem("token")}`,
-      },
-      params: {
-        query: this.search,
-        category: this.selectedCategory || undefined, // Include category only if it's selected
-      },
-    });
-
-    console.log("API Response:", response.data); // เพิ่มบรรทัดนี้
-
-    const searchLower = this.search.toLowerCase();
-    this.filteredProducts = response.data.data.filter(product => {
-      const productNameLower = product.name.toLowerCase();
-      const categoryMatch = !this.selectedCategory || product.category === this.selectedCategory;
-      return (
-        (productNameLower.includes(searchLower) || productNameLower.includes(this.search)) &&
-        categoryMatch
-      );
-    });
+    try {
+      console.log("Selected Category:", this.selectedCategory); 
+      const response = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/member/list`, {
+        headers: {
+          token: `${localStorage.getItem("token")}`,
+        },
+        params: {
+          query: this.search,
+          category: this.selectedCategory || undefined, 
+        },
+      });
+      console.log("API Response:", response.data); 
+      const searchLower = this.search.toLowerCase();
+      this.filteredProducts = response.data.data.filter(product => {
+        const productNameLower = product.name.toLowerCase();
+        const categoryMatch = !this.selectedCategory || product.category === this.selectedCategory;
+        return (
+          (productNameLower.includes(searchLower) || productNameLower.includes(this.search)) &&
+          categoryMatch
+        );
+      });
 
     // ตรวจสอบค่าของ filteredProducts ใน console
-    console.log("Filtered Products:", this.filteredProducts);
-  } catch (error) {
-    this.$toast.add({
-      severity: "error",
-      summary: "ผิดพลาด",
-      detail: error.response.data.message,
-      life: 3000,
-    });
-  }
+        console.log("Filtered Products:", this.filteredProducts);
+      } catch (error) {
+        this.$toast.add({
+          severity: "error",
+          summary: "ผิดพลาด",
+          detail: error.response.data.message,
+          life: 3000,
+        });
+      }
 
-},
+    },
 
-resetDropdown() {
+    resetDropdown() {
       this.selectedCategory = null; 
       this.searchDataAutomatically(); 
     },
@@ -394,6 +393,9 @@ resetDropdown() {
   display: block;
   margin-left: auto;
   margin-right: auto;
+}
+.responsive-dropdown{
+  width: 14rem;
 }
 
 @media only screen and (max-width: 576px) {
