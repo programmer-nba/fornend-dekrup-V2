@@ -17,6 +17,8 @@
       <Column field="member_number" header="ไอดีผู้ใช้งาน"></Column>
       <Column field="name" header="ชื่อผู้ใช้งาน"></Column>
       <Column field="username" header="ชื่อผู้ใช้งานระบบ"></Column>
+      <Column field="tel" header="เบอร์โทร"></Column>
+
       <Column field="member_date_start" header="วันที่เริ่มระบบ">
         <template #body="Props">
           {{ datetimeFormat(Props.data.timestamp) }}
