@@ -24,11 +24,17 @@
           {{ datetimeFormat(Props.data.timestamp) }}
         </template>
       </Column>
-      <Column field="address" header="ที่อยู่">
-  <template #body="{data}">
-    <Button @click="openAddressDialog(data)" class="p-button-text">ดูที่อยู่</Button>
-  </template>
-</Column>
+      <Column field="address" header="ที่อยู่" style="width: 30%;">
+        <template #body="{ data }">
+          <div>
+            <label class="mr-2">ที่อยู่: {{ data.address }} </label> 
+            <label class="mr-2">ตำบล: {{ data.subdistrict }}</label>
+            <label class="mr-2">อำเภอ: {{ data.district }}</label>
+            <label class="mr-2">จังหวัด: {{ data.province }}</label>
+            <label class="mr-2">รหัสไปรษณีย์: {{ data.postcode }}</label>
+          </div>
+        </template>
+      </Column>
 
     </DataTable>
 
@@ -106,16 +112,7 @@
       </div>
     </Dialog> -->
 
-    <Dialog v-model:visible="memberDialog" :breakpoints="{ '960px': '75vw', '640px': '90vw' }"
-    :style="{ width: '45vw' }" class="dialog-change" header="ที่อยู่สมาชิก">
-  <div>
-    <label>ที่อยู่: {{ member_detail.address }}  </label> <br>
-    <label>ตำบล: {{ member_detail.subdistrict }} </label>  <br>
-    <label>อำเภอ:{{ member_detail.district }}</label>   <br>
-     <label> จังหวัด: {{ member_detail.province }}</label>  <br>
-     <label>รหัสไปรษณีย์: {{ member_detail.postcode }}</label>
-  </div>
-</Dialog>
+
 
     <Dialog :style="{ width: '450px' }" header="แก้ไขข้อมูล" :modal="true">
       <div class="confirmation-content">
@@ -159,7 +156,6 @@ export default {
       delete_name: "",
       confirmDailog: false,
       deleteDailog: false,
-      memberDialog: false,
       isloading: false,
 
     };
@@ -190,11 +186,7 @@ export default {
     this.member = this.members;
   }
     },
-    openAddressDialog(member) {
-    this.memberDialog = true;
-    this.member_detail = member;
-    console.log(this.member_detail); // แสดงข้อมูลในคอนโซล
-  },
+
     async getdata() {
       let res = await axios
         .get(`${process.env.VUE_APP_DEKRUP}/member`, {
