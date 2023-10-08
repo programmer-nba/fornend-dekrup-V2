@@ -16,23 +16,25 @@
     <div class="md:col-6 col-12 mt-2">
       <div class="field">
         <div class="card flex justify-content-start">
-          <Dropdown v-model="selectedCategory" :options="category" optionLabel="name" placeholder="เลือกหมวดหมู่"
-            class="w-full md:w-14rem" />
+      <Dropdown v-model="selectedCategory" :options="category" optionValue="_id" optionLabel="name" placeholder="เลือกหมวดหมู่"
+              class="w-full md:w-14rem" @change="searchDataAutomatically()" />
+              <Button class="bg-red-500 p-button-sm text-white text-teal-300 ml-2 border-none" @click="resetDropdown">สินค้าทั้งหมด</Button>
+
         </div>
       </div>
     </div>
   </div>
 
   <div class="grid">
-    <div class="col-6 md:col-4 xl:col-3" v-for="product in item_product" :key="product.id">
+    <div class="col-6 md:col-4 xl:col-3" v-for="product in filteredProducts" :key="product.id">
       <div class="card-background">
-        
+
         <div class="size-img-product">
           <img :src="getImage(product.picture)" class="img-modal-product-preview img-product" />
         </div>
         <strong class="txt-head">{{ truncateText(product.name, 25) }}</strong>
         <p class="txt-category">
-          หมวดหมู่  <span>{{ getCategoryName(product.category) }}</span>
+          หมวดหมู่ <span>{{ getCategoryName(product.category) }}</span>
         </p>
         <p class="txt-category">
           จำนวน <span>{{ product.quantity }}</span>
@@ -58,49 +60,50 @@
   </Dialog>
 
   <Dialog v-model:visible="DialogChooseProduct" :modal="true" header="สินค้าของเรา" style="width: 100vh">
-  <div class="grid">
-    <div class="md:col-4 col-12 flex justify-content-center">
-      <Image alt="Image" preview>
-        <template #indicatoricon>
-          <i class="pi pi-eye"></i>
-        </template>
-        <template #image>
-          <img :src="imgSrc" class="img-modal-product" alt="image" />
-        </template>
-        <template #preview="slotProps">
-          <img :src="imgSrc" class="img-modal-product-preview" alt="preview"
-            :style="slotProps.style" @click="slotProps.onClick" />
-        </template>
-      </Image>
+    <div class="grid">
+      <div class="md:col-4 col-12 flex justify-content-center">
+        <Image alt="Image" preview>
+          <template #indicatoricon>
+            <i class="pi pi-eye"></i>
+          </template>
+          <template #image>
+            <img :src="imgSrc" class="img-modal-product" alt="image" />
+          </template>
+          <template #preview="slotProps">
+            <img :src="imgSrc" class="img-modal-product-preview" alt="preview" :style="slotProps.style"
+              @click="slotProps.onClick" />
+          </template>
+        </Image>
+      </div>
     </div>
-  </div>
-  <div class="card-head">
-    <p class="text-red-500 text-xl" style="-webkit-text-stroke: 1px">
-      {{ productMember.name }}
-    </p>
-    <small class="text-600" style="font-size: 14px; -webkit-text-stroke: 1px">หมวดหมู่: {{ getCategoryName(productMember.category) }} </small>
-    <br />
-    <small class="text-600" style="font-size: 14px; -webkit-text-stroke: 1px">จำนวน {{ productMember.quantity }}</small>
-  </div>
-  <div class="my-2">
-    <label class="text-700" for="" style="font-size: 20px; -webkit-text-stroke: 1px">รายละเอียดสินค้า</label>
-  </div>
-  <small class="text-700" for="" style="font-size: 18px">
-    {{ productMember.detail }}
-  </small>
-  <div class="my-2">
-    <label class="text-red-500" for="" style="font-size: 24px; -webkit-text-stroke: 1px">ราคา {{ productMember.price }} บาท</label>
-  </div>
-  <template #footer>
-    <Button label="ปิด" icon="pi pi-times" @click="clearData()" text />
-  </template>
-</Dialog>
-
+    <div class="card-head">
+      <p class="text-red-500 text-xl" style="-webkit-text-stroke: 1px">
+        {{ productMember.name }}
+      </p>
+      <small class="text-600" style="font-size: 14px; -webkit-text-stroke: 1px">หมวดหมู่: {{
+        getCategoryName(productMember.category) }} </small>
+      <br />
+      <small class="text-600" style="font-size: 14px; -webkit-text-stroke: 1px">จำนวน {{ productMember.quantity }}</small>
+    </div>
+    <div class="my-2">
+      <label class="text-700" for="" style="font-size: 20px; -webkit-text-stroke: 1px">รายละเอียดสินค้า</label>
+    </div>
+    <small class="text-700" for="" style="font-size: 18px">
+      {{ productMember.detail }}
+    </small>
+    <div class="my-2">
+      <label class="text-red-500" for="" style="font-size: 24px; -webkit-text-stroke: 1px">ราคา {{ productMember.price }}
+        บาท</label>
+    </div>
+    <template #footer>
+      <Button label="ปิด" icon="pi pi-times" @click="clearData()" text />
+    </template>
+  </Dialog>
 </template>
 
 <script>
-import Image from "primevue/image";
 import axios from "axios";
+import Image from "primevue/image";
 export default {
   components: {
     Image,
@@ -110,60 +113,65 @@ export default {
   data: () => ({
     DialogaddAmount: false,
     DialogChooseProduct: false,
-
-    category: "",
+    search: "", 
+    category: [], 
     product: "",
-    item_product: "",
-
+    item_product: [], 
+    selectedCategory: null, 
+    filteredProducts: [],
     data: "",
     amount: 0,
-
   }),
 
   async mounted() {
-  this.$store.commit("setLoading", true);
-  try {
-    const categoryResponse = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/category/member/list`, {
-      headers: {
-        token: `${localStorage.getItem("token")}`,
-      },
-    });
-    this.category = categoryResponse.data.data;
-  } catch (error) {
-    this.$store.commit("setLoading", false);
-    this.$toast.add({
-      severity: "error",
-      summary: "ผิดพลาด",
-      detail: error.response.data.message,
-      life: 3000,
-    });
-  }
+    this.$store.commit("setLoading", true);
+    try {
+      const categoryResponse = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/category/member/list`, {
+        headers: {
+          token: `${localStorage.getItem("token")}`,
+        },
+      });
+      this.category = categoryResponse.data.data;
+    } catch (error) {
+      this.$store.commit("setLoading", false);
+      this.$toast.add({
+        severity: "error",
+        summary: "ผิดพลาด",
+        detail: error.response.data.message,
+        life: 3000,
+      });
+    }
 
-  try {
-    const productResponse = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/member/list`, {
-      headers: {
-        token: `${localStorage.getItem("token")}`,
-      },
-    });
-    const product = productResponse.data.data;
-    this.item_product = product.reverse();
-  } catch (error) {
-    this.$store.commit("setLoading", false);
-    this.$toast.add({
-      severity: "error",
-      summary: "ผิดพลาด",
-      detail: error.response.data.message,
-      life: 3000,
-    });
-  }
+    try {
+      const productResponse = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/member/list`, {
+        headers: {
+          token: `${localStorage.getItem("token")}`,
+        },
+      });
+      const product = productResponse.data.data;
+      this.item_product = product.reverse();
 
-  this.$store.commit("setLoading", false);
-},
+      // Initialize filteredProducts with all products initially
+      this.filteredProducts = this.item_product;
+    } catch (error) {
+      // Handle error
+      this.$store.commit("setLoading", false);
+      this.$toast.add({
+        severity: "error",
+        summary: "ผิดพลาด",
+        detail: error.response.data.message,
+        life: 3000,
+      });
+    }
+
+
+    this.$store.commit("setLoading", false);
+  },
 
 
   methods: {
 
-   
+
 
     getCategoryName(categoryId) {
       const foundCategory = this.category.find(cat => cat._id === categoryId);
@@ -180,10 +188,10 @@ export default {
     },
 
     chooseProduct(item) {
-  this.productMember = item; // เก็บข้อมูลสินค้าที่เลือกไว้ในตัวแปร productMember
-  this.imgSrc = this.getImage(item.picture); // กำหนดรูปภาพของสินค้าในตัวแปร imgSrc
-  this.DialogChooseProduct = true; // แสดง DialogChooseProduct
-},
+      this.productMember = item; // เก็บข้อมูลสินค้าที่เลือกไว้ในตัวแปร productMember
+      this.imgSrc = this.getImage(item.picture); // กำหนดรูปภาพของสินค้าในตัวแปร imgSrc
+      this.DialogChooseProduct = true; // แสดง DialogChooseProduct
+    },
 
     async addCart() {
       this.$store.commit("setLoading", false);
@@ -243,37 +251,58 @@ export default {
       }
       return text;
     },
+
     async searchDataAutomatically() {
-      try {
-        const response = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/member/list`, {
-          headers: {
-            token: `${localStorage.getItem("token")}`,
-          },
-          params: {
-            query: this.search,
-          },
-        });
-        const searchLower = this.search.toLowerCase(); // แปลงค่าที่ใส่เข้ามาใน search เป็นตัวพิมพ์เล็กทั้งหมด
-        this.item_product = response.data.data.filter(product => {
-          const productNameLower = product.name.toLowerCase(); // แปลงชื่อสินค้าให้เป็นตัวพิมพ์เล็กทั้งหมด
-          return productNameLower.includes(searchLower) || productNameLower.includes(this.search);
-        });
-      } catch (error) {
-        this.$toast.add({
-          severity: "error",
-          summary: "ผิดพลาด",
-          detail: error.response.data.message,
-          life: 3000,
-        });
-      }
+  try {
+    console.log("Selected Category:", this.selectedCategory); // เพิ่มบรรทัดนี้
+    
+    const response = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/member/list`, {
+      headers: {
+        token: `${localStorage.getItem("token")}`,
+      },
+      params: {
+        query: this.search,
+        category: this.selectedCategory || undefined, // Include category only if it's selected
+      },
+    });
+
+    console.log("API Response:", response.data); // เพิ่มบรรทัดนี้
+
+    const searchLower = this.search.toLowerCase();
+    this.filteredProducts = response.data.data.filter(product => {
+      const productNameLower = product.name.toLowerCase();
+      const categoryMatch = !this.selectedCategory || product.category === this.selectedCategory;
+      return (
+        (productNameLower.includes(searchLower) || productNameLower.includes(this.search)) &&
+        categoryMatch
+      );
+    });
+
+    // ตรวจสอบค่าของ filteredProducts ใน console
+    console.log("Filtered Products:", this.filteredProducts);
+  } catch (error) {
+    this.$toast.add({
+      severity: "error",
+      summary: "ผิดพลาด",
+      detail: error.response.data.message,
+      life: 3000,
+    });
+  }
+
+},
+
+resetDropdown() {
+      this.selectedCategory = null; 
+      this.searchDataAutomatically(); 
     },
 
 
-  
+
+
   },
 
 
-  
+
 };
 </script>
 
@@ -352,11 +381,13 @@ export default {
   margin-left: auto;
   margin-right: auto;
 }
-.size-img-product{
+
+.size-img-product {
   width: 100%;
   height: 180px;
 }
-.img-product{
+
+.img-product {
   width: 80%;
   height: 80%;
   object-fit: contain;
@@ -391,13 +422,15 @@ export default {
     margin-left: auto;
     margin-right: auto;
   }
-  .size-img-product{
-  width: 100%;
-  height: 150px;
-}
-.img-modal-product-preview {
-  width: 100%;
-}
+
+  .size-img-product {
+    width: 100%;
+    height: 150px;
+  }
+
+  .img-modal-product-preview {
+    width: 100%;
+  }
 }
 
 @media only screen and (max-width: 380px) {
