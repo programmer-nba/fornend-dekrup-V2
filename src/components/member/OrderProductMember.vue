@@ -67,14 +67,14 @@
           </Column>
         </DataTable>
 
-        <Button label="ยืนยันการสั่งออเดอร์" icon="pi pi-external-link" @click="visible = true" style="width: -webkit-fill-available;" />
+        <Button label="กดเพื่อชำระเงิน" icon="pi pi-external-link" @click="visible = true" style="width: -webkit-fill-available;" />
         <Dialog v-model:visible="visible"  header="ยอดเงินที่ต้องชำระ">
             <div class="flex justify-content-center">
               <label style="font-size: 35px;text-align: center; text-align: center;">{{ $store.getters.order_total }} บาท</label>
             </div>
             <template #footer>
                 <Button label="ปิด" icon="pi pi-times" @click="visible = false" text />
-                <Button label="กดเพื่อแนบสลิปชำระเงิน" @click="confirm()"  icon="pi pi-check" autofocus  />
+                <Button label="ยืนยันการสั่งออเดอร์" @click="confirm()"  icon="pi pi-check" autofocus  />
             </template>
         </Dialog>
       </div>
@@ -242,10 +242,6 @@ export default {
       }
     },
 
-    getCategoryName(categoryId) {
-    const foundCategory = this.category.find(cat => cat._id === categoryId);
-    return foundCategory ? foundCategory.name : '';
-  },
 
     async moneySlip(){
       this.DialogPayment = false;

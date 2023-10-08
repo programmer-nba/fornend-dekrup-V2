@@ -14,6 +14,7 @@
       :rowsPerPageOptions="[5, 10, 25]" currentPageReportTemplate=" แสดง {first} ถึง {last} ของ {totalRecords} รายการ"
       responsiveLayout="scroll">
       <template #empty>ไม่มีข้อมูล</template>
+      <Column field="member_number" header="ไอดีผู้ใช้งาน"></Column>
       <Column field="name" header="ชื่อผู้ใช้งาน"></Column>
       <Column field="username" header="ชื่อผู้ใช้งานระบบ"></Column>
       <Column field="member_date_start" header="วันที่เริ่มระบบ">
@@ -160,24 +161,22 @@ export default {
     },
 
     async searchDataAutomatically() {
-      try {
-        const response = await axios.get(`${process.env.VUE_APP_DEKRUP}/member`, {
-          headers: {
-            token: `${localStorage.getItem("token")}`,
-          },
-          params: {
-            query: this.search,
-          },
-        });
-        this.member = response.data.data.filter(member => member.name.includes(this.search));
-      } catch (error) {
-        this.$toast.add({
-          severity: "error",
-          summary: "ผิดพลาด",
-          detail: error.response.data.message,
-          life: 3000,
-        });
-      }
+      if (this.search !== "") {
+    this.member = this.members.filter((el) => {
+      // ตรวจสอบค่าที่ไม่ใช่ string
+      const memberName = el.name || '';
+      const memberUsername = el.member_username || '';
+      const memberNumber = el.member_number || '';
+      
+      return (
+        memberName.toString().toLowerCase().includes(this.search.toLowerCase()) ||
+        memberUsername.toString().toLowerCase().includes(this.search.toLowerCase()) ||
+        memberNumber.toString().toLowerCase().includes(this.search.toLowerCase())
+      );
+    });
+  } else {
+    this.member = this.members;
+  }
     },
 
     async getdata() {
@@ -237,7 +236,8 @@ export default {
       try {
         await axios.put(
           `${process.env.VUE_APP_DEKRUP}/member${this.member_id}`,
-          {
+          { 
+            
             member_name: this.member_detail.member_name,
             member_username: this.member_detail.member_username,
             member_date_start: this.member_detail.member_date_start,

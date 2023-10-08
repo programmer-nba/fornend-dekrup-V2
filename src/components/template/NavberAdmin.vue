@@ -151,9 +151,19 @@ export default {
 </script>
 
 <style>
+
 .p-menubar .p-submenu-list {
     display: none;
     position: absolute;
     z-index: 150;
+    width: 270px;
 }
+@media only screen and (max-width:976px) {
+    .p-menubar .p-submenu-list {
+    display: none;
+    position: absolute;
+    z-index: 150;
+}
+}
+
 </style>

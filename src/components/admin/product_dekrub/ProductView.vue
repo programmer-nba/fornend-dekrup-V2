@@ -106,23 +106,26 @@ export default {
     const showImageModal = ref(false);
 
     const searchDataAutomatically = async () => {
-  try {
-    const response = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/list`, {
-      headers: {
-        token: localStorage.getItem("token"),
-      },
-      params: {
-        query: search.value, // ค้นหาด้วยชื่อสินค้า
-        code: search.value, // ค้นหารหัสสินค้าด้วยค่าเดียวกัน
-      },
-    });
-    item_product.value = response.data.data.filter(product => 
-      product.name.includes(search.value) || product.code.includes(search.value)
-    );
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  }
-};
+    try {
+      const response = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/list`, {
+        headers: {
+          token: localStorage.getItem("token"),
+        },
+        params: {
+          query: search.value.toLowerCase(), // แปลงค่า search เป็นตัวพิมพ์เล็กทั้งหมดก่อนที่จะใช้ในการค้นหา
+          code: search.value.toLowerCase(), // แปลงค่า search เป็นตัวพิมพ์เล็กทั้งหมดก่อนที่จะใช้ในการค้นหา
+        },
+      });
+      const searchTermLower = search.value.toLowerCase(); // แปลงค่า search เป็นตัวพิมพ์เล็กทั้งหมด
+      item_product.value = response.data.data.filter(product => 
+        product.name.toLowerCase().includes(searchTermLower) || 
+        product.code.toLowerCase().includes(searchTermLower)
+      );
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
 
 
     const getData = async () => {
@@ -286,12 +289,10 @@ export default {
   align-items: center;
   justify-content: space-between;
 
-  @media screen and (max-width: 960px) {
-    align-items: start;
-  }
+ 
 }
-
-.product-image {
+ @media screen and (max-width: 960px) {
+   .product-image {
   width: 100px;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 }
@@ -301,4 +302,6 @@ export default {
   align-items: center;
   justify-content: center;
 }
+  }
+
 </style>
