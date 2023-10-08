@@ -19,7 +19,7 @@
       <Column field="username" header="ชื่อผู้ใช้งานระบบ"></Column>
       <Column field="member_date_start" header="วันที่เริ่มระบบ">
         <template #body="Props">
-          {{ dateformat(Props.data.member_date_start) }}
+          {{ datetimeFormat(Props.data.timestamp) }}
         </template>
       </Column>
       <!-- <Column :exportable="false" style="min-width: 8rem">
@@ -286,6 +286,11 @@ export default {
           }
         });
     },
+    
+    datetimeFormat(date){
+            return dayjs(date).format("DD/MM/YYYY เวลา HH:mm:ss");
+        },
+
     resetPassword() {
       this.$confirm.require({
         message: "ต้องการรีเซตรหัสผ่าน",

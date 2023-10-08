@@ -30,7 +30,7 @@
 
       <Column field="member_date_start" header="วันที่เริ่มระบบ">
         <template #body="Props">
-          {{ dateformat(Props.data.member_date_start) }}
+          {{ datetimeFormat(Props.data.timestamp) }}
         </template>
       </Column>
       <Column header="ตัวเลือก" style="width: 15%">
@@ -260,7 +260,10 @@ export default {
         return "";
       }
     },
-
+    
+    datetimeFormat(date){
+            return dayjs(date).format("DD/MM/YYYY เวลา HH:mm:ss");
+        },
     openImageModal(imageUrl) {
       this.selectedImage = imageUrl;
     },

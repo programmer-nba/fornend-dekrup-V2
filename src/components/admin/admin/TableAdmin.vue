@@ -18,7 +18,7 @@
       <Column field="username" header="ชื่อผู้ใช้งานระบบ"></Column>
       <Column field="admin_date_start" header="วันที่เริ่มระบบ">
         <template #body="Props">
-          {{ dateformat(Props.data.admin_date_start) }}
+          {{ datetimeFormat(Props.data.timestamp) }}
         </template>
       </Column>
       <Column :exportable="false" style="min-width: 8rem">
@@ -26,7 +26,6 @@
           <Button icon="pi pi-trash" class="p-button-outlined p-button-danger" @click="del(Props.data)" />
         </template>
       </Column>
-
     </DataTable>
 
 
@@ -158,6 +157,10 @@ export default {
             window.location.reload();
           }
         });
+    },
+
+    datetimeFormat(date) {
+      return dayjs(date).format("DD/MM/YYYY เวลา HH:mm:ss");
     },
   }
 };
