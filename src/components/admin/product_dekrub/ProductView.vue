@@ -76,15 +76,7 @@
       </div>
     </div>
 
-    <Dialog v-model:visible="showImageModal" header="รูปภาพเต็ม" :modal="true" :baseZIndex="10000" @hide="showImageModal = false" >
-      <div class="p-fluid">
-        <img :src="selectedImage" alt="รูปภาพ" style="width: 450px;" />
-      </div>
-      <div class="flex justify-content-center">
-        <Button label="ปิด" icon="pi pi-times" class="justify-content-center p-button-danger mr-2"
-          @click="showImageModal = false" />
-      </div>
-    </Dialog>
+
 
   </div>
 </template>
@@ -103,7 +95,6 @@ export default {
     const selectedProduct = ref(null);
     const displayDialog = ref(false);
     const selectedImage = ref("");
-    const showImageModal = ref(false);
 
     const searchDataAutomatically = async () => {
     try {
@@ -230,7 +221,6 @@ export default {
       displayDialog,
       searchDataAutomatically,
       selectedImage,
-      showImageModal,
     };
   },
 };
