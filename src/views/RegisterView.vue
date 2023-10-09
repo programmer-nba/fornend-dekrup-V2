@@ -43,7 +43,7 @@
                         <span class="p-inputgroup-addon">
                             <i class="pi pi-key"></i>
                         </span>
-                        <Password v-model="member.password" :feedback="false"    placeholder="รหัสผ่าน"/>
+                        <Password v-model="member.password" :feedback="false" placeholder="รหัสผ่าน" />
                     </div>
                 </div>
                 <div class="sm:col-6 col-12">
@@ -51,7 +51,7 @@
                         <span class="p-inputgroup-addon">
                             <i class="pi pi-key"></i>
                         </span>
-                        <Password v-model="member.confirm_password" :feedback="false"   placeholder="ยืนยันรหัสผ่าน"/>
+                        <Password v-model="member.confirm_password" :feedback="false" placeholder="ยืนยันรหัสผ่าน" />
 
                     </div>
                 </div>
@@ -69,8 +69,8 @@
                             <i class="pi pi-map-marker"></i>
                         </span>
                         <div class="card flex justify-content-center" style="width: -webkit-fill-available">
-                            <Dropdown v-model="province"  inputClass="font"
-                                :options="item_province" placeholder="เลือกจังหวัด" optionLabel="name_th" :filter="true"
+                            <Dropdown v-model="province" inputClass="font" :options="item_province"
+                                placeholder="เลือกจังหวัด" optionLabel="name_th" :filter="true"
                                 filterPlaceholder="ค้นหาจังหวัด" @change="chooseProvince" />
                         </div>
                     </div>
@@ -80,9 +80,9 @@
                         <span class="p-inputgroup-addon">
                             <i class="pi pi-map-marker"></i>
                         </span>
-                        <div class="card flex justify-content-center"  style="width: -webkit-fill-available">
-                            <Dropdown v-model="amphure"  inputClass="font"
-                                :options="item_amphure" placeholder="เลือกเขต/จังหวัด" optionLabel="name_th" :filter="true"
+                        <div class="card flex justify-content-center" style="width: -webkit-fill-available">
+                            <Dropdown v-model="amphure" inputClass="font" :options="item_amphure"
+                                placeholder="เลือกเขต/จังหวัด" optionLabel="name_th" :filter="true"
                                 filterPlaceholder="ค้นหาเขต/อำเภอ" @change="chooseAmphure" />
                         </div>
                     </div>
@@ -93,9 +93,9 @@
                             <i class="pi pi-map-marker"></i>
                         </span>
                         <div class="card flex justify-content-center" style="width: -webkit-fill-available">
-                            <Dropdown v-model="tambon"  inputClass="font"
-                                :options="item_tambon" placeholder="เลือกตำบล" @change="chooseToDistrict"
-                                optionLabel="name_th" :filter="true" filterPlaceholder="ค้นหาแขวง/ตำบล" />
+                            <Dropdown v-model="tambon" inputClass="font" :options="item_tambon" placeholder="เลือกตำบล"
+                                @change="chooseToDistrict" optionLabel="name_th" :filter="true"
+                                filterPlaceholder="ค้นหาแขวง/ตำบล" />
                         </div>
                     </div>
                 </div>
@@ -104,9 +104,9 @@
                         <span class="p-inputgroup-addon">
                             <i class="pi pi-map-marker"></i>
                         </span>
-                        <div class="card flex justify-content-center"  style="width: -webkit-fill-available">
-                            <InputText v-model="postcode"  :disabled="isDisabled"
-                                placeholder="รหัสไปรษณ์" />
+                        <div class="card flex justify-content-center" style="width: -webkit-fill-available">
+                            <InputText v-model="member.postcode" placeholder="รหัสไปรษณ์" class="style-font"
+                                :disabled="isDisabled" />
                         </div>
                     </div>
                 </div>
@@ -161,7 +161,7 @@ export default {
     setup() {
         const members = new Member();
         const toast = useToast();
-        return { members ,toast }
+        return { members, toast }
     },
     data: () => ({
         isLoading: false,
@@ -174,7 +174,6 @@ export default {
         province: null,
         amphure: null,
         tambon: null,
-        postcode: '',
 
         member: {
             member_ref: '',
@@ -211,7 +210,7 @@ export default {
             this.province = null;
             this.district = null;
             this.subdistrict = null;
-            this.postcode = '';
+            this.postcode = null;
             this.item_subdistrict = [];
             this.item_district = [];
         },
@@ -242,7 +241,7 @@ export default {
         },
         chooseToDistrict(evt) {
             this.district = evt.value;
-            this.postcode = evt.value.zip_code;
+            this.member.postcode = evt.value.zip_code;
         },
         async checkPlatform() {
             await axios.get(`${process.env.VUE_APP_PLATFORM}public/member/check/${this.tel_platform}`, {
@@ -266,9 +265,10 @@ export default {
                 this.member.tel === '' ||
                 this.province === null ||
                 this.amphure === null ||
-                this.tambon === null 
+                this.tambon === null ||
+                this.member.postcode === null
             ) {
-                this.toast.warning( "กรุณากรอกข้อมูลทั่วไปให้ครบถ้วน");
+                this.toast.warning("กรุณากรอกข้อมูลทั่วไปให้ครบถ้วน");
                 return false;
             }
             if (this.member.password.length < 8) {
@@ -294,10 +294,10 @@ export default {
                 subdistrict: this.tambon.name_th,
                 district: this.amphure.name_th,
                 province: this.province.name_th,
+                postcode: this.member.postcode
             }
             console.log(data);
             await this.members.RegisterMember(data).then(async (result) => {
-
                 if (result) {
                     console.log(result);
                     this.loading = false;
@@ -370,6 +370,7 @@ export default {
     padding: 0.75rem 0.75rem;
     min-width: 3rem;
 }
+
 @media only screen and (max-width: 1850px) {
     .background-login {
         width: 42%;
@@ -377,6 +378,7 @@ export default {
 
 
 }
+
 @media only screen and (max-width: 1750px) {
     .background-login {
         width: 45%;
@@ -384,6 +386,7 @@ export default {
 
 
 }
+
 @media only screen and (max-width: 1580px) {
     .background-login {
         width: 50%;
@@ -391,6 +394,7 @@ export default {
 
 
 }
+
 @media only screen and (max-width: 1350px) {
     .background-login {
         margin-left: auto;
@@ -399,6 +403,7 @@ export default {
         background: #ffffffde;
     }
 }
+
 @media only screen and (max-width: 1140px) {
     .background-login {
         width: 70%;
@@ -421,5 +426,4 @@ export default {
         width: 80%;
         margin-top: 5%;
     }
-}
-</style>
+}</style>
