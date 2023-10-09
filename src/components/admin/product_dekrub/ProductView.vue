@@ -40,7 +40,7 @@
 
           <Column header="รูป" style="width: 10%">
             <template #body="item">
-              <img :src="getImage(item.data.picture)"  @click="openImageModal(getImage(item.data.picture))" class="product-image" />
+              <Image :src="getImage(item.data.picture)"  class="product-image" width="80" preview/>
             </template>
           </Column>
           <Column field="code" header="รหัสสินค้า" style="width: 10%"></Column>
@@ -76,15 +76,7 @@
       </div>
     </div>
 
-    <Dialog v-model:visible="showImageModal" header="รูปภาพเต็ม" :modal="true" :baseZIndex="10000" @hide="showImageModal = false" >
-      <div class="p-fluid">
-        <img :src="selectedImage" alt="รูปภาพ" style="width: 450px;" />
-      </div>
-      <div class="flex justify-content-center">
-        <Button label="ปิด" icon="pi pi-times" class="justify-content-center p-button-danger mr-2"
-          @click="showImageModal = false" />
-      </div>
-    </Dialog>
+
 
   </div>
 </template>
@@ -103,7 +95,6 @@ export default {
     const selectedProduct = ref(null);
     const displayDialog = ref(false);
     const selectedImage = ref("");
-    const showImageModal = ref(false);
 
     const searchDataAutomatically = async () => {
     try {
@@ -209,16 +200,8 @@ export default {
       });
     };
 
-    const openImageModal = (imageUrl) => {
-      selectedImage.value = imageUrl;
-      showImageModal.value = true;
-    };
 
-    const closeImageModal = () => {
-      showImageModal.value = false;
-      selectedImage.value = "";
-    };
-
+ 
     onMounted(() => {
       getData();
     });
@@ -237,10 +220,7 @@ export default {
       selectedProduct,
       displayDialog,
       searchDataAutomatically,
-      openImageModal,
-      closeImageModal,
       selectedImage,
-      showImageModal,
     };
   },
 };
@@ -253,10 +233,6 @@ export default {
 
 
 <style scoped>
-.product-image {
-  width: 100px;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-}
 
 .loading {
   display: flex;
