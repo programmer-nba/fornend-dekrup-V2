@@ -40,7 +40,7 @@
 
           <Column header="รูป" style="width: 10%">
             <template #body="item">
-              <img :src="getImage(item.data.picture)"  @click="openImageModal(getImage(item.data.picture))" class="product-image" />
+              <Image :src="getImage(item.data.picture)"  class="product-image" width="80" preview/>
             </template>
           </Column>
           <Column field="code" header="รหัสสินค้า" style="width: 10%"></Column>
@@ -209,16 +209,8 @@ export default {
       });
     };
 
-    const openImageModal = (imageUrl) => {
-      selectedImage.value = imageUrl;
-      showImageModal.value = true;
-    };
 
-    const closeImageModal = () => {
-      showImageModal.value = false;
-      selectedImage.value = "";
-    };
-
+ 
     onMounted(() => {
       getData();
     });
@@ -237,8 +229,6 @@ export default {
       selectedProduct,
       displayDialog,
       searchDataAutomatically,
-      openImageModal,
-      closeImageModal,
       selectedImage,
       showImageModal,
     };
@@ -253,10 +243,6 @@ export default {
 
 
 <style scoped>
-.product-image {
-  width: 100px;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-}
 
 .loading {
   display: flex;
