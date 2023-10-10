@@ -12,7 +12,8 @@
             <div class="col-12">
                 <Message><strong>เวลาทำการ : </strong> เวลาทำการตรวจสอบ ทุกวัน เวลา 9.00 น. ถึง 18.00 น.
                     หากนอกเวลาทำการจะทำการตรวจสอบในเวลาทำการของวันถัดไป</Message>
-                <Message><strong>หมายเหตุ : </strong> หากท่านทำการส่งข้อมูลแจ้งชำระเงินเรียบร้อยแล้ว กรุณารอการยืนยันจากเจ้าหน้าที่ 10-15 นาที เพื่อทำการเข้าสู่ระบบ</Message>
+                <Message><strong>หมายเหตุ : </strong> หากท่านทำการส่งข้อมูลแจ้งชำระเงินเรียบร้อยแล้ว
+                    กรุณารอการยืนยันจากเจ้าหน้าที่ 10-15 นาที เพื่อทำการเข้าสู่ระบบ</Message>
             </div>
         </div>
         <div class="grid">
@@ -28,6 +29,9 @@
                                                 class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
                                                 <div class="flex flex-column align-items-center sm:align-items-start gap-3">
                                                     <div class="text-2xl font-bold text-900">
+                                                        <Image :src="`https://drive.google.com/uc?export=view&id=` + slotProps.data.picture" width="250" />
+                                                    </div>
+                                                    <div class="text-2xl font-bold text-900">
                                                         {{ slotProps.data.name }}
                                                     </div>
                                                     <div class="text-1xl font-bold text-500">
@@ -38,7 +42,7 @@
                                                     class="flex sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2">
                                                     <span class="text-2xl font-semibold">${{ slotProps.data.price }}</span>
                                                     <Button icon="pi pi-shopping-cart"
-                                                        @click="addprice(slotProps.data.price)"></Button>
+                                                        @click="addprice(slotProps.data)"></Button>
                                                 </div>
                                             </div>
                                         </div>
@@ -92,12 +96,13 @@
                             <span class="p-float-label">
                                 <div>เลือกบัญชีธนาคารธนาคาร</div>
                                 <div class="card flex justify-content-start">
-                                    <Dropdown v-model="selectedCity" :options="cities" optionLabel="name" placeholder="เลือกบัญชีธนาคาร" class="w-full md:w-14rem" />
+                                    <Dropdown v-model="selectedCity" :options="cities" optionLabel="name"
+                                        placeholder="เลือกบัญชีธนาคาร" class="w-full md:w-14rem" />
                                 </div>
                                 <div>กรอกเลขบัญชี</div>
-                                <InputText  inputClass="font" class="w-full" placeholder="กรอกเลขบัญชี"  />
+                                <InputText inputClass="font" class="w-full" placeholder="กรอกเลขบัญชี" />
                                 <div>กรอกเลขบัตรประชาชน 13 หลัก</div>
-                                <InputText  inputClass="font" class="w-full" placeholder="กรอกเลขบัตรประชาชน"  />
+                                <InputText inputClass="font" class="w-full" placeholder="กรอกเลขบัตรประชาชน" />
                             </span>
                         </div>
                     </div>
@@ -180,81 +185,98 @@ export default {
     data: () => ({
         member_number: '',
         amount: 0,
+        product_id: '',
         slip_img: null,
         img_preview: null,
         checked: false,
         item_product: [],
         selectedCity: null,
-            cities: [
+        cities: [
             { name: 'กสิกรไทย' },
-                { name: 'ไทยพาณิชย์' },
-                { name: 'กรุงศรีอยุธยา' },
-                { name: 'กรุงเทพ' },
-                { name: 'กรุงไทย' },
-                { name: 'เกียรตินาคินภัทร' },
-                { name: 'ทิสโก้' },
-                { name: 'ทหารไทยธนชาต' },
-                { name: 'ยูโอบี' },
-                { name: 'ไอซีบีซี (ไทย)' },
-                { name: 'ซีไอเอ็มบี ไทย' },
-            ],
+            { name: 'ไทยพาณิชย์' },
+            { name: 'กรุงศรีอยุธยา' },
+            { name: 'กรุงเทพ' },
+            { name: 'กรุงไทย' },
+            { name: 'เกียรตินาคินภัทร' },
+            { name: 'ทิสโก้' },
+            { name: 'ทหารไทยธนชาต' },
+            { name: 'ยูโอบี' },
+            { name: 'ไอซีบีซี (ไทย)' },
+            { name: 'ซีไอเอ็มบี ไทย' },
+        ],
     }),
     methods: {
         clearImage() {
             this.img_preview = null;
             this.slip_img = null;
         },
+
+        getImage(item) {
+            if (Array.isArray(item) && item.length > 0) {
+                const firstImageId = item[0];
+                return `https://drive.google.com/uc?export=view&id=${firstImageId}`;
+            } else {
+                return "";
+            }
+        },
+
         chooseImage(event) {
             this.slip_img = event.files[0];
             this.img_preview = event.files[0].objectURL;
         },
 
         async addprice(item) {
-            this.amount = item;
+            this.product_id = item._id;
+            this.amount = item.price;
         },
 
         async clearprice() {
             this.amount = 0;
+            this.product_id = '';
         },
 
-                async confirm() {
-        this.loading = true;
+        async confirm() {
+            this.loading = true;
 
-        if (!this.slip_img) {
-            // ถ้ายังไม่มีรูปภาพแนบ
-            Swal.fire('แจ้งเตือน', 'กรุณาแนบรูปภาพหลักฐานการโอน', 'warning');
-            this.loading = false;
-            return;
-        }
-
-        const data = {
-            member_number: this.$store.getters.member_number,
-            name: this.$store.getters.name,
-            amount: this.amount,
-        };
-
-        const formData = new FormData();
-        formData.append('member_number', this.$store.getters.member_number);
-        formData.append('name', this.$store.getters.name);
-        formData.append('amount', this.amount);
-        formData.append('imgCollection', this.slip_img);
-
-        await this.members.orderNewMember(formData).then(async (result) => {
-            if (result) {
-            console.log(result);
-            this.loading = false;
-            this.$store.commit('setLoginDefault');
-
-            Swal.fire({
-                title: 'แจ้งชำระเงินเรียบร้อย',
-                text:
-                'รอการตรวจสอบจากส่วนกลางในวันเวลาทำการภายใน 10-15 นาที',
-                showConfirmButton: true,
-            }).then(() => {
-                window.location.reload('/');
-            });
+            if (!this.slip_img) {
+                // ถ้ายังไม่มีรูปภาพแนบ
+                Swal.fire('แจ้งเตือน', 'กรุณาแนบรูปภาพหลักฐานการโอน', 'warning');
+                this.loading = false;
+                return;
             }
-        });
+
+            const data = {
+                member_number: this.$store.getters.member_number,
+                name: this.$store.getters.name,
+                amount: this.amount,
+                product_id: this.product_id,
+            };
+
+            console.log(data);
+
+            const formData = new FormData();
+            formData.append('member_number', this.$store.getters.member_number);
+            formData.append('name', this.$store.getters.name);
+            formData.append('amount', this.amount);
+            formData.append('imgCollection', this.slip_img);
+            formData.append('product_id', this.product_id);
+
+            await this.members.orderNewMember(formData).then(async (result) => {
+                if (result) {
+                    console.log(result);
+                    this.loading = false;
+                    this.$store.commit('setLoginDefault');
+
+                    Swal.fire({
+                        title: 'แจ้งชำระเงินเรียบร้อย',
+                        text:
+                            'รอการตรวจสอบจากส่วนกลางในวันเวลาทำการภายใน 10-15 นาที',
+                        showConfirmButton: true,
+                    }).then(() => {
+                        window.location.reload('/');
+                    });
+                }
+            });
         },
 
 

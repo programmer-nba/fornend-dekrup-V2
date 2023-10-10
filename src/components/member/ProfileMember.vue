@@ -12,15 +12,24 @@
                     <p><strong>รหัสสมาชิก : </strong>{{ member_number }}</p>
                     <p><strong>ชื่อ-นามสกุล :</strong> {{ name }}</p>
                     <p><strong>เบอร์โทร : </strong>{{ tel }}</p>
-                    <p><strong>ที่อยู่ : </strong>{{ address }} {{ subdistrict }} {{ district }} {{ province }} {{ postcode }}</p>
+                    <p><strong>ที่อยู่ : </strong>{{ address }} {{ subdistrict }} {{ district }} {{ province }} {{ postcode
+                    }}</p>
                     <p><strong>รายได้ค่าคอมมิชชั่น : </strong>{{ commission_day }}</p>
                     <p><strong>รายได้ค่าบริหาร : </strong>{{ commission_week }}</p>
                     <p><strong>สถานะผู้ใช้ : </strong>{{ position }}</p>
-                  
-                 
-                    
-                    
-                    
+                </Panel>
+            </div>
+            <div class="col-12 lg:col-6">
+                <Panel header="สมุดบัญชีธนาคาร" class="custom-header-panel font-profile">
+
+                </Panel>
+            </div>
+            <div class="col-12 lg:col-6">
+                <Panel header="บัตรประชาชน" class="custom-header-panel font-profile">
+                    <div class="col-12">
+                        <Message><strong>เวลาทำการ : </strong> เวลาทำการตรวจสอบ ทุกวัน เวลา 9.00 น. ถึง 18.00 น.
+                            หากนอกเวลาทำการจะทำการตรวจสอบในเวลาทำการของวันถัดไป</Message>
+                    </div>
                 </Panel>
             </div>
             <div class="col-12 lg:col-6">
@@ -78,7 +87,7 @@ export default ({
                 const decode = await jwtDecode(localStorage.getItem("token"));
                 const data_login = {
                     logedIn: true,
-                    username:res.data.data.username,
+                    username: res.data.data.username,
                     name: res.data.data.name,
                     member_number: res.data.data.member_number,
                     tel: res.data.data.tel,
@@ -119,17 +128,17 @@ export default ({
 
     data: () => ({
         name: '',
-        username:'',
-        member_number:'',
-        tel:'',
-        address:'',
-        subdistrict:'',
-        district:'',
-        province:'',
-        postcode:'',
-        commission_day:'',
-        commission_week:'',
-        position:'',
+        username: '',
+        member_number: '',
+        tel: '',
+        address: '',
+        subdistrict: '',
+        district: '',
+        province: '',
+        postcode: '',
+        commission_day: '',
+        commission_week: '',
+        position: '',
 
         password: null,
         confirm_password: null,
@@ -182,10 +191,11 @@ export default ({
     border: none;
 }
 
-.font-profile{
-    -webkit-text-stroke: 1px;color: rgb(95, 93, 93);
+.font-profile {
+    -webkit-text-stroke: 1px;
+    color: rgb(95, 93, 93);
 }
+
 /* .custom-header-panel .p-panel-content {
     color: #FE0000;
-} */
-</style>
+} */</style>

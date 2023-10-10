@@ -99,6 +99,16 @@ export default {
                             icon: 'pi pi-user',
                             to: "/admin/member",
                         },
+                        {
+                            label: "สมุดบัญชี",
+                            icon: 'pi pi-user',
+                            to: "/admin/member/bank",
+                        },
+                        {
+                            label: "บัตรประชาชน",
+                            icon: 'pi pi-user',
+                            to: "/admin/member/iden",
+                        },
                         // {
                         //     label: "เพิ่มผู้ใช้งานระบบ",
                         //     icon: 'pi pi-plus',
