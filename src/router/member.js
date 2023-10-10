@@ -31,6 +31,16 @@ routes = [
     path: "/member/dashboard",
     name: "dashboard",
     component: () => import("../components/member/dashboard/ContractDocument.vue"),
+  },
+  {
+    path: "/member/condition",
+    name: "condition",
+    component: () => import("../components/member/dashboard/Condition.vue"),
+  },
+  {
+    path: "/member/confirmBank",
+    name: "confirmBank",
+    component: () => import("../components/member/dashboard/ConfirmIdBank.vue"),
   }
   
 ];

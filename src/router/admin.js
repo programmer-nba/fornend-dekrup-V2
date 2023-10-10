@@ -68,7 +68,12 @@ routes = [
   {
     path: "/admin/commission/register",
     name: "admin-commission-register",
-    component: () => import("../components/admin/commission/CommissionRegister.vue"),
+    component: () => import("../components/admin/commission/CommissionRegisterDay.vue"),
+  },
+  {
+    path: "/admin/commission/register/week",
+    name: "admin-commission-register-week",
+    component: () => import("../components/admin/commission/CommissionRegisterWeek.vue"),
   },
   {
     path: "/admin/commission/administer",

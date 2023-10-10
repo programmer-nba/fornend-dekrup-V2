@@ -85,30 +85,8 @@
                         </div>
                     </div>
                 </Panel>
-                <Panel class="mt-3" header="STEP 2 : กรอกข้อมูลเลขบัญชีธนาคาร และ รหัส 13 ตัวบัตรประชาชน">
-                    <div class="grid">
-                        <div class="col-12">
-                            <!-- <Image :src="require('@/assets/img/scb_bank.jpg')" :preview="true" imageClass="w-full" /> -->
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="field">
-                            <span class="p-float-label">
-                                <div>เลือกบัญชีธนาคารธนาคาร</div>
-                                <div class="card flex justify-content-start">
-                                    <Dropdown v-model="selectedCity" :options="cities" optionLabel="name"
-                                        placeholder="เลือกบัญชีธนาคาร" class="w-full md:w-14rem" />
-                                </div>
-                                <div>กรอกเลขบัญชี</div>
-                                <InputText inputClass="font" class="w-full" placeholder="กรอกเลขบัญชี" />
-                                <div>กรอกเลขบัตรประชาชน 13 หลัก</div>
-                                <InputText inputClass="font" class="w-full" placeholder="กรอกเลขบัตรประชาชน" />
-                            </span>
-                        </div>
-                    </div>
-                </Panel>
-
             </div>
+            
             <div class="col-12 lg:col-3">
                 <Panel header="STEP 3 : รูปภาพหลักฐานการโอน">
                     <div class="grid" v-if="img_preview !== null">
@@ -131,8 +109,13 @@
                 <Panel header="STEP 4 : แจ้งชำระเงิน">
                     <div class="grid">
                         <div class="col-12">
-                            <Checkbox v-model="checked" :binary="true" /> ยอมรับเงื่อนไขการและข้อความแจ้งเตือนข้างต้น
-                            <!-- <Button label="เงื่อนไขและข้อตกลง" class="p-button-text p-0 m-0" /> -->
+                            <Checkbox v-model="checked" :binary="true" /> ยอมรับ  <span><Button style="padding: 2px;" label="เงื่อนไขการใช้งานและข้อความแจ้งเตือนข้างต้น (คลิกเพื่ออ่าน)" link @click="visible = true" /></span>
+                            <Dialog v-model:visible="visible" modal header="เงื่อนไขการใช้งาน" :style="{ width: '50vw' }">
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                                    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                                </p>
+                            </Dialog>
                         </div>
                         <div class="col-12">
                             <Button label="ส่งข้อมูลแจ้งชำระเงิน" icon="pi pi-send" @click="confirm()" />
@@ -183,6 +166,8 @@ export default {
         document.title = "ชำระเงิน Package เริ่มต้น"
     },
     data: () => ({
+        visible: false,
+        
         member_number: '',
         amount: 0,
         product_id: '',
@@ -190,20 +175,7 @@ export default {
         img_preview: null,
         checked: false,
         item_product: [],
-        selectedCity: null,
-        cities: [
-            { name: 'กสิกรไทย' },
-            { name: 'ไทยพาณิชย์' },
-            { name: 'กรุงศรีอยุธยา' },
-            { name: 'กรุงเทพ' },
-            { name: 'กรุงไทย' },
-            { name: 'เกียรตินาคินภัทร' },
-            { name: 'ทิสโก้' },
-            { name: 'ทหารไทยธนชาต' },
-            { name: 'ยูโอบี' },
-            { name: 'ไอซีบีซี (ไทย)' },
-            { name: 'ซีไอเอ็มบี ไทย' },
-        ],
+       
     }),
     methods: {
         clearImage() {
@@ -224,7 +196,6 @@ export default {
             this.slip_img = event.files[0];
             this.img_preview = event.files[0].objectURL;
         },
-
         async addprice(item) {
             this.product_id = item._id;
             this.amount = item.price;
@@ -278,6 +249,7 @@ export default {
                 }
             });
         },
+
 
 
         async logout() {

@@ -51,25 +51,27 @@ export default {
           console.log(res);
           if (this.$store.getters.position === 'member') {
             if (res.data.data.status === false) {
-              this.$router.push("/member/dashboard");
+              // this.$router.push("/member/dashboard");
+              this.$router.push("/member/condition");
+              // this.$router.push("/member/confirmBank");
             } else {
               this.$router.push("/member/product");
             }
           }
           if (this.$store.getters.position === 'admin') {
-            this.$router.push("/admin");
-          }
-        })
-        .catch(() => {
+              this.$router.push("/admin");
+            }
+              })
+              .catch(() => {
+                localStorage.clear();
+                this.$store.commit('setLoading', false);
+                this.$store.commit("setDefaultLogin");
+                this.$router.push("/login");
+              });
+        } else {
           localStorage.clear();
-          this.$store.commit('setLoading', false);
-          this.$store.commit("setDefaultLogin");
           this.$router.push("/login");
-        });
-    } else {
-      localStorage.clear();
-      this.$router.push("/login");
+        }
+      },
     }
-  },
-}
 </script>

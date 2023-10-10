@@ -74,9 +74,14 @@ export default {
                     icon: 'pi pi-shopping-cart',
                     items: [
                         {
-                            label: "Commission Register",
+                            label: "Commission Register Day",
                             icon: 'pi pi-user',
                             to: "/admin/commission/register",
+                        },
+                        {
+                            label: "Commission Register Week",
+                            icon: 'pi pi-user',
+                            to: "/admin/commission/register/week",
                         },
                         {
                             label: "Commission Adminnister",

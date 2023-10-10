@@ -115,6 +115,29 @@ export class Member {
     return data;
   }
 
+
+  async confirmCondition(_id) {
+    let data;
+    const config = {
+      method: "post",
+      headers: {
+        token: this.#token,
+      },
+      url: `${this.#baseUrl}/condition/${_id}`,
+    };
+    await axios(config)
+      .then((result) => {
+        if (result) {
+          data = result.data;
+        }
+      })
+      .catch((error) => {
+        data = error;
+      });
+
+    return data;
+  }
+
   async ConfirmBank(packageId) {
     let data;
     const config = {
