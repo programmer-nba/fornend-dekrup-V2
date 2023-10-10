@@ -228,7 +228,7 @@ export default {
     for (let i = 0; i < files.length; i++) {
         const file = files[i];
         const fileSizeInBytes = file.size;
-        const maxSizeInBytes = 900000; // 900 KB
+        const maxSizeInBytes = 1000000; // 1 MB
         const allowedFileTypes = ['image/jpeg', 'image/png']; // ยอมรับไฟล์ JPEG และ PNG
 
         if (!allowedFileTypes.includes(file.type)) {
@@ -237,7 +237,7 @@ export default {
         }
 
         if (fileSizeInBytes > maxSizeInBytes) {
-            Swal.fire('แจ้งเตือน', 'ขนาดของรูปภาพใหญ่เกินกำหนด (มากกว่า 900 KB)', 'warning');
+            Swal.fire('แจ้งเตือน', 'ขนาดของรูปภาพใหญ่เกินกำหนด (มากกว่า 1 MB)', 'warning');
             return;
         }
 

@@ -5,7 +5,7 @@
   <div class="mt-4 ">
     <h1 class="md:m-0 text-center">รายงานสมัครสมาชิก</h1>
     <div class="grid p-fluid px-3 justify-content-center mt-3">
-     
+
     </div>
     <DataTable :value="member" :paginator="true" :rows="10" class="px-3 py-3"
       paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink  RowsPerPageDropdown"
@@ -20,7 +20,7 @@
           <Image :src="getImage(item.data.slip_img)" alt="Image" width="50" preview />
           <!-- <img :src="getImage(item.data.slip_img)" class="product-image" style="width: 200px; height: 200px; object-fit: cover;" 
             @click="openImageModal(getImage(item.data.slip_img))" />  -->
-          </template>
+        </template>
       </Column>
       <Column header="สถานะ">
         <template #body="item">
@@ -44,14 +44,30 @@
             v-if="item.data.status[item.data.status.length - 1].status === 'รอตรวจสอบ' && item.data.status[0].status !== 'ยกเลิกออเดอร์' && item.data._id">
             <i class="pi pi-times"></i>
           </Button>
-
+          <Button v-if="item.data.status[item.data.status.length - 1].status === 'ยืนยันออเดอร์'"
+    class="p-button-rounded p-button-info p-button-icon mr-2" @click="showOrderDetail(item.data)">
+    <i class="pi pi-info-circle"></i>
+  </Button>
 
         </template>
       </Column>
     </DataTable>
 
-
-
+    <Dialog v-model:visible="displayOrderDetail" :breakpoints="{ '960px': '75vw', '640px': '90vw' }"
+      :style="{ width: '700px' }" header="รายละเอียดออเดอร์" >
+      <div v-if="selectedOrder">
+        <div v-for="(product, index) in selectedOrder.product_detail" :key="index">
+          <h1>{{ product.product_name }}</h1>
+          <p>รายละเอียด: {{ product.product_detail }}</p>
+          <p>จำนวน: {{ product.quantity }}</p>
+          <p>ราคา: {{ product.price }}</p>
+          <p>รวม: {{ product.totalprice }}</p>
+        </div>
+      </div>
+      <template #footer>
+        <Button label="ปิด" class=" p-button-danger" icon="pi pi-times" @click="closeOrderDetailDialog" />
+      </template>
+    </Dialog>
 
   </div>
 </template>
@@ -90,16 +106,14 @@ export default {
       selectedImage: "",
       display: false,
       itemToCancel: null,
-
+      displayOrderDetail: false,
+      orderDetail: null,
     };
   },
   mounted() {
     this.getOrder();
   },
   methods: {
-    dateformat(date) {
-      return dayjs(date).locale("th").add(543, "year").format("DD/MMMM/YYYY");
-    },
 
     async searchDataAutomatically() {
       try {
@@ -122,6 +136,25 @@ export default {
       }
     },
 
+    async showOrderDetail(order) {
+      try {
+        const response = await this.OrderService.GetOrder();
+        if (response && response.data) {
+          const orderDetail = response.data.find((item) => item._id === order._id);
+          if (orderDetail) {
+            this.selectedOrder = orderDetail;
+            this.displayOrderDetail = true; // แสดง Dialog รายละเอียดออเดอร์
+          } else {
+            console.error("ไม่พบข้อมูลรายละเอียดออเดอร์");
+          }
+        } else {
+          console.error("API response is missing data property.");
+        }
+      } catch (error) {
+        console.error("Error fetching order detail:", error);
+        // แสดงข้อความผิดพลาดหรือดำเนินการเพิ่มตามที่คุณต้องการ
+      }
+    },
 
     hideDialog() {
       this.display = false;
@@ -260,17 +293,20 @@ export default {
         return "";
       }
     },
-    
-    datetimeFormat(date){
-            return dayjs(date).format("DD/MM/YYYY เวลา HH:mm:ss");
-        },
+
+    datetimeFormat(date) {
+      return dayjs(date).format("DD/MM/YYYY เวลา HH:mm:ss");
+    },
     openImageModal(imageUrl) {
       this.selectedImage = imageUrl;
     },
 
+    closeOrderDetailDialog() {
+      this.displayOrderDetail = false; 
+      this.selectedOrder = null; 
+    },
 
 
-    
 
     getStatusColor(statusArray) {
       const latestStatus = statusArray[statusArray.length - 1];

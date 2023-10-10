@@ -164,9 +164,7 @@ export default {
     this.getdata();
   },
   methods: {
-    dateformat(date) {
-      return dayjs(date).locale("th").add(543, "year").format("DD/MMMM/YYYY");
-    },
+ 
 
     async searchDataAutomatically() {
       if (this.search !== "") {

@@ -14,12 +14,13 @@
             <span class="p-inputgroup-addon border-red-400" style="background-color: #C21010;">
               <i class="pi pi-search text-white"></i>
             </span>
-            <InputText v-model="search" @keyup="searchDataAutomatically()" class="w-full font z-0" placeholder="ค้นหาสินค้า เช่น ชื่อสินค้า รหัสสินค้า " />
+            <InputText v-model="search" @keyup="searchDataAutomatically()" class="w-full font z-0"
+              placeholder="ค้นหาสินค้า เช่น ชื่อสินค้า รหัสสินค้า " />
           </div>
-          
+
         </div>
       </div>
-     
+
       <div class="col-12 lg:col-2 mt-2">
         <div class="field">
           <Button label="Add product" style="background-color: #E60965;" class="border-red-400"
@@ -40,7 +41,7 @@
 
           <Column header="รูป" style="width: 10%">
             <template #body="item">
-              <Image :src="getImage(item.data.picture)"  class="product-image" width="80" preview/>
+              <Image :src="getImage(item.data.picture)" class="product-image" width="80" preview />
             </template>
           </Column>
           <Column field="code" header="รหัสสินค้า" style="width: 10%"></Column>
@@ -52,31 +53,27 @@
               {{ numberFormat(item.data.price) }}
             </template>
           </Column>
-          <Column field="price" header="ราคาทุน" >
+          <Column field="price" header="ราคาทุน">
             <template #body="item">
               {{ numberFormat(item.data.cost) }}
             </template>
           </Column>
-          <Column field="quantity" header="จำนวนคงเหลือ" >
+          <Column field="quantity" header="จำนวนคงเหลือ">
             <template #body="item">
               {{ numberFormatShort(item.data.quantity) }}
             </template>
           </Column>
-          <Column field="category" header="หมวดหมู่" ></Column>
-          <Column header="แก้ไข" style="width: 10%">
+          <Column field="category" header="หมวดหมู่"></Column>
+
+          <Column :exportable="false" header="แก้ไข" style="width: 10%">
             <template #body="item">
-              <Button icon="pi pi-pencil" class="p-button-rounded p-button-warning mr-2"
-                @click="editProduct(item.data)" />
-              <ProductDetail :product="selectedProduct" v-model:displayDialog="displayDialog" @save-edit="saveProduct" />
+              <ProductDetail :cat_id="item.data._id" :product="item.data" :item_product="item_product" />
             </template>
           </Column>
         </DataTable>
 
-
       </div>
     </div>
-
-
 
   </div>
 </template>
@@ -92,32 +89,28 @@ export default {
     const item_product = ref([]);
     const search = ref("");
     const category = ref("");
-    const selectedProduct = ref(null);
-    const displayDialog = ref(false);
-    const selectedImage = ref("");
+
 
     const searchDataAutomatically = async () => {
-    try {
-      const response = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/list`, {
-        headers: {
-          token: localStorage.getItem("token"),
-        },
-        params: {
-          query: search.value.toLowerCase(), // แปลงค่า search เป็นตัวพิมพ์เล็กทั้งหมดก่อนที่จะใช้ในการค้นหา
-          code: search.value.toLowerCase(), // แปลงค่า search เป็นตัวพิมพ์เล็กทั้งหมดก่อนที่จะใช้ในการค้นหา
-        },
-      });
-      const searchTermLower = search.value.toLowerCase(); // แปลงค่า search เป็นตัวพิมพ์เล็กทั้งหมด
-      item_product.value = response.data.data.filter(product => 
-        product.name.toLowerCase().includes(searchTermLower) || 
-        product.code.toLowerCase().includes(searchTermLower)
-      );
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
-
-
+      try {
+        const response = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/list`, {
+          headers: {
+            token: localStorage.getItem("token"),
+          },
+          params: {
+            query: search.value.toLowerCase(), // แปลงค่า search เป็นตัวพิมพ์เล็กทั้งหมดก่อนที่จะใช้ในการค้นหา
+            code: search.value.toLowerCase(), // แปลงค่า search เป็นตัวพิมพ์เล็กทั้งหมดก่อนที่จะใช้ในการค้นหา
+          },
+        });
+        const searchTermLower = search.value.toLowerCase(); // แปลงค่า search เป็นตัวพิมพ์เล็กทั้งหมด
+        item_product.value = response.data.data.filter(product =>
+          product.name.toLowerCase().includes(searchTermLower) ||
+          product.code.toLowerCase().includes(searchTermLower)
+        );
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
 
     const getData = async () => {
       try {
@@ -147,11 +140,6 @@ export default {
       } catch (error) {
         console.error(error);
       }
-    };
-
-    const editProduct = (product) => {
-      selectedProduct.value = { ...product };
-      displayDialog.value = true;
     };
 
     const searchData = () => {
@@ -201,7 +189,6 @@ export default {
     };
 
 
- 
     onMounted(() => {
       getData();
     });
@@ -216,12 +203,9 @@ export default {
       filtercategory,
       numberFormat,
       numberFormatShort,
-      editProduct,
-      selectedProduct,
-      displayDialog,
       searchDataAutomatically,
-      selectedImage,
     };
+
   },
 };
 </script>
@@ -233,7 +217,6 @@ export default {
 
 
 <style scoped>
-
 .loading {
   display: flex;
   align-items: center;
@@ -265,19 +248,19 @@ export default {
   align-items: center;
   justify-content: space-between;
 
- 
-}
- @media screen and (max-width: 960px) {
-   .product-image {
-  width: 100px;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+
 }
 
-.confirmation-content {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+@media screen and (max-width: 960px) {
+  .product-image {
+    width: 100px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
   }
 
+  .confirmation-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
 </style>

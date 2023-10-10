@@ -27,7 +27,7 @@
         {{ item.data.receiptnumber }}
       </template>
     </Column>
-    <Column header="ชื่อ" style="width: 15%;">
+    <Column header="ชื่อ" style="width: 10%;">
       <template #body="item">
         {{ item.data.customer_name }}
       </template>
@@ -37,15 +37,20 @@
         {{ item.data.customer_address }}
       </template>
     </Column>
+    <Column header="เบอร์โทร" >
+      <template #body="item">
+        {{ item.data.customer_tel }}
+      </template>
+    </Column>
     <Column header="สถานะ">
       <template #body="item">
         <Chip :class="getStatusColor(item.data.status)" :label="item.data.status[item.data.status.length - 1].status" />
       </template>
     </Column>
-    <Column field="timestamp" header="วันที่ทำรายการ" style="width: 10%;">
-      <template #body="item">
-        {{ new Date(item.data.timestamp).toLocaleString() }}
-      </template>
+    <Column  header="วันที่ทำรายการ" style="width: 10%;">
+      <template #body="Props">
+          {{ datetimeFormat(Props.data.timestamp) }}
+        </template>
     </Column>
     <Column :exportable="false" style="min-width: 8rem">
   <template #body="rowData">
@@ -79,7 +84,7 @@
     </template>
   </Dialog>
 
-  <Dialog v-model="showOrderDetailsDialog" header="รายละเอียดออเดอร์" :modal="true" :baseZIndex="10000"
+  <Dialog  v-model:visible="showOrderDetailsDialog" header="รายละเอียดออเดอร์" :modal="true" :baseZIndex="10000"
     :visible="showOrderDetailsDialog" width="80%">
     <div class="p-fluid">
 
@@ -116,6 +121,7 @@
 
 <script>
 import { ConfirmOrder } from '@/components/lib/order';
+import dayjs from "dayjs";
 import "dayjs/locale/th";
 import Swal from 'sweetalert2';
 
@@ -130,7 +136,6 @@ export default {
     const isLoading = ref(false);
     const showOrderDetailsDialog = ref(false);
     const orderData = ref(null); // เพิ่มตัวแปร orderData
-
     const Order = new ConfirmOrder();
 
     onMounted(async () => {
@@ -154,7 +159,9 @@ export default {
       }
     };
 
-
+    const datetimeFormat = (date) => {
+      return dayjs(date).format("DD/MM/YYYY เวลา HH:mm:ss");
+    };
 
     const closeOrderDetailsDialog = () => {
       showOrderDetailsDialog.value = false;
@@ -198,6 +205,8 @@ export default {
           orders.value = result.data.filter(
             (item) => item.status[item.status.length - 1].status !== 'ยกเลิกออเดอร์'
           );
+          orders.value.reverse();
+
         } else {
           console.error("API response is missing data property.");
         }
@@ -355,7 +364,7 @@ export default {
       closeOrderDetailsDialog,
       showOrderDetailsDialog,
       orderData, // คืนค่า orderData เพื่อใช้ในเทมเพลต
-
+      datetimeFormat 
     };
   },
 };

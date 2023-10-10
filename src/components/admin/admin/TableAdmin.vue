@@ -17,8 +17,8 @@
       <Column field="name" header="ชื่อผู้ดูแลระบบ"></Column>
       <Column field="username" header="ชื่อผู้ใช้งานระบบ"></Column>
       <Column field="admin_date_start" header="วันที่เริ่มระบบ">
-        <template #body="Props">
-          {{ datetimeFormat(Props.data.timestamp) }}
+        <template #body="item">
+          {{ datetimeFormat(item.data.timestamp) }}
         </template>
       </Column>
       <Column :exportable="false" style="min-width: 8rem">
@@ -35,8 +35,7 @@
 
 <script>
 import axios from "axios";
-import dayjs from "dayjs";
-import "dayjs/locale/th";
+import dayjs from 'dayjs';
 import Swal from "sweetalert2";
 
 export default {
@@ -58,9 +57,7 @@ export default {
     this.getdata();
   },
   methods: {
-    dateformat(date) {
-      return dayjs(date).locale("th").add(543, "year").format("DD/MMMM/YYYY");
-    },
+
 
     async searchDataAutomatically() {
       try {
@@ -159,9 +156,9 @@ export default {
         });
     },
 
-    datetimeFormat(date) {
-      return dayjs(date).format("DD/MM/YYYY เวลา HH:mm:ss");
-    },
+    datetimeFormat(date){
+            return dayjs(date).format("DD/MM/YYYY เวลา HH:mm:ss");
+        },
   }
 };
 </script>
