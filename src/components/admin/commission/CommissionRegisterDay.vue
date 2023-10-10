@@ -75,7 +75,7 @@ export default {
     methods: {
         async getComissionDay() {
             this.$store.commit('setLoading', true);
-            await this.withdrawDay.GetComiissionDay().then(result => {
+            await this.withdrawDay.GetComRegisterDay().then(result => {
                 const order = result.data;
                 this.item_commission = order.reverse();
             }).catch((err) => {

@@ -22,7 +22,7 @@
                   border-radius: 15px;
                   color: red;
                   padding: 2px;"><strong></strong>{{ $store.getters.order_total }} บาท</label>
-          
+
           <label style="font-size: 14px;color: #ffff;"><Button label="กดเพื่อชำระเงิน" link @click="visible = true"
               style="color: #ffff;" /></label>
         </div>
@@ -31,7 +31,8 @@
     <div class="grid px-2">
       <div class="col-12  justify-context-center">
         <div class="flex justify-content-end">
-          <Button label="ล้างตระกร้าสินค้า" severity="danger" @click="clearCart()" raised  v-if="$store.getters.order_detail.length > 0" />
+          <Button label="ล้างตระกร้าสินค้า" severity="danger" @click="clearCart()" raised
+            v-if="$store.getters.order_detail.length > 0" />
         </div>
         <DataTable :value="$store.getters.order_detail" :row="10">
           <template #empty>
@@ -65,29 +66,31 @@
           <Column header="ราคา" style="width: 30%;">
             <template #body="item">
               {{ item.data.price }}
-              
+
             </template>
           </Column>
         </DataTable>
 
-        <Button label="กดเพื่อชำระเงิน" icon="pi pi-external-link" @click="visible = true" style="width: -webkit-fill-available;" v-if="$store.getters.order_detail.length > 0" />
-        <Dialog v-model:visible="visible"  header="ยอดเงินที่ต้องชำระ">
-            <div class="flex justify-content-center">
-              <label style="font-size: 35px;text-align: center; text-align: center;">{{ $store.getters.order_total }} บาท</label>
-            </div>
-            <template #footer>
-                <Button label="ปิด" icon="pi pi-times" @click="visible = false" text />
-                <Button label="ยืนยันการสั่งออเดอร์" @click="confirm()"  icon="pi pi-check" autofocus  />
-            </template>
+        <Button label="กดเพื่อชำระเงิน" icon="pi pi-external-link" @click="visible = true"
+          style="width: -webkit-fill-available;" v-if="$store.getters.order_detail.length > 0" />
+        <Dialog v-model:visible="visible" header="ยอดเงินที่ต้องชำระ">
+          <div class="flex justify-content-center">
+            <label style="font-size: 35px;text-align: center; text-align: center;">{{ $store.getters.order_total }}
+              บาท</label>
+          </div>
+          <template #footer>
+            <Button label="ปิด" icon="pi pi-times" @click="visible = false" text />
+            <Button label="ยืนยันการสั่งออเดอร์" @click="confirm()" icon="pi pi-check" autofocus />
+          </template>
         </Dialog>
       </div>
 
-      
+
 
       <div class="col-12">
 
-      
-       
+
+
 
         <Dialog v-model:visible="DialogPayment" header="ชำระเงิน">
           <TabView>
@@ -105,7 +108,7 @@
                     <FileUpload mode="basic" :auto="true" chooseLabel="แนบรูปภาพหลักฐานการโอน" uploadIcon="pi pi-paperclip"
                     class="input-image" @change="SetImage"/>
                   </label> -->
-                  
+
                   <label v-if="!img_preview" class="file-input-label">
                     <span>แนบรูป</span>
                     <input type="file" class="input-image" @change="SetImage" />
@@ -146,14 +149,15 @@ export default {
   setup() {
     const toast = useToast();
     const product = new Product();
-    return { product , toast };
+    return { product, toast };
   },
   data: () => ({
-    visible:false,
+    visible: false,
 
     slip_img: null,
     DialogPayment: false,
-   
+
+    res: '',
 
     img_preview: null,
     img_upload: [],
@@ -176,7 +180,7 @@ export default {
       this.member_number = res.data.data.member_number;
       this.name = res.data.data.name;
       this.tel = res.data.data.tel;
-      this.address = `${res.data.data.address}, แขวง/ตำบล: ${res.data.data.subdistrict}, เขต/อำเภอ: ${res.data.data.district}, จังหวัด: ${res.data.data.provice}, รหัสไปรษณีย์: ${res.data.data.postcode}`
+      this.address = `${res.data.data.address}, แขวง/ตำบล: ${res.data.data.subdistrict}, เขต/อำเภอ: ${res.data.data.district}, จังหวัด: ${res.data.data.province}, รหัสไปรษณีย์: ${res.data.data.postcode}`
       this.line = `ไม่มี`;
     })
   },
@@ -222,55 +226,56 @@ export default {
     async confirm() {
       this.DialogPayment = true;
       this.loading = true;
-      if (this.img_upload) {
-        const data = {
-          member_number: this.member_number,
-          customer_name: this.name,
-          customer_tel: this.tel,
-          customer_address: this.address,
-          customer_line: this.line,
-          product_detail: this.$store.getters.order,
-          picture: this.img_upload,
-        }
-        console.log(data)
-        await this.product.PreOrder(data).then(async (result) => {
-          if (result) {
-            console.log(result);
-            this.loading = false;
-            this.$toast.add({
-              severity: "success",
-              summary: "สำเร็จ",
-              life: 3000,
-            })
-          }
-        })
+      const data = {
+        member_number: this.member_number,
+        customer_name: this.name,
+        customer_tel: this.tel,
+        customer_address: this.address,
+        customer_line: this.line,
+        product_detail: this.$store.getters.order,
       }
+      await axios.post(`${process.env.VUE_APP_DEKRUP}/product/order`, data, {
+        headers: {
+          'token': `${this.$store.getters.token}`
+        }
+      }).then((res) => {
+        this.$store.commit('setLoading', false);
+        this.res = res.data;
+        console.log(this.res)
+        this.$toast.add({
+          severity: "success",
+          summary: "สำเร็จ",
+          detail: "ทำรายการสำเร็จ",
+          life: 3000,
+        });
+      }).catch((err) => {
+        this.$store.commit('setLoading', false);
+        this.$toast.add({ severity: 'error', summary: 'ไม่สำเร็จ', detail: err.response.data.message, life: 3000 });
+      })
     },
 
 
     async moneySlip() {
-    if (this.img_preview === null) {
+      this.loading = true;
+      if (this.img_upload === null) {
         this.toast.warning("กรุณาแนบสลิปการโอนเงิน")
-    } 
-    else if (this.img_upload) {
-        const data = {
-          picture: this.img_upload,
-        }
-        console.log(data)
-        await this.product.PutMoneySlip(data).then(async (result) => {
-          if (result) {
-            console.log(result);
-            this.loading = false;
-            this.toast.success('ชำระเงินสำเร็จ');
-            // window.location.reload(3000);
-          }
-        })
       }
+      const id = this.res._id;
+      const formData = new FormData();
+      formData.append('imgCollection', this.img_upload[0]);
+      await this.product.PutMoneySlip(formData, id).then(async (result) => {
+        if (result) {
+          console.log(result);
+          this.loading = false;
+          this.toast.success('ชำระเงินสำเร็จ');
+          // window.location.reload(3000);
+        }
+      })
     },
 
-    
 
-    clearCart(){
+
+    clearCart() {
       window.location.reload();
     }
 

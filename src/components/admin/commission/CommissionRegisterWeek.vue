@@ -1,12 +1,11 @@
 <template>
     <div class="grid">
         <div class="col-12 text-center">
-            <h1>Commission Week</h1>
-            <small><strong>หมายเหตุ : </strong>ค่าคอมมิชชั่น จากการซื้อสินค้าซ้ำ</small>
+            <h1>Commission Day</h1>
+            <small><strong>หมายเหตุ : </strong>ค่าคอมมิชชั่น จากการแนะนำผู้สมัคร</small>
         </div>
         <div class="col-12 text-right">
             <Button icon="pi pi-file-export" label="Download" @click="export_data" class="mr-2"></Button>
-            
         </div>
     </div>
     <div class="grid">
@@ -59,8 +58,8 @@ export default {
         CommissionDetail,
     },
     setup() {
-        const withdrawWeek = new Withdraw();
-        return { withdrawWeek };
+        const withdrawDay = new Withdraw();
+        return { withdrawDay };
     },
     created() {
         document.title = "รายงานการถอน | Commission Day";
@@ -70,13 +69,13 @@ export default {
         dialogCancel: false,
     }),
     async mounted() {
-        await this.getCommissionWeek();
+        await this.getComissionDay();
     },
 
     methods: {
-        async getCommissionWeek() {
+        async getComissionDay() {
             this.$store.commit('setLoading', true);
-            await this.withdrawWeek.GetComAdminister().then(result => {
+            await this.withdrawDay.GetComRegisterWeek().then(result => {
                 const order = result.data;
                 this.item_commission = order.reverse();
             }).catch((err) => {
@@ -105,7 +104,7 @@ export default {
             return data
         },
 
-        datetimeFormat(date){
+        datetimeFormat(date) {
             return dayjs(date).format("DD/MM/YYYY เวลา HH:mm:ss");
         },
     },

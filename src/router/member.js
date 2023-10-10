@@ -31,7 +31,7 @@ routes = [
     path: "/member/dashboard",
     name: "dashboard",
     component: () => import("../components/member/dashboard/ContractDocument.vue"),
-  }
+  },
   
 ];
 
