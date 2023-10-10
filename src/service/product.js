@@ -101,7 +101,7 @@ export class Product {
 
 
   //image slip
-  async MoneySlip(_id){
+  async PutMoneySlip(_id){
     let data;
     const config = {
         method:'put',
@@ -109,8 +109,7 @@ export class Product {
         headers:{
             'token': this.#token,
         },
-        url:`${this.#baseUrl}/product/order/updatepicture/${_id}`, 
-        data: packageData,      
+        url:`${this.#baseUrl}/product/order/updatepicture/${_id}`,   
     }
     await axios(config).then(result=>{
         if(result){

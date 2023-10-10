@@ -138,13 +138,15 @@
 import Dialog from 'primevue/dialog';
 import { Product } from '../../service/product';
 import axios from 'axios';
+import { useToast } from "vue-toastification";
 export default {
   components: {
     Dialog
   },
   setup() {
+    const toast = useToast();
     const product = new Product();
-    return { product };
+    return { product , toast };
   },
   data: () => ({
     visible:false,
@@ -246,12 +248,27 @@ export default {
     },
 
 
-    async moneySlip(){
-      this.DialogPayment = false;
-      this.visible = false;
-      alert('ชำระเงินเรียบร้อย');
-      window.location.reload();
+    async moneySlip() {
+    if (this.img_preview === null) {
+        this.toast.warning("กรุณาแนบสลิปการโอนเงิน")
+    } 
+    else if (this.img_upload) {
+        const data = {
+          picture: this.img_upload,
+        }
+        console.log(data)
+        await this.product.PutMoneySlip(data).then(async (result) => {
+          if (result) {
+            console.log(result);
+            this.loading = false;
+            this.toast.success('ชำระเงินสำเร็จ');
+            // window.location.reload(3000);
+          }
+        })
+      }
     },
+
+    
 
     clearCart(){
       window.location.reload();
