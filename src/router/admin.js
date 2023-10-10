@@ -51,6 +51,16 @@ routes = [
     component: () => import("../components/admin/member/TableMember.vue"),
   },
   {
+    path: "/admin/member/bank",
+    name: "admin-member-bank",
+    component: () => import("../components/admin/member/BankView.vue"),
+  },
+  {
+    path: "/admin/member/iden",
+    name: "admin-member-iden",
+    component: () => import("../components/admin/member/IdenView.vue"),
+  },
+  {
     path: "/admin/member/add",
     name: "admin-member-add",
     component: () => import("../components/admin/member/addView.vue"),

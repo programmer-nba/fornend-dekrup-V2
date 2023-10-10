@@ -6,6 +6,7 @@
     "serve": "vue-cli-service serve --port 3000",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
+    "deploy:test": "scp -r dist/* root@143.198.204.72:/var/www/shop-dekrub.nbadigital.tech",
     "deploy:production": "scp -r dist/* root@143.198.207.85:/var/www/shop.dekrubshop.com"
   },
   "dependencies": {

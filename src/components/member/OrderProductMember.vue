@@ -176,7 +176,7 @@ export default {
       this.member_number = res.data.data.member_number;
       this.name = res.data.data.name;
       this.tel = res.data.data.tel;
-      this.address = `${res.data.data.address}, แขวง/ตำบล: ${res.data.data.subdistrict}, เขต/อำเภอ: ${res.data.data.district}, จังหวัด: ${res.data.data.provice}`
+      this.address = `${res.data.data.address}, แขวง/ตำบล: ${res.data.data.subdistrict}, เขต/อำเภอ: ${res.data.data.district}, จังหวัด: ${res.data.data.provice}, รหัสไปรษณีย์: ${res.data.data.postcode}`
       this.line = `ไม่มี`;
     })
   },
