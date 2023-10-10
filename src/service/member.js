@@ -116,14 +116,14 @@ export class Member {
   }
 
 
-  async confirmCondition(_id) {
+  async confirmCondition(packageId) {
     let data;
     const config = {
       method: "post",
       headers: {
         token: this.#token,
       },
-      url: `${this.#baseUrl}/condition/${_id}`,
+      url: `${this.#baseUrl}/condition/${packageId}`,
     };
     await axios(config)
       .then((result) => {
@@ -170,6 +170,54 @@ export class Member {
         token: this.#token,
       },
       url: `${this.#baseUrl}/verify_iden/confirm/${packageId}`,
+    };
+    await axios(config)
+      .then((result) => {
+        if (result) {
+          data = result.data;
+        }
+      })
+      .catch((error) => {
+        data = error;
+      });
+
+    return data;
+  }
+
+  async AddBank(packageData) {
+    let data;
+    const config = {
+      method: "put",
+      maxBodyLength: Infinity,
+      headers: {
+        token: this.#token,
+      },
+      url: `${this.#baseUrl}/verify_bank`,
+      data: packageData,
+    };
+    await axios(config)
+      .then((result) => {
+        if (result) {
+          data = result.data;
+        }
+      })
+      .catch((error) => {
+        data = error;
+      });
+
+    return data;
+  }
+
+  async AddIden(packageData) {
+    let data;
+    const config = {
+      method: "put",
+      maxBodyLength: Infinity,
+      headers: {
+        token: this.#token,
+      },
+      url: `${this.#baseUrl}/verify_iden`,
+      data: packageData,
     };
     await axios(config)
       .then((result) => {
