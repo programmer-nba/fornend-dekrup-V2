@@ -82,7 +82,7 @@ export default {
     methods: {
         async getCommissionWeek() {
             this.$store.commit('setLoading', true);
-            await this.withdrawWeek.GetComAdminister().then(result => {
+            await this.withdrawWeek.getComRegisterDay().then(result => {
                 const order = result.data;
                 this.item_commission = order.reverse();
             }).catch((err) => {

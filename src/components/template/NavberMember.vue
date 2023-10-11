@@ -3,7 +3,7 @@
         <div class="xl:col-10 col-7 flex justify-content-center align-items-center">
             <Menubar :model="item_manu"
                 class="custom-menu  border-round-3xl p-0 mt-2  hover:border-2 hover:border-purple-900 flex align-items-center justify-content-center bg-white"
-                style="width: 40%;">
+                style="width: 60%;">
             </Menubar>
         </div>
         <div class="xl:col-2 col-5 mt-2 flex justify-content-end px-3">
@@ -39,16 +39,21 @@ export default {
                     icon: "pi pi-shopping-cart",
                     to: "/member/product",
                 },
-                {
-                    label: "รายได้ค่าคอมมิชชั่น",
-                    icon: "pi pi-money-bill",
-                    to: "/member/commissionday"
-                },
-                {
-                    label: "รายได้ค่าบริหาร",
-                    icon: "pi pi-money-bill",
-                    to: "/member/commissionweek"
-                },
+                // {
+                //     label: "รายได้ค่าคอมมิชชั่น",
+                //     icon: "pi pi-money-bill",
+                //     to: "/member/commission/register/day"
+                // },
+                // {
+                //     label: "รายได้ค่าคอมมิชชั่น",
+                //     icon: "pi pi-money-bill",
+                //     to: "/member/commission/register/week"
+                // },
+                // {
+                //     label: "รายได้ค่าบริหาร",
+                //     icon: "pi pi-money-bill",
+                //     to: "/member/commission/adminiter"
+                // },
                 {
                     label: "ตั้งค่าโปรไฟล์",
                     icon: "pi pi-user",

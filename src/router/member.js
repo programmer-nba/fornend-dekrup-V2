@@ -18,14 +18,19 @@ routes = [
     component: () => import("../components/member/ProfileMember.vue"),
   },
   {
-    path: "/member/commissionday",
-    name: "member-commissionday",
-    component: () => import("../components/member/CommissionDay.vue"),
+    path: "/member/commission/register/day",
+    name: "member-commission-registerday",
+    component: () => import("../components/member/commission/CommissionRegisterDay.vue"),
   },
   {
-    path: "/member/commissionweek",
-    name: "member-commissionweek",
-    component: () => import("../components/member/CommissionWeek.vue"),
+    path: "/member/commission/register/week",
+    name: "member-commissionday-registerweek",
+    component: () => import("../components/member/commission/CommissionRegisterWeek.vue"),
+  },
+  {
+    path: "/member/commission/adminiter",
+    name: "member-commissionweek-administer",
+    component: () => import("../components/member/commission/CommissionAdminister.vue"),
   },
   {
     path: "/member/dashboard",
