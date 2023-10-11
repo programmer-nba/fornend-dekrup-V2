@@ -26,6 +26,26 @@ export class Member {
   }
 
   // create
+  async GetProduct() {
+    let data;
+    const config = {
+      method: "get",
+      url: `${this.#baseUrl}/product/member/list`,
+    };
+    await axios(config)
+      .then((result) => {
+        if (result) {
+          data = result.data;
+        }
+      })
+      .catch((error) => {
+        data = error;
+      });
+
+    return data;
+  }
+
+  // create
   async RegisterMember(packageData) {
     let data;
     const config = {

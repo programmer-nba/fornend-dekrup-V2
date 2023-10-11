@@ -173,8 +173,6 @@ export default {
             await this.members.AddBank(formData).then(async (result) => {
                 if (result) {
                     console.log(result);
-                    this.loading = false;
-                    this.$store.commit('setLoginDefault');
 
                     Swal.fire({
                         title: 'แนบรูปสมุดบัญชีเรียบร้อย',
@@ -209,8 +207,6 @@ export default {
             await this.members.AddIden(formData).then(async (result) => {
                 if (result) {
                     console.log(result);
-                    this.loading = false;
-                    this.$store.commit('setLoginDefault');
 
                     Swal.fire({
                         title: 'แนบรูปบัตรประจำตัวประชาชนเรียบร้อย',
