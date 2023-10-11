@@ -38,8 +38,7 @@
     <span class="p-float-label m-0 ">
       <input type="file" id="picture" @change="handleImageChange" class="w-full" />
     </span>
-
-    <!-- ตัวอย่างการแสดงผลรูปภาพใน Dialog -->
+    
     <img
   v-if="displayupdate && imagePreview"
   :src="imagePreview"
@@ -48,6 +47,7 @@
 />
     <img v-else-if="displayupdate && imgCollection.length > 0" :src="URL.createObjectURL(imgCollection[0])" alt="รูปภาพ"
       style="width: 120px;" />
+
     <template #footer>
       <Button label="ยกเลิก" icon="pi pi-times" @click="displayupdate = false" class="p-button-text" />
       <Button label="บันทึก" icon="pi pi-check" @click="updateProduct" />
@@ -167,6 +167,7 @@ export default {
       }
     };
 
+    
     const handleImageChange = (event) => {
       const files = event.target.files;
 

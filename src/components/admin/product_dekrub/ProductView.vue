@@ -67,10 +67,60 @@
 
           <Column :exportable="false" header="แก้ไข" style="width: 10%">
             <template #body="item">
-              <ProductDetail :cat_id="item.data._id" :product="item.data" :item_product="item_product" />
+              <Button @click="editProduct(item.data)">แก้ไข</Button>
             </template>
           </Column>
+
         </DataTable>
+
+        <Dialog v-model:visible="displayEdit" :modal="true" :breakpoints="{ '960px': '75vw', '640px': '90vw' }"
+          :style="{ width: '700px' }">
+          <div>
+            <h2>แก้ไขสินค้า</h2>
+
+            <div class="field">
+              <label for="name">ชื่อสินค้า</label>
+              <InputText id="name" v-model="edit_product.name" class="w-full" autofocus />
+            </div>
+            <div class="field">
+              <label for="detail">รายละเอียด</label>
+              <Textarea id="detail" v-model="edit_product.detail" class="w-full" autofocus />
+            </div>
+
+            <div class="field">
+              <label for="price">ราคา</label>
+              <InputText id="price" v-model="edit_product.price" class="w-full" autofocus />
+            </div>
+
+            <div class="field">
+              <label for="cost">ราคาทุน</label>
+              <InputText id="cost" v-model="edit_product.cost" class="w-full" autofocus />
+            </div>
+            <div class="field">
+              <label for="quantity">จำนวนคงเหลือ</label>
+              <InputText id="quantity" v-model="edit_product.quantity" class="w-full" autofocus />
+            </div>
+            <div class="field">
+              <label for="category">หมวดหมู่</label>
+              <Dropdown v-model="edit_product.category" optionLabel="name" optionValue="_id" :options="categories"
+                class="w-full" />
+
+            </div>
+
+            <div class="field">
+    <label for="image">รูปภาพ</label>
+    <img v-if="edit_productImage" :src="imagePreview" alt="Product Image" class="product-image"
+      width="100" height="100" />
+    <input type="file" @change="onImageChange" accept="image/*" />
+  </div>
+            <Button @click="saveEdit" class="mr-2">บันทึก</Button>
+            <Button @click="closeDialog">ยกเลิก</Button>
+          </div>
+        </Dialog>
+
+
+
+
 
       </div>
     </div>
@@ -80,16 +130,22 @@
 
 <script>
 import axios from "axios";
-import { onMounted, ref } from "vue";
-import ProductDetail from "../product_dekrub/ProductDetail.vue";
+import Swal from 'sweetalert2';
+import { computed, onMounted, ref } from "vue";
 
 export default {
-  components: { ProductDetail },
+
+
   setup() {
     const item_product = ref([]);
     const search = ref("");
     const category = ref("");
+    const displayEdit = ref(false);
+    const edit_product = ref({}); // Initialize edit_product
+    const categories = ref([]);
 
+    const edit_productImage = ref(''); // Image preview source
+    const edit_productImageFile = ref(null); // Selected image file
 
     const searchDataAutomatically = async () => {
       try {
@@ -142,6 +198,19 @@ export default {
       }
     };
 
+    const getCategoryData = async () => {
+      try {
+        const categoryResponse = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/category/list`, {
+          headers: {
+            token: localStorage.getItem("token"),
+          },
+        });
+
+        categories.value = categoryResponse.data.data;
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
     const searchData = () => {
       if (search.value === "") {
         getData();
@@ -188,9 +257,84 @@ export default {
       });
     };
 
+    const saveEdit = async () => {
+  try {
+    if (edit_product.value) {
+      const formData = new FormData();
+      formData.append("name", edit_product.value.name);
+      formData.append("detail", edit_product.value.detail);
+      formData.append("price", edit_product.value.price);
+      formData.append("cost", edit_product.value.cost);
+      formData.append("quantity", edit_product.value.quantity);
+      formData.append("category", edit_product.value.category);
+
+      if (edit_productImage.value) {
+        formData.append("image", edit_productImage.value);
+      }
+
+      const response = await axios.put(
+        `${process.env.VUE_APP_DEKRUP}/product/update/${edit_product.value._id}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            token: localStorage.getItem("token"),
+          },
+        }
+      );
+      console.log("Response data:", response.data);
+
+      if (response.data.message === "อัพเดทสินค้าสำเร็จ") {
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: 'บันทึกข้อมูลสำเร็จ',
+        }).then(() => {
+          getData();
+          displayEdit.value = false; // Access displayEdit directly
+        });
+      }
+    } else {
+      console.error("edit_product is undefined.");
+    }
+  } catch (error) {
+    console.error("Error saving data:", error);
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'Failed to save data',
+    });
+  }
+};
+
+const onImageChange = (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        edit_productImage.value = URL.createObjectURL(file); // Update the image preview source
+        edit_productImageFile.value = file; // Assign the selected image file
+      }
+    };
+
+
+    const imagePreview = computed(() => {
+      return edit_productImage.value;
+    });
+
+
+    const editProduct = (item) => {
+      displayEdit.value = true;
+      edit_product.value = { ...item };
+      edit_productImage.value = getImage(item.picture);
+    };
+
+    const closeDialog = () => {
+      displayEdit.value = false; // ปิดหน้าต่างแก้ไข
+    };
 
     onMounted(() => {
       getData();
+      getCategoryData();
+
     });
 
     return {
@@ -204,6 +348,15 @@ export default {
       numberFormat,
       numberFormatShort,
       searchDataAutomatically,
+      displayEdit,
+      closeDialog,
+      editProduct,
+      edit_product,
+      saveEdit,
+      edit_productImage,
+      categories,
+      onImageChange,
+      imagePreview
     };
 
   },
@@ -262,5 +415,18 @@ export default {
     align-items: center;
     justify-content: center;
   }
+}
+</style>
+
+<style >
+/* กำหนด z-index สำหรับ Dialog */
+.p-dialog {
+  z-index: 9997;
+  /* ให้ค่าน้อยกว่า SweetAlert2 */
+}
+
+/* กำหนด z-index สำหรับ SweetAlert2 */
+.swal2-container {
+  z-index: 9999;
 }
 </style>
