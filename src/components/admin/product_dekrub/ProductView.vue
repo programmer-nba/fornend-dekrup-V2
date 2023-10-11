@@ -108,11 +108,12 @@
             </div>
 
             <div class="field">
-    <label for="image">รูปภาพ</label>
-    <img v-if="edit_productImage" :src="imagePreview" alt="Product Image" class="product-image"
-      width="100" height="100" />
-    <input type="file" @change="onImageChange" accept="image/*" />
-  </div>
+              <label for="image">รูปภาพ</label>
+              <img v-if="edit_productImage" :src="imagePreview" alt="Product Image" class="product-image" width="100"
+                height="100" />
+
+              <input type="file" @change="onImageChange" accept="image/*" />
+            </div>
             <Button @click="saveEdit" class="mr-2">บันทึก</Button>
             <Button @click="closeDialog">ยกเลิก</Button>
           </div>
@@ -144,8 +145,8 @@ export default {
     const edit_product = ref({}); // Initialize edit_product
     const categories = ref([]);
 
-    const edit_productImage = ref(''); // Image preview source
-    const edit_productImageFile = ref(null); // Selected image file
+    const edit_productImage = ref('');
+    const edit_productImageFile = ref(null);
 
     const searchDataAutomatically = async () => {
       try {
@@ -232,6 +233,7 @@ export default {
       }
     };
 
+
     const filtercategory = () => {
       if (category.value !== "") {
         const _id = category.value;
@@ -258,63 +260,73 @@ export default {
     };
 
     const saveEdit = async () => {
-  try {
-    if (edit_product.value) {
-      const formData = new FormData();
-      formData.append("name", edit_product.value.name);
-      formData.append("detail", edit_product.value.detail);
-      formData.append("price", edit_product.value.price);
-      formData.append("cost", edit_product.value.cost);
-      formData.append("quantity", edit_product.value.quantity);
-      formData.append("category", edit_product.value.category);
+      try {
+        if (edit_product.value) {
+          const formData = new FormData();
+          formData.append("name", edit_product.value.name);
+          formData.append("detail", edit_product.value.detail);
+          formData.append("price", edit_product.value.price);
+          formData.append("cost", edit_product.value.cost);
+          formData.append("quantity", edit_product.value.quantity);
+          formData.append("category", edit_product.value.category);
 
-      if (edit_productImage.value) {
-        formData.append("image", edit_productImage.value);
+          if (edit_productImageFile.value) {
+        formData.append("image", edit_productImageFile.value);
+        console.log("New Image ID:", edit_productImageFile.value);
+
+        // Update the image URL to the new image's file name
+        edit_productImage.value = `https://drive.google.com/uc?export=view&id=${edit_productImageFile.name}`;
       }
 
-      const response = await axios.put(
-        `${process.env.VUE_APP_DEKRUP}/product/update/${edit_product.value._id}`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            token: localStorage.getItem("token"),
-          },
+          console.log("FormData:", formData);
+
+          const response = await axios.put(
+            `${process.env.VUE_APP_DEKRUP}/product/update/${edit_product.value._id}`,
+            formData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+                token: localStorage.getItem("token"),
+              },
+            }
+          );
+          console.log("Response data:", response.data);
+
+          if (response.data.message === "อัพเดทสินค้าสำเร็จ") {
+            Swal.fire({
+              icon: 'success',
+              title: 'Success',
+              text: 'บันทึกข้อมูลสำเร็จ',
+            }).then(() => {
+              getData();
+              displayEdit.value = false; // Access displayEdit directly
+            });
+          }
+        } else {
+          console.error("edit_product is undefined.");
         }
-      );
-      console.log("Response data:", response.data);
-
-      if (response.data.message === "อัพเดทสินค้าสำเร็จ") {
+      } catch (error) {
+        console.error("Error saving data:", error);
         Swal.fire({
-          icon: 'success',
-          title: 'Success',
-          text: 'บันทึกข้อมูลสำเร็จ',
-        }).then(() => {
-          getData();
-          displayEdit.value = false; // Access displayEdit directly
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to save data',
         });
-      }
-    } else {
-      console.error("edit_product is undefined.");
-    }
-  } catch (error) {
-    console.error("Error saving data:", error);
-    Swal.fire({
-      icon: 'error',
-      title: 'Error',
-      text: 'Failed to save data',
-    });
-  }
-};
-
-const onImageChange = (event) => {
-      const file = event.target.files[0];
-      if (file) {
-        edit_productImage.value = URL.createObjectURL(file); // Update the image preview source
-        edit_productImageFile.value = file; // Assign the selected image file
       }
     };
 
+    const onImageChange = (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        edit_productImageFile.value = file;
+        // Create a URL for the new image and set it to imagePreview
+        const reader = new FileReader();
+        reader.onload = () => {
+          imagePreview.value = reader.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    };
 
     const imagePreview = computed(() => {
       return edit_productImage.value;
