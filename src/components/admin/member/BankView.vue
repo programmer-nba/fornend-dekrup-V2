@@ -30,8 +30,8 @@
                 <template #body="item">
                     <Button class="p-button-success mr-1" icon="pi pi-check" @click="confirmBank(item.data)"
                         v-if="getLaststatus(item.data.status) !== 'ยืนยันเรียบร้อยแล้ว'" />
-                    <Button class="p-button-danger" icon="pi pi-times" @click="showCancelDialog(item.data)"
-                        v-if="getLaststatus(item.data.status) !== 'ยืนยันเรียบร้อยแล้ว'" />
+                    <!-- <Button class="p-button-danger" icon="pi pi-times" @click="showCancelDialog(item.data)"
+                        v-if="getLaststatus(item.data.status) !== 'ยืนยันเรียบร้อยแล้ว'" /> -->
                 </template>
             </Column>
         </DataTable>

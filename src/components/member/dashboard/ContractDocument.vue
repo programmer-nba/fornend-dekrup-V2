@@ -23,33 +23,28 @@
                         <div class="col-12" v-if="this.amount === 0">
                             <DataView :value="item_product">
                                 <template #list="slotProps">
-                                    <div class="col-12">
-                                        <div class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4">
-                                            <div
-                                                class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
-                                                <div class="flex flex-column align-items-center sm:align-items-start gap-3">
-                                                    <div class="text-2xl font-bold text-900">
-                                                        <Image :src="`https://drive.google.com/uc?export=view&id=` + slotProps.data.picture" width="250" />
-                                                    </div>
-                                                    <div class="text-2xl font-bold text-900">
-                                                        {{ slotProps.data.name }}
-                                                    </div>
-                                                    <div class="text-1xl font-bold text-500">
-                                                        {{ slotProps.data.detail }}
-                                                    </div>
-                                                </div>
-                                                <div
-                                                    class="flex sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2">
-                                                    <span class="text-2xl font-semibold">${{ slotProps.data.price }}</span>
-                                                    <Button icon="pi pi-shopping-cart"
-                                                        @click="addprice(slotProps.data)"></Button>
-                                                </div>
-                                            </div>
+                                    <div class="col-6  lg:col-12 xl:col-6 mt-5 px-1">
+                                    <div class="background-product" style="padding: 5%;">
+                                        <img :src="`https://drive.google.com/uc?export=view&id=` + slotProps.data.picture" class="img-productCon" />
+                                        <div>
+                                        <h3 style="-webkit-text-stroke:1px;padding-bottom: 30px;">{{ slotProps.data.name }}</h3>
+                                        <Button icon="pi pi-shopping-cart" style="padding: 5px;" class="mb-1 p-button-danger z-0 w-full" label="ใส่ตระกร้า" @click="addprice(slotProps.data)" />
+                                        <Button label="รายละเอียด" severity="warning" style="padding: 5px;" @click="showDetailDialog(slotProps.data)" class="w-full" />
+                                        <Dialog :visible="slotProps.data.showDetail" modal header="รายละเอียดสินค้า" class="size-dialog">
+                                            <img :src="`https://drive.google.com/uc?export=view&id=` + slotProps.data.picture" class="img-productConDialog" />
+                                            <h2>{{ slotProps.data.name }}</h2>
+                                            <p>
+                                            {{ slotProps.data.detail }}
+                                            </p>
+                                            <template #footer>
+                                            <Button label="ปิด" icon="pi pi-times" @click="closeDetailDialog(slotProps.data)" text />
+                                            </template>
+                                        </Dialog>
                                         </div>
+                                    </div>
                                     </div>
                                 </template>
                             </DataView>
-
                         </div>
                         <div v-else>
                             <Message><strong>หมายเหตุ : </strong>กรุณาแสกน QR Code ด้านล่างเพื่อชำระเงิน พร้อมแนบสลิป
@@ -86,7 +81,7 @@
                     </div>
                 </Panel>
             </div>
-            
+
             <div class="col-12 lg:col-3">
                 <Panel header="STEP 3 : รูปภาพหลักฐานการโอน">
                     <div class="grid" v-if="img_preview !== null">
@@ -109,13 +104,7 @@
                 <Panel header="STEP 4 : แจ้งชำระเงิน">
                     <div class="grid">
                         <div class="col-12">
-                            <Checkbox v-model="checked" :binary="true" /> ยอมรับ  <span><Button style="padding: 2px;" label="เงื่อนไขการใช้งานและข้อความแจ้งเตือนข้างต้น (คลิกเพื่ออ่าน)" link @click="visible = true" /></span>
-                            <Dialog v-model:visible="visible" modal header="เงื่อนไขการใช้งาน" :style="{ width: '50vw' }">
-                                <p>
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                                    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                                </p>
-                            </Dialog>
+                            <Checkbox v-model="checked" :binary="true" /> ยอมรับเงื่อนไขการใช้งานและข้อความแจ้งเตือนข้างต้น 
                         </div>
                         <div class="col-12">
                             <Button label="ส่งข้อมูลแจ้งชำระเงิน" icon="pi pi-send" @click="confirm()" />
@@ -139,35 +128,10 @@ export default {
         const members = new Member();
         return { members }
     },
-    async created() {
-        await axios.get(`${process.env.VUE_APP_DEKRUP}/me`, {
-            headers: {
-                'token': `${localStorage.getItem('token')}`
-            }
-        }).catch((err) => {
-            if (err.response.status === 408) {
-                localStorage.clear();
-                window.location.reload();
-            }
-        })
-        await axios.get(`${process.env.VUE_APP_DEKRUP}/product/member/list`, {
-            headers: {
-                'token': `${localStorage.getItem('token')}`
-            }
-        }).then((res) => {
-            this.item_product = res.data.data;
-        })
-            .catch((err) => {
-                if (err.response.status === 408) {
-                    localStorage.clear();
-                    window.location.reload();
-                }
-            })
-        document.title = "ชำระเงิน Package เริ่มต้น"
-    },
+    
     data: () => ({
         visible: false,
-        
+
         member_number: '',
         amount: 0,
         product_id: '',
@@ -175,9 +139,26 @@ export default {
         img_preview: null,
         checked: false,
         item_product: [],
-       
+
     }),
+
+    async mounted() {
+        await this.getProduct();
+        console.log(localStorage.getItem("token"));
+    },
+
     methods: {
+        
+        async getProduct() {
+            this.$store.commit('setLoading', true);
+            await this.members.GetProduct().then(result => {
+                this.item_product = result.data;
+            }).catch((err) => {
+                this.$store.commit('setLoading', false);
+                this.$toast.add({ severity: 'error', summary: 'ผิดพลาด', detail: err.response.data.message, life: 3000 })
+            })
+        },
+
         clearImage() {
             this.img_preview = null;
             this.slip_img = null;
@@ -249,7 +230,14 @@ export default {
                 }
             });
         },
+        
+        showDetailDialog(item) {
+            item.showDetail = true;
+        },
 
+        closeDetailDialog(item) {
+            item.showDetail = false;
+        },
 
 
         async logout() {
@@ -273,4 +261,40 @@ export default {
 }
 </script>
 
-<style></style>
+
+<style>
+.background-product{
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    height: auto;
+    background: rgb(255, 255, 255);
+    border-radius: 10px;
+    border: 1px solid rgb(230, 222, 222);
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.img-productCon{
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+
+}
+
+.img-productConDialog{
+    width: 50%;
+    margin-right: auto;
+    margin-left: auto;
+    display: block;
+}
+.size-dialog{
+    width: 50vw;
+}
+
+@media only screen and (max-width:768px){
+    .size-dialog{
+    width: 80vw;
+}
+    
+}
+</style>

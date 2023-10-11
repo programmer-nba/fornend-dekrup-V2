@@ -301,8 +301,10 @@ export default {
                 if (result) {
                     console.log(result);
                     this.loading = false;
-                    this.toast.success("สมัครสมาชิกสำเร็จ");
-                    window.location.reload('/');
+                    this.toast.success("สมัครสมาชิกสำเร็จ กรุณาเข้าสู่ระบบอีกครั้ง");
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 3000);
                 }
             })
         },

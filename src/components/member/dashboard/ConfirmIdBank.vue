@@ -74,11 +74,13 @@
                     </div>
                 </Panel>
             </div>
+            
         </div>
-        <Button label="ยืนยันข้อมูล" class="p-button-danger w-full" @click="confirm()" />
-
-        <div class="footer">
-
+       
+     
+        <Button label="ทำรายการถัดไป" class="p-button-danger mt-5" style="width: 150px; margin-left: auto;margin-right: auto;display: block;" @click="confirm()" /><br>     
+        <div class="text-center" style="color: red; font-size: 20; -webkit-text-stroke: 1px;">
+            <div>*** หากท่านยืนยันบัญชีและยืนยันบัตรประชาชนแล้วกรุณากด ทำรายการถัดไป *** </div>
         </div>
 
 
@@ -173,8 +175,6 @@ export default {
             await this.members.AddBank(formData).then(async (result) => {
                 if (result) {
                     console.log(result);
-                    this.loading = false;
-                    this.$store.commit('setLoginDefault');
 
                     Swal.fire({
                         title: 'แนบรูปสมุดบัญชีเรียบร้อย',
@@ -209,8 +209,6 @@ export default {
             await this.members.AddIden(formData).then(async (result) => {
                 if (result) {
                     console.log(result);
-                    this.loading = false;
-                    this.$store.commit('setLoginDefault');
 
                     Swal.fire({
                         title: 'แนบรูปบัตรประจำตัวประชาชนเรียบร้อย',

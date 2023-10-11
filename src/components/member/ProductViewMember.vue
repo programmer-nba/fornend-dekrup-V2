@@ -54,8 +54,8 @@
   <Dialog v-model:visible="DialogaddAmount" modal header="จำนวนสั่งซื้อ">
     <InputNumber v-model="amount" inputId="minmax-buttons" mode="decimal" showButtons :min="0" />
     <template #footer>
-      <Button label="สั่งซื้อ" icon="pi pi-shopping-cart" @click="addCart()" />
       <Button label="ปิด" icon="pi pi-times" @click="clearData()" text />
+      <Button label="สั่งซื้อ" icon="pi pi-shopping-cart" @click="addCart()" />
     </template>
   </Dialog>
 
@@ -104,9 +104,15 @@
 <script>
 import axios from "axios";
 import Image from "primevue/image";
+import { useToast } from "vue-toastification";
 export default {
   components: {
+    
     Image,
+  },
+  setup() {
+    const toast = useToast();
+    return {  toast };
   },
 
 
@@ -194,6 +200,12 @@ export default {
     },
 
     async addCart() {
+      if (this.amount === 0) {
+        this.toast.warning("กรุณาเพิ่มจำนวนสั่งซื้อ");
+        return;
+      }
+
+      // ดำเนินการเพิ่มรายการสินค้า
       this.$store.commit("setLoading", false);
       this.total = this.data.price * this.amount;
 
