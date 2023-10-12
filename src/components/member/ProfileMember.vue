@@ -12,15 +12,39 @@
                     <p><strong>รหัสสมาชิก : </strong>{{ member_number }}</p>
                     <p><strong>ชื่อ-นามสกุล :</strong> {{ name }}</p>
                     <p><strong>เบอร์โทร : </strong>{{ tel }}</p>
-                    <p><strong>ที่อยู่ : </strong>{{ address }} {{ subdistrict }} {{ district }} {{ province }} {{ postcode
-                    }}</p>
+                    <p><strong>ที่อยู่ : </strong>{{ address }} {{ subdistrict }} {{ district }} {{ province }} {{ postcode}}</p>
                     <p><strong>รายได้ค่าคอมมิชชั่น : </strong>{{ commission_day }}</p>
                     <p><strong>รายได้ค่าบริหาร : </strong>{{ commission_week }}</p>
                     <p><strong>สถานะผู้ใช้ : </strong>{{ position }}</p>
+                    <!-- <p><strong>สถานะผู้ใช้ : </strong>{{ status_bank }}</p> -->
                 </Panel>
             </div>
-            <div class="col-12 lg:col-3" v-if="status_bank === 'อยู่ระหว่างการตรวจสอบ'">
-                <Panel header="สมุดบัญชีธนาคาร" class="custom-header-panel font-profile">
+            <div class="col-12 lg:col-6">
+                <Panel header="เปลี่ยนรหัสผ่าน" class="custom-header-panel">
+                    <div class="grid ">
+                        <div class="col-12">
+                            <div class="field">
+                                <label>เปลี่ยนรหัสผ่านใหม่ :</label>
+                                <Password v-model="password" inputClass="font" inputStyle="width: 100%;" class="w-full"
+                                    placeholder="กรอกรหัสผ่านที่ต้องการเปลี่ยน" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid">
+                        <div class="col-12">
+                            <div class="field">
+                                <label>ยืนยันรหัสผ่านใหม่อีกครั้ง :</label>
+                                <InputText type="password" v-model="confirm_password" placeholder="กรอกรหัสผ่านใหม่อีกครั้ง"
+                                    class="font w-full" />
+                            </div>
+                        </div>
+                    </div>
+                    <Button label="เปลี่ยนรหัสผ่าน" class="bg-red-500 border-none" @click="confirm()" />
+                </Panel>
+            </div>
+            
+            <div class="col-12 lg:col-6 xl:col-3" >
+                <Panel  header="ท่านยังไม่ได้ยืนยันสมุดบัญชีธนาคาร" class="custom-header-panel font-profile"  v-if="status_bank === '-'"  >
                     <div class="col-12">
                         <Message><strong>เวลาทำการ : </strong> เวลาทำการตรวจสอบ ทุกวัน เวลา 9.00 น. ถึง 18.00 น.
                             หากนอกเวลาทำการจะทำการตรวจสอบในเวลาทำการของวันถัดไป</Message>
@@ -28,7 +52,7 @@
                     <div class="col-12">
                         <div class="field">
                             <span class="p-float-label">
-                                <div>เลือกบัญชีธนาคารธนาคาร</div>
+                                <div>กรอกชื่อบัญชีธนาคารธนาคาร</div>
                                 <div class="card flex justify-content-start">
                                     <InputText v-model="bank" inputClass="font" placeholder="กรอกธนาคาร" />
                                 </div>
@@ -57,10 +81,15 @@
                         </div>
                     </div>
                 </Panel>
+                <Panel  header="ยืนยันสมุดบัญชีธนาคาร" class="custom-header-panel font-profile"  v-if="status_bank === 'อยู่ระหว่างการตรวจสอบ'"  >
+                    <Message style="color: red; -webkit-text-stroke: 1px;" class="mb-2"><strong>สถานะการตรวจสอบ : </strong>ท่านได้แนบสมุดบัญชีแล้ว เจ้าหน้าที่กำลังตรวจสอบ </Message>
+                    <Message><strong>เวลาทำการ : </strong>รอตรวจสอบจากเจ้าหน้าที่ เวลาทำการตรวจสอบ ทุกวัน เวลา 9.00 น. ถึง 18.00 น.
+                            หากนอกเวลาทำการจะทำการตรวจสอบในเวลาทำการของวันถัดไป</Message>
+                </Panel>
             </div>
-            <div class="col-12 lg:col-3" v-if="status_iden === 'อยู่ระหว่างการตรวจสอบ'">
-                <Panel header="บัตรประชาชน" class="custom-header-panel font-profile">
-                    <div class="col-12">
+            <div class="col-12 lg:col-6 xl:col-3 " >
+                <Panel header="ท่านยังไม่ได้ยืนยันบัตรประชาชน" class="custom-header-panel font-profile" v-if="status_iden === '-' ">
+                     <div class="col-12">
                         <Message><strong>เวลาทำการ : </strong> เวลาทำการตรวจสอบ ทุกวัน เวลา 9.00 น. ถึง 18.00 น.
                             หากนอกเวลาทำการจะทำการตรวจสอบในเวลาทำการของวันถัดไป</Message>
                     </div>
@@ -93,30 +122,13 @@
                         </div>
                     </div>
                 </Panel>
-            </div>
-            <div class="col-12 lg:col-6">
-                <Panel header="เปลี่ยนรหัสผ่าน" class="custom-header-panel">
-                    <div class="grid ">
-                        <div class="col-12">
-                            <div class="field">
-                                <label>เปลี่ยนรหัสผ่านใหม่ :</label>
-                                <Password v-model="password" inputClass="font" inputStyle="width: 100%;" class="w-full"
-                                    placeholder="กรอกรหัสผ่านที่ต้องการเปลี่ยน" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="grid">
-                        <div class="col-12">
-                            <div class="field">
-                                <label>ยืนยันรหัสผ่านใหม่อีกครั้ง :</label>
-                                <InputText type="password" v-model="confirm_password" placeholder="กรอกรหัสผ่านใหม่อีกครั้ง"
-                                    class="font w-full" />
-                            </div>
-                        </div>
-                    </div>
-                    <Button label="เปลี่ยนรหัสผ่าน" class="bg-red-500 border-none" @click="confirm()" />
+                <Panel header="ยืนยันบัตรประชาชน" class="custom-header-panel font-profile" v-if="status_iden === 'อยู่ระหว่างการตรวจสอบ'" >
+                    <Message style="color: red; -webkit-text-stroke: 1px;" class="mb-2"><strong>สถานะการตรวจสอบ : </strong>ท่านได้แนบบัตรประชาชนแล้ว เจ้าหน้าที่กำลังตรวจสอบ </Message>
+                    <Message><strong>เวลาทำการ : </strong>รอตรวจสอบจากเจ้าหน้าที่ เวลาทำการตรวจสอบ ทุกวัน เวลา 9.00 น. ถึง 18.00 น.
+                            หากนอกเวลาทำการจะทำการตรวจสอบในเวลาทำการของวันถัดไป</Message>
                 </Panel>
             </div>
+          
         </div>
     </div>
 </template>
@@ -173,6 +185,8 @@ export default ({
                 this.$store.commit("setLogin", data_login);
                 this.$store.commit('setLoading', false);
                 console.log(data_login);
+                console.log(data_login.status_bank);
+                console.log(data_login.status_iden);
                 this.name = data_login.name;
                 this.username = data_login.username;
                 this.member_number = data_login.member_number;
@@ -185,6 +199,8 @@ export default ({
                 this.commission_day = data_login.commission_day;
                 this.commission_week = data_login.commission_week;
                 this.position = data_login.position;
+                this.status_bank = data_login.status_bank;
+                this.status_iden = data_login.status_iden;
             })
             .catch(() => {
                 localStorage.clear();
@@ -193,6 +209,10 @@ export default ({
                 this.$router.push("/login");
             });
     },
+
+
+
+   
 
     data: () => ({
         name: '',
@@ -220,10 +240,13 @@ export default ({
         iden_number: '',
         bank: '',
 
+
         status_bank: '',
         image_bank: '',
         status_iden: '',
         image_iden: '',
+
+
     }),
 
     methods: {

@@ -69,7 +69,7 @@
   
   <style>
   .column-responsive{
-    width: 1600px;
+    width: 1000px;
   }
   .p-datatable .p-datatable-thead>tr>th {
       background-color: #ffe3e3 !important;

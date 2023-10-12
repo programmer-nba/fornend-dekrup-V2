@@ -1,12 +1,12 @@
 <template>
     <div class="grid navbar-sticky" style="background: red; ">
-        <div class="xl:col-10 col-7 flex justify-content-center align-items-center">
+        <div class="xl:col-10 lg:col-9 md:col-2 col-4 flex justify-content-center align-items-center">
             <Menubar :model="item_manu"
                 class="custom-menu  border-round-3xl p-0 mt-2  hover:border-2 hover:border-purple-900 flex align-items-center justify-content-center bg-white"
-                style="width: 60%;">
+                >
             </Menubar>
         </div>
-        <div class="xl:col-2 col-5 mt-2 flex justify-content-end px-3">
+        <div class="xl:col-2 lg:col-3 md:col-10 col-8 mt-2 flex justify-content-end px-3">
             <Button class="p-button-danger z-0" label="ออกจากระบบ" icon="pi pi-power-off" @click="logout()" />
         </div>
     </div>
@@ -103,4 +103,14 @@ export default {
     z-index: 1;
     width: 300px;
     }
+
+.custom-menu{
+    width: 40%;
+}
+
+@media only screen and (max-width:1600px){
+    .custom-menu{
+        width: 90%;
+    }
+}
 </style>
