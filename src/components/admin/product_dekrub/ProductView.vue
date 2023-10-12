@@ -77,7 +77,6 @@
           :style="{ width: '700px' }">
           <div>
             <h2>แก้ไขสินค้า</h2>
-
             <div class="field">
               <label for="name">ชื่อสินค้า</label>
               <InputText id="name" v-model="edit_product.name" class="w-full" autofocus />
@@ -104,24 +103,19 @@
               <label for="category">หมวดหมู่</label>
               <Dropdown v-model="edit_product.category" optionLabel="name" optionValue="_id" :options="categories"
                 class="w-full" />
-
             </div>
 
             <div class="field">
-              <label for="image">รูปภาพ</label>
-              <img v-if="edit_productImage" :src="imagePreview" alt="Product Image" class="product-image" width="100"
-                height="100" />
-
+              <label for="image">รูปภาพ</label> <br>
+              <Image v-if="edit_productImage" :src="imagePreview" class="product-image" width="100"
+                height="100" preview />  <br>
               <input type="file" @change="onImageChange" accept="image/*" />
+
             </div>
             <Button @click="saveEdit" class="mr-2">บันทึก</Button>
             <Button @click="closeDialog">ยกเลิก</Button>
           </div>
         </Dialog>
-
-
-
-
 
       </div>
     </div>
@@ -132,7 +126,7 @@
 <script>
 import axios from "axios";
 import Swal from 'sweetalert2';
-import { computed, onMounted, ref } from "vue";
+import { onMounted, ref } from "vue";
 
 export default {
 
@@ -142,11 +136,14 @@ export default {
     const search = ref("");
     const category = ref("");
     const displayEdit = ref(false);
-    const edit_product = ref({}); // Initialize edit_product
+    const edit_product = ref({
+      newImage: null,
+    });
     const categories = ref([]);
 
     const edit_productImage = ref('');
     const edit_productImageFile = ref(null);
+    const imagePreview = ref("");
 
     const searchDataAutomatically = async () => {
       try {
@@ -222,17 +219,6 @@ export default {
       }
     };
 
-    const getImage = (item) => {
-      if (typeof item === 'string') {
-        return `https://drive.google.com/uc?export=view&id=${item}`;
-      } else if (Array.isArray(item) && item.length > 0) {
-        const firstImageId = item[0];
-        return `https://drive.google.com/uc?export=view&id=${firstImageId}`;
-      } else {
-        return "";
-      }
-    };
-
 
     const filtercategory = () => {
       if (category.value !== "") {
@@ -271,12 +257,9 @@ export default {
           formData.append("category", edit_product.value.category);
 
           if (edit_productImageFile.value) {
-        formData.append("image", edit_productImageFile.value);
-        console.log("New Image ID:", edit_productImageFile.value);
+            formData.append("imgCollection", edit_productImageFile.value); // อัพเดทรูปภาพใหม่ใน FormData
+          }
 
-        // Update the image URL to the new image's file name
-        edit_productImage.value = `https://drive.google.com/uc?export=view&id=${edit_productImageFile.name}`;
-      }
 
           console.log("FormData:", formData);
 
@@ -299,7 +282,7 @@ export default {
               text: 'บันทึกข้อมูลสำเร็จ',
             }).then(() => {
               getData();
-              displayEdit.value = false; // Access displayEdit directly
+              displayEdit.value = false;
             });
           }
         } else {
@@ -315,32 +298,79 @@ export default {
       }
     };
 
-    const onImageChange = (event) => {
-      const file = event.target.files[0];
-      if (file) {
-        edit_productImageFile.value = file;
-        // Create a URL for the new image and set it to imagePreview
-        const reader = new FileReader();
-        reader.onload = () => {
-          imagePreview.value = reader.result;
-        };
-        reader.readAsDataURL(file);
+    const getImage = (item) => {
+      if (item) {
+        if (typeof item === 'string') {
+          return `https://drive.google.com/uc?export=view&id=${item}`;
+        } else if (Array.isArray(item) && item.length > 0) {
+          const firstImageId = item[0];
+          return `https://drive.google.com/uc?export=view&id=${firstImageId}`;
+        }
       }
+      return "";
     };
 
-    const imagePreview = computed(() => {
-      return edit_productImage.value;
+    const onImageChange = (event) => {
+  console.log('onImageChange function called');
+
+  const file = event.target.files[0];
+  console.log('Selected file:', file);
+
+  // ตรวจสอบขนาดไฟล์
+  if (file && file.size > 1024 * 1024) { // 1 MB = 1024 * 1024 bytes
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'ขนาดไฟล์รูปภาพต้องไม่เกิน 1 MB',
     });
+    event.target.value = ''; // รีเซ็ตค่า input file
+    return;
+  }
+
+  if (file) {
+    edit_productImageFile.value = file;
+    edit_product.newImage = file;
+    const reader = new FileReader();
+    reader.onload = () => {
+      imagePreview.value = reader.result;
+
+      // อัพเดทค่า edit_productImage เพื่อให้แสดงรูปภาพใหม่ที่คุณเลือก
+      edit_productImage.value = reader.result;
+
+      // อัพเดท URL รูปภาพใน edit_product
+      edit_product.picture = reader.result;
+    };
+    reader.readAsDataURL(file);
+  } else {
+    if (!edit_productImage.value) {
+      imagePreview.value = getImage(edit_product.value.picture);
+    }
+  }
+};
+
 
 
     const editProduct = (item) => {
       displayEdit.value = true;
       edit_product.value = { ...item };
-      edit_productImage.value = getImage(item.picture);
+
+      const existingImage = getImage(item.picture);
+      if (existingImage) {
+        imagePreview.value = existingImage;
+
+        // อัพเดทค่า edit_productImage เพื่อให้แสดงรูปภาพที่ตรงกับรูปภาพของรายการที่คุณกำลังแก้ไข
+        edit_productImage.value = existingImage;
+      } else {
+        imagePreview.value = '';
+        edit_productImage.value = ''; // เพิ่มบรรทัดนี้เพื่อลบรูปภาพเดิม (ถ้ามี)
+      }
     };
 
+
+
+
     const closeDialog = () => {
-      displayEdit.value = false; // ปิดหน้าต่างแก้ไข
+      displayEdit.value = false;
     };
 
     onMounted(() => {
@@ -374,11 +404,6 @@ export default {
   },
 };
 </script>
-
-
-
-
-
 
 
 <style scoped>
@@ -431,13 +456,10 @@ export default {
 </style>
 
 <style >
-/* กำหนด z-index สำหรับ Dialog */
 .p-dialog {
   z-index: 9997;
-  /* ให้ค่าน้อยกว่า SweetAlert2 */
 }
 
-/* กำหนด z-index สำหรับ SweetAlert2 */
 .swal2-container {
   z-index: 9999;
 }
