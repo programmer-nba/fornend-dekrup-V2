@@ -107,8 +107,8 @@
 
             <div class="field">
               <label for="image">รูปภาพ</label> <br>
-              <Image v-if="edit_productImage" :src="imagePreview" class="product-image" width="100"
-                height="100" preview />  <br>
+              <Image v-if="edit_productImage" :src="imagePreview" class="product-image" width="100" height="100"
+                preview /> <br>
               <input type="file" @change="onImageChange" accept="image/*" />
 
             </div>
@@ -126,7 +126,7 @@
 <script>
 import axios from "axios";
 import Swal from 'sweetalert2';
-import { onMounted, ref } from "vue";
+import { onMounted, ref, toRaw } from "vue";
 
 export default {
 
@@ -247,7 +247,9 @@ export default {
 
     const saveEdit = async () => {
       try {
-        if (edit_product.value) {
+        if (edit_product.value && edit_product.value.name) {
+          console.log("Name is defined:", edit_product.value.name);
+          console.log("Image file is defined:", edit_productImageFile.value);
           const formData = new FormData();
           formData.append("name", edit_product.value.name);
           formData.append("detail", edit_product.value.detail);
@@ -257,7 +259,7 @@ export default {
           formData.append("category", edit_product.value.category);
 
           if (edit_productImageFile.value) {
-            formData.append("imgCollection", edit_productImageFile.value); // อัพเดทรูปภาพใหม่ใน FormData
+            formData.append("imgCollection", edit_productImageFile.value);
           }
 
 
@@ -281,6 +283,12 @@ export default {
               title: 'Success',
               text: 'บันทึกข้อมูลสำเร็จ',
             }).then(() => {
+              if (response.data.updatedProduct && 'picture' in response.data.updatedProduct) {
+                const updatedImage = getImage(toRaw(response.data.updatedProduct.picture));
+                edit_productImage.value = updatedImage;
+              }
+              // รีเซ็ตค่าฟิลด์อัพโหลดรูปภาพ
+              edit_productImageFile.value = null;
               getData();
               displayEdit.value = false;
             });
@@ -310,67 +318,70 @@ export default {
       return "";
     };
 
+
     const onImageChange = (event) => {
-  console.log('onImageChange function called');
+      console.log('onImageChange function called');
 
-  const file = event.target.files[0];
-  console.log('Selected file:', file);
+      const file = event.target.files[0];
+      console.log('Selected file:', file);
 
-  // ตรวจสอบขนาดไฟล์
-  if (file && file.size > 1024 * 1024) { // 1 MB = 1024 * 1024 bytes
-    Swal.fire({
-      icon: 'error',
-      title: 'Error',
-      text: 'ขนาดไฟล์รูปภาพต้องไม่เกิน 1 MB',
-    });
-    event.target.value = ''; // รีเซ็ตค่า input file
-    return;
-  }
+      if (file && file.size > 1024 * 1024) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'ขนาดไฟล์รูปภาพต้องไม่เกิน 1 MB',
+        });
+        event.target.value = '';
+        return;
+      }
 
-  if (file) {
-    edit_productImageFile.value = file;
-    edit_product.newImage = file;
-    const reader = new FileReader();
-    reader.onload = () => {
-      imagePreview.value = reader.result;
-
-      // อัพเดทค่า edit_productImage เพื่อให้แสดงรูปภาพใหม่ที่คุณเลือก
-      edit_productImage.value = reader.result;
-
-      // อัพเดท URL รูปภาพใน edit_product
-      edit_product.picture = reader.result;
-    };
-    reader.readAsDataURL(file);
-  } else {
-    if (!edit_productImage.value) {
-      imagePreview.value = getImage(edit_product.value.picture);
-    }
-  }
-};
-
-
-
-    const editProduct = (item) => {
-      displayEdit.value = true;
-      edit_product.value = { ...item };
-
-      const existingImage = getImage(item.picture);
-      if (existingImage) {
-        imagePreview.value = existingImage;
-
-        // อัพเดทค่า edit_productImage เพื่อให้แสดงรูปภาพที่ตรงกับรูปภาพของรายการที่คุณกำลังแก้ไข
-        edit_productImage.value = existingImage;
+      if (file) {
+        // อัพเดต edit_productImageFile ทันที
+        edit_productImageFile.value = file;
+        edit_product.newImage = file;
+        const reader = new FileReader();
+        reader.onload = () => {
+          // อัพเดต imagePreview ทันที
+          imagePreview.value = reader.result;
+        };
+        reader.readAsDataURL(file);
       } else {
-        imagePreview.value = '';
-        edit_productImage.value = ''; // เพิ่มบรรทัดนี้เพื่อลบรูปภาพเดิม (ถ้ามี)
+        if (!edit_productImageFile.value) {
+          // ใช้ค่าเดิมแทนการรีเซ็ตเมื่อไม่มีไฟล์ใหม่
+          if (edit_product.value && edit_product.value.picture) {
+            imagePreview.value = getImage(edit_product.value.picture);
+          } else {
+            // ไม่มีรูปเดิม
+            imagePreview.value = '';
+          }
+        }
       }
     };
 
+    const editProduct = (item) => {
+      if (item && item.picture) {
+        displayEdit.value = true;
+        edit_product.value = { ...item };
 
+        // ใช้รูปภาพทั้งหมดในอาร์เรย์ item.picture
+        if (Array.isArray(item.picture) && item.picture.length > 0) {
+          const images = item.picture.map((imageId) => getImage(imageId));
+          edit_productImage.value = images[0]; // ใช้รูปแรกเป็นตัวอย่าง
 
+          // แสดงรูปแรกใน imagePreview หรืออื่น ๆ
+          imagePreview.value = images[0];
+        } else {
+          console.error("Invalid item or missing picture property");
+        }
+      }
+    };
 
     const closeDialog = () => {
-      displayEdit.value = false;
+      if (displayEdit !== undefined) {
+        displayEdit.value = false;
+      } else {
+        console.error("displayEdit is undefined");
+      }
     };
 
     onMounted(() => {
@@ -400,7 +411,6 @@ export default {
       onImageChange,
       imagePreview
     };
-
   },
 };
 </script>
