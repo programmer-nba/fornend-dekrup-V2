@@ -34,6 +34,7 @@
                                 <br>
                                 <div class="grid">
                                     <div class="col-12 text-center">
+                                        <div style="color: red; font-size: 16; -webkit-text-stroke: 1px;">*  กรุณากดยืนยันบัญชีธนาคาร  </div>
                                         <Button label="ยืนยัน" @click="confirmBank()" />
                                     </div>
                                 </div>
@@ -66,6 +67,7 @@
                                 <br>
                                 <div class="grid">
                                     <div class="col-12 text-center">
+                                        <div style="color: red; font-size: 20; -webkit-text-stroke: 1px;">*  กรุณากดยืนยันบัตรประชาชน  </div>
                                         <Button label="ยืนยัน" @click="confirmIden()" />
                                     </div>
                                 </div>
@@ -80,7 +82,7 @@
      
         <Button label="ทำรายการถัดไป" class="p-button-danger mt-5" style="width: 150px; margin-left: auto;margin-right: auto;display: block;" @click="confirm()" /><br>     
         <div class="text-center" style="color: red; font-size: 20; -webkit-text-stroke: 1px;">
-            <div>*** หากท่านยืนยันบัญชีและยืนยันบัตรประชาชนแล้วกรุณากด ทำรายการถัดไป *** </div>
+            <div>** หากท่านยืนยันบัญชีและยืนยันบัตรประชาชนแล้วกรุณากด ทำรายการถัดไป </div>
         </div>
 
 
