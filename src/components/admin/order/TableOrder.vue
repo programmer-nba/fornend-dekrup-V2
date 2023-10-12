@@ -11,69 +11,94 @@
         <InputText v-model="search" placeholder="ค้นหาข้อมูล" class="z-0" @keyup="searchDataAutomatically()" />
       </div>
     </div>
-
-
   </div>
-  <DataTable :value="orders" :immutable="false" stripedRows responsiveLayout="scroll" :paginator="true" :rows="20"
-    paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
-    currentPageReportTemplate="แสดง {first} ถึง {last} ใน {totalRecords} รายการ" class="px-3">
-    <!-- โค้ดเก่าในส่วนของ template อื่น ๆ ให้เหมือนเดิม -->
-    <template #empty>
-      <p class="font-italic text-center text-5xl" style="color: #BD1616;">ไม่พบข้อมูลใบสั่งชื้อ</p>
-    </template>
+  <!-- <div class="grid mt-2">
+    <div class="col-3">
+      <div class="p-inputgroup">
+        <span class="p-inputgroup-addon bg-purple-500 text-white">
+          <i class="pi pi-calendar text-xl"></i>
+        </span>
+        <Calendar inputId="range" icon="pi pi-calendar" selectionMode="range" placeholder="FILTER DATE" class="w-full"
+          v-model="day" @date-select="searchDay" />
+      </div>
+    </div>
+    <div class="col-2">
+      <Dropdown v-model="product_id" :options="item_product" optionLabel="name" placeholder="Select Product"
+        class="w-full" />
+    </div>
+    <div class="col-1">
+      <Button label="Clear All" class="p-button-text p-button-plain" @click="clear"></Button>
+    </div>
+    <div class="col-1">
+      <Button icon="pi pi-file-export" label="Export" @click="exportCSV()" class="mr-2"></Button>
+    </div>
+    <div class="col-1">
+      <Button icon="pi pi-file-export" label="Export All" @click="exportCSVAll()" class="mr-2"></Button>
+    </div>
+  </div> -->
+  <div class="grid mt-2">
+    <DataTable :value="orders" :immutable="false" stripedRows responsiveLayout="scroll" :paginator="true" :rows="20"
+      paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
+      currentPageReportTemplate="แสดง {first} ถึง {last} ใน {totalRecords} รายการ" class="px-3">
+      <!-- โค้ดเก่าในส่วนของ template อื่น ๆ ให้เหมือนเดิม -->
+      <template #empty>
+        <p class="font-italic text-center text-5xl" style="color: #BD1616;">ไม่พบข้อมูลใบสั่งชื้อ</p>
+      </template>
 
-    <Column header="เลขที่ใบสั่งชื้อ" style="width: 15%;">
-      <template #body="item">
-        {{ item.data.receiptnumber }}
-      </template>
-    </Column>
-    <Column header="ชื่อ" style="width: 10%;">
-      <template #body="item">
-        {{ item.data.customer_name }}
-      </template>
-    </Column>
-    <Column header="ที่อยู่" style="width: 25%;">
-      <template #body="item">
-        {{ item.data.customer_address }}
-      </template>
-    </Column>
-    <Column header="เบอร์โทร" >
-      <template #body="item">
-        {{ item.data.customer_tel }}
-      </template>
-    </Column>
-    <Column header="สถานะ">
-      <template #body="item">
-        <Chip :class="getStatusColor(item.data.status)" :label="item.data.status[item.data.status.length - 1].status" />
-      </template>
-    </Column>
-    <Column  header="วันที่ทำรายการ" style="width: 10%;">
-      <template #body="Props">
+      <Column header="เลขที่ใบสั่งชื้อ" style="width: 15%;">
+        <template #body="item">
+          {{ item.data.receiptnumber }}
+        </template>
+      </Column>
+      <Column header="ชื่อ" style="width: 10%;">
+        <template #body="item">
+          {{ item.data.customer_name }}
+        </template>
+      </Column>
+      <Column header="ที่อยู่" style="width: 25%;">
+        <template #body="item">
+          {{ item.data.customer_address }}
+        </template>
+      </Column>
+      <Column header="เบอร์โทร">
+        <template #body="item">
+          {{ item.data.customer_tel }}
+        </template>
+      </Column>
+      <Column header="สถานะ">
+        <template #body="item">
+          <Chip :class="getStatusColor(item.data.status)" :label="item.data.status[item.data.status.length - 1].status" />
+        </template>
+      </Column>
+      <Column header="วันที่ทำรายการ" style="width: 10%;">
+        <template #body="Props">
           {{ datetimeFormat(Props.data.timestamp) }}
         </template>
-    </Column>
-    <Column :exportable="false" style="min-width: 8rem">
-  <template #body="rowData">
-    <Button icon="pi pi-print" label="พิมพ์ใบส่งสินค้า"
-      class="p-button-outlined p-button-sm text-sm text-teal-300 mr-2" @click="showDialog(rowData)" />
+      </Column>
+      <Column :exportable="false" style="min-width: 8rem">
+        <template #body="rowData">
+          <Button icon="pi pi-print" label="พิมพ์ใบส่งสินค้า"
+            class="p-button-outlined p-button-sm text-sm text-teal-300 mr-2" @click="showDialog(rowData)" />
 
-    <!-- เพิ่มเงื่อนไขเพื่อไม่แสดงปุ่มรายละเอียดเมื่อสถานะล่าสุดเป็น 'ยืนยันออเดอร์' -->
-    <Button icon="pi pi-search" label="รายละเอียด" class="p-button-outlined p-button-sm text-sm text-teal-300 mr-2"
-      @click="showOrderDetails(rowData)" v-if="rowData.data.status[rowData.data.status.length - 1].status !== 'ยืนยันออเดอร์'" />
+          <!-- เพิ่มเงื่อนไขเพื่อไม่แสดงปุ่มรายละเอียดเมื่อสถานะล่าสุดเป็น 'ยืนยันออเดอร์' -->
+          <Button icon="pi pi-search" label="รายละเอียด" class="p-button-outlined p-button-sm text-sm text-teal-300 mr-2"
+            @click="showOrderDetails(rowData)"
+            v-if="rowData.data.status[rowData.data.status.length - 1].status !== 'ยืนยันออเดอร์'" />
 
-    <Button class=" p-button-success p-button-icon mr-2 mt-2" @click="confirmOrder(rowData.data)"
-      v-if="rowData.data.status[rowData.data.status.length - 1].status === 'รอตรวจสอบ' && rowData.data.status[0].status !== 'ยืนยันออเดอร์'">
-      <i class="pi pi-check"></i>
-    </Button>
+          <Button class=" p-button-success p-button-icon mr-2 mt-2" @click="confirmOrder(rowData.data)"
+            v-if="rowData.data.status[rowData.data.status.length - 1].status === 'รอตรวจสอบ' && rowData.data.status[0].status !== 'ยืนยันออเดอร์'">
+            <i class="pi pi-check"></i>
+          </Button>
 
-    <Button class=" p-button-danger p-button-icon" @click="showCancelConfirmation(rowData.data)"
-      v-if="rowData.data.status[rowData.data.status.length - 1].status === 'รอตรวจสอบ' && rowData.data.status[0].status !== 'ยกเลิกออเดอร์' && rowData.data._id">
-      <i class="pi pi-times"></i>
-    </Button>
-  </template>
-</Column>
+          <Button class=" p-button-danger p-button-icon" @click="showCancelConfirmation(rowData.data)"
+            v-if="rowData.data.status[rowData.data.status.length - 1].status === 'รอตรวจสอบ' && rowData.data.status[0].status !== 'ยกเลิกออเดอร์' && rowData.data._id">
+            <i class="pi pi-times"></i>
+          </Button>
+        </template>
+      </Column>
+    </DataTable>
+  </div>
 
-  </DataTable>
 
 
   <Dialog class="dialog-change" v-model:visible="Dialogbill" :style="{ width: '450px' }" header="ใบส่งสินค้า"
@@ -84,7 +109,7 @@
     </template>
   </Dialog>
 
-  <Dialog  v-model:visible="showOrderDetailsDialog" header="รายละเอียดออเดอร์" :modal="true" :baseZIndex="10000"
+  <Dialog v-model:visible="showOrderDetailsDialog" header="รายละเอียดออเดอร์" :modal="true" :baseZIndex="10000"
     :visible="showOrderDetailsDialog" width="80%">
     <div class="p-fluid">
 
@@ -94,8 +119,8 @@
         <ul>
 
           <li v-for="product in orderData.product_detail" :key="product._id">
-            {{ product.product_name }}   <br>
-            จำนวน: {{ product.quantity }}  <br>
+            {{ product.product_name }} <br>
+            จำนวน: {{ product.quantity }} <br>
             - ราคา: {{ product.price }} บาท
           </li>
         </ul>
@@ -124,7 +149,7 @@ import { ConfirmOrder } from '@/components/lib/order';
 import dayjs from "dayjs";
 import "dayjs/locale/th";
 import Swal from 'sweetalert2';
-
+import axios from 'axios';
 import { onMounted, ref } from 'vue';
 
 export default {
@@ -137,6 +162,7 @@ export default {
     const showOrderDetailsDialog = ref(false);
     const orderData = ref(null); // เพิ่มตัวแปร orderData
     const Order = new ConfirmOrder();
+    const search = ref();
 
     onMounted(async () => {
       getOrder();
@@ -167,8 +193,6 @@ export default {
       showOrderDetailsDialog.value = false;
     };
 
-
-
     const showOrderDetails = (rowData) => {
       if (rowData && rowData.data) {
         const orderItems = rowData.data.product_detail.map(item => ({
@@ -192,7 +216,6 @@ export default {
         console.error('ข้อมูลไม่ถูกต้องหรือไม่มีข้อมูลออเดอร์');
       }
     };
-
 
     const getOrder = async () => {
       isLoading.value = true;
@@ -364,7 +387,7 @@ export default {
       closeOrderDetailsDialog,
       showOrderDetailsDialog,
       orderData, // คืนค่า orderData เพื่อใช้ในเทมเพลต
-      datetimeFormat 
+      datetimeFormat,
     };
   },
 };
@@ -456,7 +479,8 @@ export default {
   100% {
     clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 100%, 100% 100%, 100% 100%)
   }
-}</style>
+}
+</style>
 
 
 

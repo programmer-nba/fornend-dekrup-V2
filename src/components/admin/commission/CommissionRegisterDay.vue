@@ -4,13 +4,29 @@
             <h1>Commission Register Day</h1>
             <small><strong>หมายเหตุ : </strong>ค่าคอมมิชชั่น จากการแนะนำผู้สมัคร</small>
         </div>
-        <div class="col-12 text-right">
-            <Button icon="pi pi-file-export" label="Download" @click="export_data" class="mr-2"></Button>
+        <div class="col-3">
+            <div class="p-inputgroup">
+                <span class="p-inputgroup-addon bg-purple-500 text-white">
+                    <i class="pi pi-calendar text-xl"></i>
+                </span>
+                <Calendar inputId="range" icon="pi pi-calendar" selectionMode="range" placeholder="FILTER DATE"
+                    class="w-full" v-model="day" @date-select="searchDay" />
+            </div>
+        </div>
+        <!-- <div class="col-2">
+            <Dropdown v-model="member_id" :options="item_member" optionLabel="name" optionValue="_id" placeholder="Select Member"
+                class="w-full" @change="filtermember()" />
+        </div> -->
+        <div class="col-1">
+            <Button label="Clear All" class="p-button-text p-button-plain" @click="clear"></Button>
+        </div>
+        <div class="col-3">
+            <Button icon="pi pi-file-export" label="Download" @click="exportCSV()" class="mr-2"></Button>
         </div>
     </div>
     <div class="grid">
         <div class="col-12">
-            <DataTable :value="item_commission" :paginator="true" :rows="20">
+            <DataTable :value="item_commission" :paginator="true" :rows="20" ref="dt">
                 <template #empty>
                     <p class="text-center"><em>-- ไม่พบข้อมูล --</em></p>
                 </template>
@@ -58,6 +74,7 @@ import CommissionDetail from "./CommissionDetail.vue";
 import { Withdraw } from "../../../service/commission.withdraw";
 import dayjs from 'dayjs';
 import axios from 'axios';
+import * as XLSX from "xlsx";
 export default {
     components: {
         CommissionDetail,
@@ -73,14 +90,18 @@ export default {
         item_commission: [],
         dialogCancel: false,
         member: [],
+
+        day: '',
+        member_id: '',
+        item_member: [],
     }),
     async mounted() {
-        await this.getComissionDay();
+        await this.getComRegisterDay();
         await this.getMember();
     },
 
     methods: {
-        async getComissionDay() {
+        async getComRegisterDay() {
             this.$store.commit('setLoading', true);
             await this.withdrawDay.GetComRegisterDay().then(result => {
                 const order = result.data;
@@ -98,11 +119,55 @@ export default {
                 }
             }).then((res) => {
                 this.member = res.data.data;
-                console.log(this.member);
+                this.item_member = this.member.reverse();
             })
         },
 
-        getMemberName(item){
+        exportCSV() {
+            const newData = [];
+
+            this.item_commission.map((item) => {
+                newData.push({
+                    "รหัสสมาชิกผู้รับ": item.data[0].member_number,
+                    "ชื่อผู้รับ": this.getMemberName(item.data[0].member_number),
+                    "ก่อนหักภาษี": item.data[0].commission,
+                    "หักภาษี ณ ที่จ่าย 3%": item.data[0].vat3percent,
+                    "หลังหักภาษี": item.data[0].remainding_commission,
+                    "วันที่": this.datetimeFormat(item.timestamp)
+                })
+            })
+
+            const dataArr = newData.map((row) => [
+                row["รหัสสมาชิกผู้รับ"],
+                row["ชื่อผู้รับ"],
+                row["ก่อนหักภาษี"],
+                row["หักภาษี ณ ที่จ่าย 3%"],
+                row["หลังหักภาษี"],
+                row["วันที่"]
+            ]);
+
+            dataArr.unshift(["รหัสสมาชิกผู้รับ", "ชื่อผู้รับ", "ก่อนหักภาษี", "หักภาษี ณ ที่จ่าย 3%", "หลังหักภาษี", "วันที่"]);
+            const ws = XLSX.utils.json_to_sheet(dataArr);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws);
+            XLSX.writeFile(wb, "CommissionRegisterDay.xlsx");
+        },
+
+        searchDay() {
+            if (this.day && this.day[0] !== 0 && this.day[1] !== 0) {
+                this.item_commission = this.item_commission.filter(
+                    (item) => dayjs(item.timestamp).format() >= dayjs(this.day[0]).format() &&
+                        dayjs(item.timestamp).format() <= dayjs(this.day[1]).add(1, "day").format()
+                )
+            }
+        },
+
+        clear() {
+            this.day = "";
+            this.getComRegisterDay();
+        },
+
+        getMemberName(item) {
             const member = this.member.find((el) => el.member_number === item)
             if (member) {
                 return member.name;
@@ -133,6 +198,16 @@ export default {
 
         datetimeFormat(date) {
             return dayjs(date).format("DD/MM/YYYY เวลา HH:mm:ss");
+        },
+
+        filtermember() {
+            if (this.member_id !== "") {
+                const id = this.getCodeProduct(this.product_id);
+                this.member = this.member.filter(
+                    (item) => this.getCodeProduct(item.product_detail[0].product_id) === id
+                )
+            }
+            console.log(this.member_id)
         },
     },
 }

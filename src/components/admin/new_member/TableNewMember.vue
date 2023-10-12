@@ -2,10 +2,32 @@
   <div v-if="isLoading" class="loading-overlay">
     <div class="loader"></div>
   </div>
-  <div class="mt-4 ">
-    <h1 class="md:m-0 text-center">รายงานสมัครสมาชิก</h1>
+  <div class="grid">
+    <div class="col-12 text-center">
+      <h1>รายงานสมัครสมาชิก</h1>
+    </div>
+    <div class="col-3">
+      <div class="p-inputgroup">
+        <span class="p-inputgroup-addon bg-purple-500 text-white">
+          <i class="pi pi-calendar text-xl"></i>
+        </span>
+        <Calendar inputId="range" icon="pi pi-calendar" selectionMode="range" placeholder="FILTER DATE" class="w-full"
+          v-model="day" @date-select="searchDay" />
+      </div>
+    </div>
+    <div class="col-2">
+      <Dropdown v-model="product_id" :options="item_product" optionLabel="name" optionValue="_id" placeholder="Select Product"
+        class="w-full" @change="filterproduct()" />
+    </div>
+    <div class="col-1">
+      <Button label="Clear All" class="p-button-text p-button-plain" @click="clear"></Button>
+    </div>
+    <div class="col-1">
+      <Button icon="pi pi-file-export" label="Export" @click="exportCSV()" class="mr-2"></Button>
+    </div>
+  </div>
+  <div>
     <div class="grid p-fluid px-3 justify-content-center mt-3">
-
     </div>
     <DataTable :value="member" :paginator="true" :rows="10" class="px-3 py-3"
       paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink  RowsPerPageDropdown"
@@ -45,16 +67,16 @@
             <i class="pi pi-times"></i>
           </Button>
           <Button v-if="item.data.status[item.data.status.length - 1].status === 'ยืนยันออเดอร์'"
-    class="p-button-rounded p-button-info p-button-icon mr-2" @click="showOrderDetail(item.data)">
-    <i class="pi pi-info-circle"></i>
-  </Button>
+            class="p-button-rounded p-button-info p-button-icon mr-2" @click="showOrderDetail(item.data)">
+            <i class="pi pi-info-circle"></i>
+          </Button>
 
         </template>
       </Column>
     </DataTable>
 
     <Dialog v-model:visible="displayOrderDetail" :breakpoints="{ '960px': '75vw', '640px': '90vw' }"
-      :style="{ width: '700px' }" header="รายละเอียดออเดอร์" >
+      :style="{ width: '700px' }" header="รายละเอียดออเดอร์">
       <div v-if="selectedOrder">
         <div v-for="(product, index) in selectedOrder.product_detail" :key="index">
           <h1>{{ product.product_name }}</h1>
@@ -78,7 +100,8 @@ import dayjs from "dayjs";
 import "dayjs/locale/th";
 import Swal from 'sweetalert2';
 import { ref } from "vue";
-
+import axios from 'axios';
+import * as XLSX from "xlsx";
 export default {
   setup() {
     const isLoading = ref(false);
@@ -108,10 +131,17 @@ export default {
       itemToCancel: null,
       displayOrderDetail: false,
       orderDetail: null,
+
+      day: "",
+      item_member: "",
+      item_product: "",
+      product_id: "",
     };
   },
-  mounted() {
-    this.getOrder();
+  async mounted() {
+    await this.getOrder();
+    await this.getMember();
+    await this.getProduct();
   },
   methods: {
 
@@ -257,6 +287,26 @@ export default {
       }
     },
 
+    async getMember() {
+      await axios.get(`${process.env.VUE_APP_DEKRUP}/member`, {
+        headers: {
+          'token': `${localStorage.getItem('token')}`
+        }
+      }).then((res) => {
+        this.item_member = res.data.data;
+      })
+    },
+
+    async getProduct() {
+      await axios.get(`${process.env.VUE_APP_DEKRUP}/product/list`, {
+        headers: {
+          'token': `${localStorage.getItem('token')}`
+        }
+      }).then((res) => {
+        this.item_product = res.data.data;
+      })
+    },
+
     async confirmOrder(item) {
       this.isLoading = true;
 
@@ -302,11 +352,9 @@ export default {
     },
 
     closeOrderDetailDialog() {
-      this.displayOrderDetail = false; 
-      this.selectedOrder = null; 
+      this.displayOrderDetail = false;
+      this.selectedOrder = null;
     },
-
-
 
     getStatusColor(statusArray) {
       const latestStatus = statusArray[statusArray.length - 1];
@@ -320,9 +368,114 @@ export default {
       }
     },
 
+    exportCSV() {
+      const newData = [];
 
+      this.member.map((item) => {
+        newData.push({
+          "วันที่": this.datetimeFormat(item.timestamp),
+          "รหัสสินค้า": this.getCodeProduct(item.product_detail[0].product_id),
+          "ชื่อสินค้า": this.getNameProduct(item.product_detail[0].product_id),
+          "จำนวน": item.product_detail[0].quantity,
+          "ชื่อผู้สั่ง": this.getNameMember(item.member_number),
+          "เบอร์โทรผู้สั่ง": this.getTelMember(item.member_number),
+          "ที่อยู่จัดส่ง": this.getAddressMember(item.member_number),
+        })
+      })
 
+      const dataArr = newData.map((row) => [
+        row["วันที่"],
+        row["รหัสสินค้า"],
+        row["ชื่อสินค้า"],
+        row["จำนวน"],
+        row["ชื่อผู้สั่ง"],
+        row["เบอร์โทรผู้สั่ง"],
+        row["ที่อยู่จัดส่ง"]
+      ]);
 
+      dataArr.unshift(["วันที่", "รหัสสินค้า", "ชื่อสินค้า", "จำนวน", "ชื่อผู้สั่ง", "เบอร์โทรผู้สั่ง", "ที่อยู่จัดส่ง"]);
+      const ws = XLSX.utils.json_to_sheet(dataArr);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws);
+      XLSX.writeFile(wb, "PreOrderNewMemberAll.xlsx");
+    },
+
+    searchDay() {
+      if (this.day && this.day[0] !== 0 && this.day[1] !== 0) {
+        this.member = this.member.filter(
+          (item) => dayjs(item.timestamp).format() >= dayjs(this.day[0]).format() &&
+            dayjs(item.timestamp).format() <= dayjs(this.day[1]).add(1, "day").format()
+        )
+      }
+    },
+
+    clear() {
+      this.day = "";
+      this.product_id = "";
+      this.getOrder();
+      this.getMember();
+      this.getProduct();
+    },
+
+    getLastStatus(item) {
+      const data = item[item.length - 1].status;
+      return data
+    },
+
+    getNameMember(item) {
+      const member = this.item_member.find((el) => el.member_number === item)
+      if (member) {
+        return member.name;
+      } else {
+        return 'สมาชิกนี้ไม่มีในฐานข้อมูลแล้ว...';
+      }
+    },
+
+    getCodeProduct(item) {
+      const product = this.item_product.find((el) => el._id === item)
+      if (product) {
+        return product.code;
+      } else {
+        return 'สินค้านี้ไม่มีในฐานข้อมูลแล้ว...';
+      }
+    },
+
+    getNameProduct(item) {
+      const product = this.item_product.find((el) => el._id === item)
+      if (product) {
+        return product.name;
+      } else {
+        return 'สินค้านี้ไม่มีในฐานข้อมูลแล้ว...';
+      }
+    },
+
+    getTelMember(item) {
+      const member = this.item_member.find((el) => el.member_number === item)
+      if (member) {
+        return member.tel;
+      } else {
+        return 'สมาชิกนี้ไม่มีในฐานข้อมูลแล้ว...';
+      }
+    },
+
+    getAddressMember(item) {
+      const member = this.item_member.find((el) => el.member_number === item)
+      if (member) {
+        const address = `${member.address} ${member.subdistrict} ${member.district} ${member.province} ${member.postcode}`
+        return address;
+      } else {
+        return 'สมาชิกนี้ไม่มีในฐานข้อมูลแล้ว...';
+      }
+    },
+
+    filterproduct() {
+      if (this.product_id !== "") {
+        const id = this.getCodeProduct(this.product_id);
+        this.member = this.member.filter(
+          (item) => this.getCodeProduct(item.product_detail[0].product_id) === id
+        )
+      }
+    },
   },
 };
 </script>

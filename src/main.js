@@ -69,7 +69,7 @@ import Textarea from "primevue/textarea";
 import ConfirmPopup from "primevue/confirmpopup";
 import Editor from "primevue/editor";
 import OrganizationChart from "primevue/organizationchart";
-// import JsonCSV from 'vue-json-csv';
+import JsonCSV from 'vue-json-csv';
 
 const app = createApp(App);
 
@@ -142,6 +142,6 @@ app.component("SelectButton", SelectButton);
 app.component("OrganizationChart", OrganizationChart);
 app.component("Editor", Editor);
 app.component("ConfirmPopup", ConfirmPopup);
-// app.component("downloadCsv", JsonCSV);
+app.component("downloadCsv", JsonCSV);
 
 app.mount("#app");

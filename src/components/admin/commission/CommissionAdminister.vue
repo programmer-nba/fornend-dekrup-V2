@@ -4,9 +4,20 @@
             <h1>Commission Administer</h1>
             <small><strong>หมายเหตุ : </strong>ค่าคอมมิชชั่น จากการซื้อสินค้าซ้ำ</small>
         </div>
-        <div class="col-12 text-right">
-            <Button icon="pi pi-file-export" label="Download" @click="export_data" class="mr-2"></Button>
-            
+        <div class="col-3">
+            <div class="p-inputgroup">
+                <span class="p-inputgroup-addon bg-purple-500 text-white">
+                    <i class="pi pi-calendar text-xl"></i>
+                </span>
+                <Calendar inputId="range" icon="pi pi-calendar" selectionMode="range" placeholder="FILTER DATE"
+                    class="w-full" v-model="day" @date-select="searchDay" />
+            </div>
+        </div>
+        <div class="col-1">
+            <Button label="Clear All" class="p-button-text p-button-plain" @click="clear"></Button>
+        </div>
+        <div class="col-3">
+            <Button icon="pi pi-file-export" label="Download" @click="exportCSV()" class="mr-2"></Button>
         </div>
     </div>
     <div class="grid">
@@ -59,6 +70,7 @@ import CommissionDetail from "./CommissionDetail.vue";
 import { Withdraw } from "../../../service/commission.withdraw";
 import dayjs from 'dayjs';
 import axios from "axios";
+import * as XLSX from "xlsx";
 export default {
     components: {
         CommissionDetail,
@@ -74,15 +86,17 @@ export default {
         item_commission: [],
         dialogCancel: false,
         member: [],
+
+        day: "",
     }),
     async mounted() {
-        await this.getCommissionWeek();
+        await this.getCommissionAdminister();
     },
 
     methods: {
-        async getCommissionWeek() {
+        async getCommissionAdminister() {
             this.$store.commit('setLoading', true);
-            await this.withdrawWeek.getComRegisterDay().then(result => {
+            await this.withdrawWeek.GetComAdminister().then(result => {
                 const order = result.data;
                 this.item_commission = order.reverse();
             }).catch((err) => {
@@ -102,7 +116,51 @@ export default {
             })
         },
 
-        getMemberName(item){
+        exportCSV() {
+            const newData = [];
+
+            this.item_commission.map((item) => {
+                newData.push({
+                    "รหัสสมาชิกผู้รับ": item.data[0].member_number,
+                    "ชื่อผู้รับ": this.getMemberName(item.data[0].member_number),
+                    "ก่อนหักภาษี": item.data[0].commission,
+                    "หักภาษี ณ ที่จ่าย 3%": item.data[0].vat3percent,
+                    "หลังหักภาษี": item.data[0].remainding_commission,
+                    "วันที่": this.datetimeFormat(item.timestamp)
+                })
+            })
+
+            const dataArr = newData.map((row) => [
+                row["รหัสสมาชิกผู้รับ"],
+                row["ชื่อผู้รับ"],
+                row["ก่อนหักภาษี"],
+                row["หักภาษี ณ ที่จ่าย 3%"],
+                row["หลังหักภาษี"],
+                row["วันที่"]
+            ]);
+
+            dataArr.unshift(["รหัสสมาชิกผู้รับ", "ชื่อผู้รับ", "ก่อนหักภาษี", "หักภาษี ณ ที่จ่าย 3%", "หลังหักภาษี", "วันที่"]);
+            const ws = XLSX.utils.json_to_sheet(dataArr);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws);
+            XLSX.writeFile(wb, "CommissionAdminister.xlsx");
+        },
+
+        searchDay() {
+            if (this.day && this.day[0] !== 0 && this.day[1] !== 0) {
+                this.item_commission = this.item_commission.filter(
+                    (item) => dayjs(item.timestamp).format() >= dayjs(this.day[0]).format() &&
+                        dayjs(item.timestamp).format() <= dayjs(this.day[1]).add(1, "day").format()
+                )
+            }
+        },
+
+        clear() {
+            this.day = "";
+            this.getCommissionAdminister();
+        },
+
+        getMemberName(item) {
             const member = this.member.find((el) => el.member_number === item)
             if (member) {
                 return member.name;
@@ -131,7 +189,7 @@ export default {
             return data
         },
 
-        datetimeFormat(date){
+        datetimeFormat(date) {
             return dayjs(date).format("DD/MM/YYYY เวลา HH:mm:ss");
         },
     },
