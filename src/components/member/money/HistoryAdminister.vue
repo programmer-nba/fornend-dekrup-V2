@@ -57,14 +57,21 @@ export default {
     return { commissions }
   },
   async mounted() {
-    await this.getCommissionWeek();
+    await this.getComAdminister();
   },
   methods: {
-    async getCommissionWeek() {
+    async getComAdminister() {
       this.$store.commit('setLoading', true);
-      await this.commissions.getComAdminiter().then(result => {
-        const order = result.data;
-        this.item_commission = order.reverse();
+      await this.commissions.getMe().then(async result => {
+        this.member_number = result.data.member_number;
+        await this.commissions.GetComAdminiter().then(result => {
+          const order = result.data;
+          const id = this.member_number;
+          const order_list = order.filter(
+            (item) => item.data[0].member_number === id
+          )
+          this.item_commission = order_list.reverse();
+        })
       }).catch((err) => {
         this.$store.commit('setLoading', false);
         this.$toast.add({ severity: 'error', summary: 'ผิดพลาด', detail: err.response.data.message, life: 3000 })

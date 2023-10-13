@@ -39,21 +39,21 @@ export default {
                     icon: "pi pi-shopping-cart",
                     to: "/member/product",
                 },
-                // {
-                //     label: "รายได้ค่าคอมมิชชั่น",
-                //     icon: "pi pi-money-bill",
-                //     to: "/member/commission/register/day"
-                // },
-                // {
-                //     label: "รายได้ค่าคอมมิชชั่น",
-                //     icon: "pi pi-money-bill",
-                //     to: "/member/commission/register/week"
-                // },
-                // {
-                //     label: "รายได้ค่าบริหาร",
-                //     icon: "pi pi-money-bill",
-                //     to: "/member/commission/adminiter"
-                // },
+                {
+                    label: "รายได้ค่าคอมมิชชั่น",
+                    icon: "pi pi-money-bill",
+                    to: "/member/commission/register/day"
+                },
+                {
+                    label: "รายได้ค่าคอมมิชชั่น",
+                    icon: "pi pi-money-bill",
+                    to: "/member/commission/register/week"
+                },
+                {
+                    label: "รายได้ค่าบริหาร",
+                    icon: "pi pi-money-bill",
+                    to: "/member/commission/adminiter"
+                },
                 {
                     label: "ตั้งค่าโปรไฟล์",
                     icon: "pi pi-user",

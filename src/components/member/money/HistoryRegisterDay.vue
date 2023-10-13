@@ -51,6 +51,7 @@ export default {
   data: () => ({
     item_commission: [],
     member_number: '',
+    member_id: '',
   }),
   setup() {
     const commissions = new CommissionMember();
@@ -62,16 +63,16 @@ export default {
   methods: {
     async getCommissionWeek() {
       this.$store.commit('setLoading', true);
-      await this.commissions.getComRegisterDay().then(result => {
-        const order = result.data;
-        this.item_commission = order.reverse();
-      }).catch((err) => {
-        this.$store.commit('setLoading', false);
-        this.$toast.add({ severity: 'error', summary: 'ผิดพลาด', detail: err.response.data.message, life: 3000 })
-      })
-
-      await this.commissions.getMe().then(result => {
+      await this.commissions.getMe().then(async result => {
         this.member_number = result.data.member_number;
+        await this.commissions.getComRegisterDay().then(result => {
+          const order = result.data;
+          const id = this.member_number;
+          const order_list = order.filter(
+            (item) => item.data[0].member_number === id
+          )
+          this.item_commission = order_list.reverse();
+        })
       }).catch((err) => {
         this.$store.commit('setLoading', false);
         this.$toast.add({ severity: 'error', summary: 'ผิดพลาด', detail: err.response.data.message, life: 3000 })
@@ -106,6 +107,7 @@ export default {
     datetimeFormat(date) {
       return dayjs(date).format("DD/MM/YYYY เวลา HH:mm:ss");
     },
+
   },
 
 };

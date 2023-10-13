@@ -52,7 +52,7 @@ export class CommissionMember {
   }
 
   //get commission register week
-  async getComAdminiter() {
+  async GetComAdminiter() {
     let data;
     const config = {
       method: "get",

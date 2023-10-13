@@ -36,68 +36,67 @@
       <Button icon="pi pi-file-export" label="Export All" @click="exportCSVAll()" class="mr-2"></Button>
     </div>
   </div> -->
-  <div class="grid mt-2">
-    <DataTable :value="orders" :immutable="false" stripedRows responsiveLayout="scroll" :paginator="true" :rows="20"
-      paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
-      currentPageReportTemplate="แสดง {first} ถึง {last} ใน {totalRecords} รายการ" class="px-3">
-      <!-- โค้ดเก่าในส่วนของ template อื่น ๆ ให้เหมือนเดิม -->
-      <template #empty>
-        <p class="font-italic text-center text-5xl" style="color: #BD1616;">ไม่พบข้อมูลใบสั่งชื้อ</p>
+  <DataTable :value="orders" :immutable="false" stripedRows responsiveLayout="scroll" :paginator="true" :rows="20"
+    paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
+    currentPageReportTemplate="แสดง {first} ถึง {last} ใน {totalRecords} รายการ" class="px-3">
+    <!-- โค้ดเก่าในส่วนของ template อื่น ๆ ให้เหมือนเดิม -->
+    <template #empty>
+      <p class="font-italic text-center text-5xl" style="color: #BD1616;">ไม่พบข้อมูลใบสั่งชื้อ</p>
+    </template>
+
+    <Column header="เลขที่ใบสั่งชื้อ" style="width: 15%;">
+      <template #body="item">
+        {{ item.data.receiptnumber }}
       </template>
+    </Column>
+    <Column header="ชื่อ" style="width: 10%;">
+      <template #body="item">
+        {{ item.data.customer_name }}
+      </template>
+    </Column>
+    <Column header="ที่อยู่" style="width: 25%;">
+      <template #body="item">
+        {{ item.data.customer_address }}
+      </template>
+    </Column>
+    <Column header="เบอร์โทร">
+      <template #body="item">
+        {{ item.data.customer_tel }}
+      </template>
+    </Column>
+    <Column header="สถานะ">
+      <template #body="item">
+        <Chip :class="getStatusColor(item.data.status)" :label="item.data.status[item.data.status.length - 1].status" />
+      </template>
+    </Column>
+    <Column header="วันที่ทำรายการ" style="width: 10%;">
+      <template #body="Props">
+        {{ datetimeFormat(Props.data.timestamp) }}
+      </template>
+    </Column>
+    <Column :exportable="false" style="min-width: 8rem">
+      <template #body="rowData">
+        <Button icon="pi pi-print" label="พิมพ์ใบส่งสินค้า"
+          class="p-button-outlined p-button-sm text-sm text-teal-300 mr-2" @click="showDialog(rowData)" />
 
-      <Column header="เลขที่ใบสั่งชื้อ" style="width: 15%;">
-        <template #body="item">
-          {{ item.data.receiptnumber }}
-        </template>
-      </Column>
-      <Column header="ชื่อ" style="width: 10%;">
-        <template #body="item">
-          {{ item.data.customer_name }}
-        </template>
-      </Column>
-      <Column header="ที่อยู่" style="width: 25%;">
-        <template #body="item">
-          {{ item.data.customer_address }}
-        </template>
-      </Column>
-      <Column header="เบอร์โทร">
-        <template #body="item">
-          {{ item.data.customer_tel }}
-        </template>
-      </Column>
-      <Column header="สถานะ">
-        <template #body="item">
-          <Chip :class="getStatusColor(item.data.status)" :label="item.data.status[item.data.status.length - 1].status" />
-        </template>
-      </Column>
-      <Column header="วันที่ทำรายการ" style="width: 10%;">
-        <template #body="Props">
-          {{ datetimeFormat(Props.data.timestamp) }}
-        </template>
-      </Column>
-      <Column :exportable="false" style="min-width: 8rem">
-        <template #body="rowData">
-          <Button icon="pi pi-print" label="พิมพ์ใบส่งสินค้า"
-            class="p-button-outlined p-button-sm text-sm text-teal-300 mr-2" @click="showDialog(rowData)" />
+        <!-- เพิ่มเงื่อนไขเพื่อไม่แสดงปุ่มรายละเอียดเมื่อสถานะล่าสุดเป็น 'ยืนยันออเดอร์' -->
+        <Button icon="pi pi-search" label="รายละเอียด" class="p-button-outlined p-button-sm text-sm text-teal-300 mr-2"
+          @click="showOrderDetails(rowData)"
+          v-if="rowData.data.status[rowData.data.status.length - 1].status !== 'ยืนยันออเดอร์'" />
 
-          <!-- เพิ่มเงื่อนไขเพื่อไม่แสดงปุ่มรายละเอียดเมื่อสถานะล่าสุดเป็น 'ยืนยันออเดอร์' -->
-          <Button icon="pi pi-search" label="รายละเอียด" class="p-button-outlined p-button-sm text-sm text-teal-300 mr-2"
-            @click="showOrderDetails(rowData)"
-            v-if="rowData.data.status[rowData.data.status.length - 1].status !== 'ยืนยันออเดอร์'" />
+        <Button class=" p-button-success p-button-icon mr-2 mt-2" @click="confirmOrder(rowData.data)"
+          v-if="rowData.data.status[rowData.data.status.length - 1].status === 'รอตรวจสอบ' && rowData.data.status[0].status !== 'ยืนยันออเดอร์'">
+          <i class="pi pi-check"></i>
+        </Button>
 
-          <Button class=" p-button-success p-button-icon mr-2 mt-2" @click="confirmOrder(rowData.data)"
-            v-if="rowData.data.status[rowData.data.status.length - 1].status === 'รอตรวจสอบ' && rowData.data.status[0].status !== 'ยืนยันออเดอร์'">
-            <i class="pi pi-check"></i>
-          </Button>
+        <Button class=" p-button-danger p-button-icon" @click="showCancelConfirmation(rowData.data)"
+          v-if="rowData.data.status[rowData.data.status.length - 1].status === 'รอตรวจสอบ' && rowData.data.status[0].status !== 'ยกเลิกออเดอร์' && rowData.data._id">
+          <i class="pi pi-times"></i>
+        </Button>
+      </template>
+    </Column>
+  </DataTable>
 
-          <Button class=" p-button-danger p-button-icon" @click="showCancelConfirmation(rowData.data)"
-            v-if="rowData.data.status[rowData.data.status.length - 1].status === 'รอตรวจสอบ' && rowData.data.status[0].status !== 'ยกเลิกออเดอร์' && rowData.data._id">
-            <i class="pi pi-times"></i>
-          </Button>
-        </template>
-      </Column>
-    </DataTable>
-  </div>
 
 
 

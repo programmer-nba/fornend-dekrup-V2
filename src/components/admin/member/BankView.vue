@@ -81,7 +81,10 @@ export default {
                     }
                 });
             const banks = res.data.data;
-            this.item_bank = banks.reverse();
+            const bank_list = banks.filter(
+                (item) => this.getLaststatus(item.status) === 'อยู่ระหว่างการตรวจสอบ'
+            )
+            this.item_bank = bank_list.reverse();
         },
 
         getLaststatus(item) {

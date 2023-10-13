@@ -18,7 +18,8 @@
       <Column field="name" header="ชื่อผู้ใช้งาน"></Column>
       <Column field="username" header="ชื่อผู้ใช้งานระบบ"></Column>
       <Column field="tel" header="เบอร์โทร"></Column>
-
+      <Column field="commission_day" header="ค่าคอมมิชชั่นสะสม"></Column>
+      <Column field="commission_week" header="ค่าบริหารสะสม"></Column>
       <Column field="member_date_start" header="วันที่เริ่มระบบ">
         <template #body="Props">
           {{ datetimeFormat(Props.data.timestamp) }}

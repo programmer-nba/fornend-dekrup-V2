@@ -80,7 +80,10 @@ export default {
                     }
                 });
             const idens = res.data.data;
-            this.item_iden = idens.reverse();
+            const iden_list = idens.filter(
+                (item) => this.getLaststatus(item.status) === 'อยู่ระหว่างการตรวจสอบ'
+            )
+            this.item_iden = iden_list.reverse();
         },
 
         getLaststatus(item) {

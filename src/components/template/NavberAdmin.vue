@@ -70,6 +70,11 @@ export default {
                     to: "/admin/order",
                 },
                 {
+                    label: "Order Dekrub",
+                    icon: 'pi pi-shopping-cart',
+                    to: "/admin/ordernew",
+                },
+                {
                     label: "รายงาน Commission",
                     icon: 'pi pi-shopping-cart',
                     items: [
@@ -87,6 +92,11 @@ export default {
                             label: "Commission Adminnister",
                             icon: 'pi pi-plus',
                             to: "/admin/commission/administer",
+                        },
+                        {
+                            label: "Commission",
+                            icon: 'pi pi-plus',
+                            to: "/admin/commission",
                         },
                         {
                             label: "จัดการ Percent Commission",

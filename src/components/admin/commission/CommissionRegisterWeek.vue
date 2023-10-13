@@ -13,6 +13,10 @@
                     class="w-full" v-model="day" @date-select="searchDay" />
             </div>
         </div>
+        <div class="col-2">
+            <Dropdown v-model="member_id" :options="item_member" optionLabel="name" optionValue="_id" placeholder="Select Member"
+                class="w-full" @change="filtermember()" />
+        </div>
         <div class="col-1">
             <Button label="Clear All" class="p-button-text p-button-plain" @click="clear"></Button>
         </div>
@@ -88,6 +92,8 @@ export default {
         member: [],
 
         day: "",
+        member_id: "",
+        item_member: [],
     }),
     async mounted() {
         await this.getComRegisterWeek();
@@ -113,6 +119,7 @@ export default {
                 }
             }).then((res) => {
                 this.member = res.data.data;
+                this.item_member = this.member.reverse();
             })
         },
 
@@ -128,7 +135,11 @@ export default {
                     "หลังหักภาษี": item.data[0].remainding_commission,
                     "วันที่": this.datetimeFormat(item.timestamp)
                 })
-            })
+            });
+
+            const commission = this.item_commission.reduce((sum, item) => sum + item.data[0].commission, 0);
+            const vat = this.item_commission.reduce((sum, item) => sum + item.data[0].vat3percent, 0);
+            const total = this.item_commission.reduce((sum, item) => sum + item.data[0].remainding_commission, 0);
 
             const dataArr = newData.map((row) => [
                 row["รหัสสมาชิกผู้รับ"],
@@ -140,6 +151,7 @@ export default {
             ]);
 
             dataArr.unshift(["รหัสสมาชิกผู้รับ", "ชื่อผู้รับ", "ก่อนหักภาษี", "หักภาษี ณ ที่จ่าย 3%", "หลังหักภาษี", "วันที่"]);
+            dataArr.push(["", "", commission, vat, total, ""]);
             const ws = XLSX.utils.json_to_sheet(dataArr);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws);
@@ -157,6 +169,7 @@ export default {
 
         clear() {
             this.day = "";
+            this.member_id = "";
             this.getComRegisterWeek();
         },
 
@@ -164,6 +177,15 @@ export default {
             const member = this.member.find((el) => el.member_number === item);
             if (member) {
                 return member.name;
+            } else {
+                return 'สมาชิกนี้ไม่มีในฐานข้อมูลแล้ว...';
+            }
+        },
+
+        getMemberCode(item) {
+            const member = this.member.find((el) => el._id === item)
+            if (member) {
+                return member.member_number;
             } else {
                 return 'สมาชิกนี้ไม่มีในฐานข้อมูลแล้ว...';
             }
@@ -191,6 +213,15 @@ export default {
 
         datetimeFormat(date) {
             return dayjs(date).format("DD/MM/YYYY เวลา HH:mm:ss");
+        },
+
+        filtermember() {
+            if (this.member_id !== "") {
+                const id = this.getMemberCode(this.member_id);
+                this.item_commission = this.item_commission.filter(
+                    (item) => item.data[0].member_number === id
+                )
+            }
         },
     },
 }

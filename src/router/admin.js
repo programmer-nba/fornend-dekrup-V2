@@ -36,6 +36,11 @@ routes = [
     component: () => import("../components/admin/order/TableOrder.vue"),
   },
   {
+    path: "/admin/ordernew",
+    name: "admin-order-new",
+    component: () => import("../components/admin/order/TableNewOrder.vue"),
+  },
+  {
     path: "/admin/admin",
     name: "admin-admin",
     component: () => import("../components/admin/admin/TableAdmin.vue"),
@@ -64,6 +69,11 @@ routes = [
     path: "/admin/member/add",
     name: "admin-member-add",
     component: () => import("../components/admin/member/addView.vue"),
+  },
+  {
+    path: "/admin/commission",
+    name: "admin-commission",
+    component: () => import("../components/admin/commission/Commission.vue"),
   },
   {
     path: "/admin/commission/register",

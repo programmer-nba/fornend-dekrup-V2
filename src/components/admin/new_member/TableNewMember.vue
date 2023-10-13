@@ -16,8 +16,8 @@
       </div>
     </div>
     <div class="col-2">
-      <Dropdown v-model="product_id" :options="item_product" optionLabel="name" optionValue="_id" placeholder="Select Product"
-        class="w-full" @change="filterproduct()" />
+      <Dropdown v-model="product_id" :options="item_product" optionLabel="name" optionValue="_id"
+        placeholder="Select Product" class="w-full" @change="filterproduct()" />
     </div>
     <div class="col-1">
       <Button label="Clear All" class="p-button-text p-button-plain" @click="clear"></Button>
@@ -27,8 +27,6 @@
     </div>
   </div>
   <div>
-    <div class="grid p-fluid px-3 justify-content-center mt-3">
-    </div>
     <DataTable :value="member" :paginator="true" :rows="10" class="px-3 py-3"
       paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink  RowsPerPageDropdown"
       :rowsPerPageOptions="[5, 10, 25]" currentPageReportTemplate=" แสดง {first} ถึง {last} ของ {totalRecords} รายการ"

@@ -258,28 +258,28 @@ export default {
     async moneySlip() {
       this.loading = true;
       if (this.img_upload.length === 0) {
-  this.toast.warning("กรุณาแนบสลิปการโอนเงิน");
-} else {
-  // เมื่อมีไฟล์ที่ถูกเลือก, ให้ดำเนินการส่งข้อมูล
-  const id = this.res._id;
-  const formData = new FormData();
-  formData.append('imgCollection', this.img_upload[0]);
-  this.product.PutMoneySlip(formData, id)
-    .then(async (result) => {
-      if (result) {
-        console.log(result);
-        this.loading = false;
-        this.toast.success('ชำระเงินสำเร็จ');
-        setTimeout(() => {
-          window.location.reload();
-        }, 2000);
+        this.toast.warning("กรุณาแนบสลิปการโอนเงิน");
+      } else {
+        // เมื่อมีไฟล์ที่ถูกเลือก, ให้ดำเนินการส่งข้อมูล
+        const id = this.res._id;
+        const formData = new FormData();
+        formData.append('imgCollection', this.img_upload[0]);
+        this.product.PutMoneySlip(formData, id)
+          .then(async (result) => {
+            if (result) {
+              console.log(result);
+              this.loading = false;
+              this.toast.success('ชำระเงินสำเร็จ');
+              setTimeout(() => {
+                window.location.reload();
+              }, 2000);
+            }
+          })
+          .catch((error) => {
+            this.loading = false;
+            this.toast.error('เกิดข้อผิดพลาดในการส่งข้อมูล: ' + error.message);
+          });
       }
-    })
-    .catch((error) => {
-      this.loading = false;
-      this.toast.error('เกิดข้อผิดพลาดในการส่งข้อมูล: ' + error.message);
-    });
-}
 
     },
 
