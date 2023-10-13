@@ -10,7 +10,7 @@
                             <i class="pi pi-user"></i>
                         </span>
                         <InputText v-model="member.member_ref" label="รหัสผู้แนะนำ" variant="outlined" density="comfortable"
-                            placeholder="กรอกเบอร์โทรศัพท์ผู้แนะนำ(ถ้ามี)" :disabled="ref_status" hide-details="auto"
+                            placeholder="รหัสผู้แนะนำขึ้นต้น DK" :disabled="ref_status" hide-details="auto"
                             :append-inner-icon="(ref_status ? 'mdi-check' : '')" @change="checkRefMember" />
                     </div>
                 </div>
@@ -35,7 +35,7 @@
                         <span class="p-inputgroup-addon">
                             <i class="pi pi-user-edit"></i>
                         </span>
-                        <InputText v-model="member.username" placeholder="ยูสเซอร์เนม" class="style-font" />
+                        <InputText v-model="member.username" placeholder="ยูสเซอร์เนม ใช้ภาษาอังกฤษ/ตัวเลข" class="style-font" />
                     </div>
                 </div>
                 <div class="sm:col-6 col-12">
@@ -43,7 +43,7 @@
                         <span class="p-inputgroup-addon">
                             <i class="pi pi-key"></i>
                         </span>
-                        <Password v-model="member.password" :feedback="false" placeholder="รหัสผ่าน" />
+                        <Password v-model="member.password" :feedback="false" placeholder="รหัสผ่าน ใช้ภาษาอังกฤษ/ตัวเลข" />
                     </div>
                 </div>
                 <div class="sm:col-6 col-12">
@@ -60,7 +60,7 @@
                         <span class="p-inputgroup-addon">
                             <i class="pi pi-map-marker"></i>
                         </span>
-                        <InputText v-model="member.address" placeholder="ที่อยู่" class="style-font" />
+                        <InputText v-model="member.address" placeholder="ที่อยู่ (ตามบัตรประชาชน)" class="style-font" />
                     </div>
                 </div>
                 <div class="sm:col-6 col-12">

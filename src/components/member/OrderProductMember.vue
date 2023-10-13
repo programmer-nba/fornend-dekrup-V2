@@ -8,7 +8,7 @@
     <div class="grid py-2 px-2">
       <div class="col-6 md:col-6 lg:col-12 xl:col-6">
         <div class="flex flex-column align-items-center justify-content-center h-7rem text-900 border-round m-2"
-          style="background-color: #ffae35; font-size: 20px">
+          style="background-color: #ffae35; font-size: 20px;-webkit-text-stroke: 1px;">
           <label style="font-size: 20px">สินค้า/รายการ</label>
           <div style="font-size: 20px">{{ $store.getters.order_detail.length }}</div>
         </div>
@@ -17,14 +17,16 @@
         <div
           class="flex flex-column align-items-center justify-content-center h-7rem font-bold text-white border-round m-2"
           style="background-color: #da2121">
-          <label style="font-size: 18px">ยอดเงินที่ต้องชำระ</label>
-          <label style="font-size: 20px;background: #ffff;
+          <label style="font-size: 18px; -webkit-text-stroke: 0.5px;">ยอดเงินที่ต้องชำระ</label>
+          <label style="font-size: 20px;
+                  background: #ffff;
+                  -webkit-text-stroke: 1px;
                   border-radius: 15px;
-                  color: red;
-                  padding: 2px;"><strong></strong>{{ $store.getters.order_total }} บาท</label>
-
-          <label style="font-size: 14px;color: #ffff;"><Button label="กดเพื่อชำระเงิน" link @click="visible = true"
-              style="color: #ffff;" /></label>
+                  padding-left: 20px;
+                  padding-right: 20px;
+                  color: rgb(255, 0, 0);
+                  "><strong></strong>{{ $store.getters.order_total }} บาท</label>
+         
         </div>
       </div>
     </div>
@@ -258,6 +260,7 @@ export default {
     async moneySlip() {
       this.loading = true;
       if (this.img_upload.length === 0) {
+<<<<<<< Updated upstream
         this.toast.warning("กรุณาแนบสลิปการโอนเงิน");
       } else {
         // เมื่อมีไฟล์ที่ถูกเลือก, ให้ดำเนินการส่งข้อมูล
@@ -279,6 +282,23 @@ export default {
             this.loading = false;
             this.toast.error('เกิดข้อผิดพลาดในการส่งข้อมูล: ' + error.message);
           });
+=======
+  this.toast.warning("กรุณาแนบสลิปการโอนเงิน");
+} else {
+  // เมื่อมีไฟล์ที่ถูกเลือก, ให้ดำเนินการส่งข้อมูล
+  const id = this.res._id;
+  const formData = new FormData();
+  formData.append('imgCollection', this.img_upload[0]);
+  this.product.PutMoneySlip(formData, id)
+    .then(async (result) => {
+      if (result) {
+        console.log(result);
+        this.loading = false;
+        this.toast.success('ชำระเงินสำเร็จ');
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
+>>>>>>> Stashed changes
       }
 
     },
