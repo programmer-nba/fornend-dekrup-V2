@@ -64,11 +64,11 @@ export default {
                     icon: 'pi pi-shopping-cart',
                     to: "/admin/new_member",
                 },
-                {
-                    label: "Order Dekrub",
-                    icon: 'pi pi-shopping-cart',
-                    to: "/admin/order",
-                },
+                // {
+                //     label: "Order Dekrub",
+                //     icon: 'pi pi-shopping-cart',
+                //     to: "/admin/order",
+                // },
                 {
                     label: "Order Dekrub",
                     icon: 'pi pi-shopping-cart',
