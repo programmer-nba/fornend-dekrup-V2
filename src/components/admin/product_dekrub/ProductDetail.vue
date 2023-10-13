@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <Button icon="pi pi-pencil" class="p-button-rounded p-button-info mr-2" @click="(displayupdate = true)" />
 
   <Dialog header="แก้ไขสินค้า" v-model:visible="displayupdate" :breakpoints="{ '960px': '75vw', '640px': '90vw' }"
@@ -244,4 +244,4 @@ export default {
 }
 </style>
 
-
+ -->

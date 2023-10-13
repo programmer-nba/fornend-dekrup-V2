@@ -17,10 +17,21 @@
             <InputText v-model="search" @keyup="searchDataAutomatically()" class="w-full font z-0"
               placeholder="ค้นหาสินค้า เช่น ชื่อสินค้า รหัสสินค้า " />
           </div>
-
+          
         </div>
       </div>
-
+   <div class="col-12 lg:col-4 mt-2">
+        <div class="field">
+          <div class="p-inputgroup">
+            <span class="p-inputgroup-addon border-red-400" style="background-color: #C21010;">
+              <i class="pi pi-search text-white"></i>
+            </span>
+            <Dropdown class="w-full font z-0"
+              placeholder="เลือกหมวดหมู่สินค้า" />
+          </div>
+          
+        </div>
+      </div>
       <div class="col-12 lg:col-2 mt-2">
         <div class="field">
           <Button label="Add product" style="background-color: #E60965;" class="border-red-400"
@@ -210,6 +221,7 @@ export default {
         console.error("Error fetching categories:", error);
       }
     };
+
     const searchData = () => {
       if (search.value === "") {
         getData();
@@ -217,18 +229,6 @@ export default {
         item_product.value = item_product.value.filter(
           (el) => el.name.includes(search.value)
         );
-      }
-    };
-
-
-    const filtercategory = () => {
-      if (category.value !== "") {
-        const _id = category.value;
-        item_product.value = item_product.value.filter(
-          (item) => item.product_category === _id
-        );
-      } else {
-        getData();
       }
     };
 
@@ -399,7 +399,6 @@ export default {
       getData,
       searchData,
       getImage,
-      filtercategory,
       numberFormat,
       numberFormatShort,
       searchDataAutomatically,
