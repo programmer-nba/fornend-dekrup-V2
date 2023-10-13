@@ -33,8 +33,7 @@
         <DataTable :value="item_product" :paginator="true" :rows="20"
           paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
           :rowsPerPageOptions="[5, 10, 25, 50, 75, 100]"
-          currentPageReportTemplate="แสดง {first} ถึง {last} จาก {totalRecords} สินค้าทั้งหมด" 
-          responsiveLayout="stack">
+          currentPageReportTemplate="แสดง {first} ถึง {last} จาก {totalRecords} สินค้าทั้งหมด" responsiveLayout="stack">
           <!-- ตรวจสอบว่ามีข้อมูลสินค้าหรือไม่ -->
           <template #empty>
             <p class="font-italic text-center text-5xl" style="color: #BD1616;">ไม่พบข้อมูลสินค้า</p>
@@ -66,9 +65,10 @@
           </Column>
           <Column field="category" header="หมวดหมู่"></Column>
 
-          <Column :exportable="false" header="แก้ไข" style="width: 10%; " >
+          <Column :exportable="false" header="แก้ไข" style="width: 10%; ">
             <template #body="item">
-              <Button @click="editProduct(item.data)" class="border-none" style="background-color: #E60965;" >แก้ไข</Button>
+              <Button @click="editProduct(item.data)" class="border-none"
+                style="background-color: #E60965;">แก้ไข</Button>
             </template>
           </Column>
 
@@ -113,7 +113,7 @@
               <input type="file" @change="onImageChange" accept="image/*" />
 
             </div>
-            <Button @click="saveEdit" class="mr-2 bg-red-600 border-none" >บันทึก</Button>
+            <Button @click="saveEdit" class="mr-2 bg-red-600 border-none">บันทึก</Button>
             <Button @click="closeDialog" class="surface-500 border-none">ยกเลิก</Button>
           </div>
         </Dialog>
@@ -127,7 +127,7 @@
 <script>
 import axios from "axios";
 import Swal from 'sweetalert2';
-import { onMounted, ref, toRaw } from "vue";
+import { onMounted, ref } from "vue";
 
 export default {
 
@@ -285,9 +285,10 @@ export default {
               text: 'บันทึกข้อมูลสำเร็จ',
             }).then(() => {
               if (response.data.updatedProduct && 'picture' in response.data.updatedProduct) {
-                const updatedImage = getImage(toRaw(response.data.updatedProduct.picture));
-                edit_productImage.value = updatedImage;
+                const updatedImage = getImage(response.data.updatedProduct.picture);
+                edit_productImage = updatedImage; // อัพเดทรูปภาพทันที
               }
+
               // รีเซ็ตค่าฟิลด์อัพโหลดรูปภาพ
               edit_productImageFile.value = null;
               getData();
