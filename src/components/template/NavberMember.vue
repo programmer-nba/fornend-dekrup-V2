@@ -1,5 +1,5 @@
 <template>
-    <div class="grid navbar-sticky" style="background: red; ">
+    <div class="grid " style=" background: red;">
         <div class="xl:col-10 lg:col-9 md:col-2 col-4 flex justify-content-center align-items-center">
             <Menubar :model="item_manu"
                 class="custom-menu  border-round-3xl p-0 mt-2  hover:border-2 hover:border-purple-900 flex align-items-center justify-content-center bg-white"
@@ -83,12 +83,7 @@ export default {
 </script>
 
 <style>
-.navbar-sticky {
-    position: sticky !important;
-    top: 0 !important;
-    z-index: 100;
 
-}
 
 .p-menubar .p-submenu-list {
     display: none;
@@ -105,7 +100,7 @@ export default {
     }
 
 .custom-menu{
-    width: 40%;
+    width: auto;
 }
 
 @media only screen and (max-width:1600px){
