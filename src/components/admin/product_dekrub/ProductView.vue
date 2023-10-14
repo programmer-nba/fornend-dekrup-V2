@@ -17,19 +17,21 @@
             <InputText v-model="search" @keyup="searchDataAutomatically()" class="w-full font z-0"
               placeholder="ค้นหาสินค้า เช่น ชื่อสินค้า รหัสสินค้า " />
           </div>
-          
+
         </div>
       </div>
-   <div class="col-12 lg:col-4 mt-2">
+      <div class="col-12 lg:col-4 mt-2">
         <div class="field">
           <div class="p-inputgroup">
             <span class="p-inputgroup-addon border-red-400" style="background-color: #C21010;">
               <i class="pi pi-search text-white"></i>
             </span>
-            <Dropdown class="w-full font z-0"
-              placeholder="เลือกหมวดหมู่สินค้า" />
+            <Dropdown class="w-full font z-0" placeholder="เลือกหมวดหมู่สินค้า" :options="categories" v-model="category"
+              optionLabel="name" optionValue="_id" @change="filterProductsByCategory" />
+            <Button class="w-8rem font z-0 border-none"  label="รีเซ็ต" @click="resetSearch"  style="background-color: #7D7C7C;"/>
+
           </div>
-          
+
         </div>
       </div>
       <div class="col-12 lg:col-2 mt-2">
@@ -52,31 +54,33 @@
 
           <Column header="รูป" style="width: 10%">
             <template #body="item">
-              <Image :src="getImage(item.data.picture)" class="product-image" width="80" preview />
+              <Image :src="getImage(item.data.picture)" class="product-image" width="100" preview />
             </template>
           </Column>
-          <Column field="code" header="รหัสสินค้า" style="width: 10%"></Column>
-          <Column field="name" header="ชื่อสินค้า" style="width: 10%"></Column>
-          <Column field="detail" header="รายละเอียด" style="width: 25%"></Column>
-          <Column field="price" header="ราคาขาย" style="width: 10%">
-
+          <Column field="code" header="รหัสสินค้า" class="text-center" style="width: 10%"></Column>
+          <Column field="name" header="ชื่อสินค้า" class="text-center" style="width: 10%"></Column>
+          <Column field="detail" header="รายละเอียด" class="detail-column text-center" style="width: 25%"></Column>
+          <Column field="price" header="ราคาขาย" class="text-center" style="width: 5%">
             <template #body="item">
               {{ numberFormat(item.data.price) }}
             </template>
           </Column>
-          <Column field="price" header="ราคาทุน">
+          <Column field="price" header="ราคาทุน" class="text-center" style="width: 5%">
             <template #body="item">
               {{ numberFormat(item.data.cost) }}
             </template>
           </Column>
-          <Column field="quantity" header="จำนวนคงเหลือ">
+          <Column field="quantity" header="จำนวนคงเหลือ" class="text-center" style="width: 7%">
             <template #body="item">
               {{ numberFormatShort(item.data.quantity) }}
             </template>
           </Column>
-          <Column field="category" header="หมวดหมู่"></Column>
-
-          <Column :exportable="false" header="แก้ไข" style="width: 10%; ">
+          <Column field="category" class="text-center" header="หมวดหมู่">
+            <template #body="item">
+              {{ getCategoryName(item.data.category) }}
+            </template>
+          </Column>
+          <Column :exportable="false" class="text-center" header="แก้ไข" style="width: 10%; ">
             <template #body="item">
               <Button @click="editProduct(item.data)" class="border-none"
                 style="background-color: #E60965;">แก้ไข</Button>
@@ -152,30 +156,71 @@ export default {
       newImage: null,
     });
     const categories = ref([]);
+    const item_productFull = ref([]);
 
     const edit_productImage = ref('');
     const edit_productImageFile = ref(null);
     const imagePreview = ref("");
 
+    const resetSearch = () => {
+  search.value = ""; // รีเซ็ตค่าค้นหาเป็นข้อความว่าง
+  category.value = ""; // รีเซ็ตค่าหมวดหมู่เป็นค่าว่าง
+  getData(); // เรียกใช้ฟังก์ชัน searchData เพื่อแสดงรายการสินค้าทั้งหมด
+};
+
+
     const searchDataAutomatically = async () => {
       try {
-        const response = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/list`, {
-          headers: {
-            token: localStorage.getItem("token"),
-          },
-          params: {
-            query: search.value.toLowerCase(), // แปลงค่า search เป็นตัวพิมพ์เล็กทั้งหมดก่อนที่จะใช้ในการค้นหา
-            code: search.value.toLowerCase(), // แปลงค่า search เป็นตัวพิมพ์เล็กทั้งหมดก่อนที่จะใช้ในการค้นหา
-          },
-        });
-        const searchTermLower = search.value.toLowerCase(); // แปลงค่า search เป็นตัวพิมพ์เล็กทั้งหมด
-        item_product.value = response.data.data.filter(product =>
-          product.name.toLowerCase().includes(searchTermLower) ||
-          product.code.toLowerCase().includes(searchTermLower)
-        );
+        const searchTermLower = search.value.toLowerCase();
+        const codeLower = search.value.toLowerCase();
+
+        if (search.value === "" && !category) {
+          // ถ้าคำค้นหาว่าง และไม่มีหมวดหมู่ที่ถูกเลือก
+          item_product.value = item_productFull.value;
+        } else {
+          // มีคำค้นหาให้กรองรายการสินค้าตามคำค้นหา
+          item_product.value = item_productFull.value.filter(product =>
+            (product.category === category._value || !category._value) &&
+            (product.name.toLowerCase().includes(searchTermLower) ||
+              product.code.toLowerCase().includes(codeLower))
+          );
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
+    };
+
+    const filterProductsByCategory = async () => {
+      console.log("Selected Category:", category);
+
+      if (category) {
+        try {
+          const response = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/list`, {
+            headers: {
+              token: localStorage.getItem("token"),
+            },
+            params: {
+              category: category._value, // เลือก _value จาก ref แทนค่า ref เอง
+            },
+          });
+
+          item_product.value = response.data.data.reverse().map(item => {
+            if (item.category === category._value) {
+              return item;
+            }
+            return null;
+          }).filter(item => item !== null);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      } else {
+        item_product.value = item_productFull.value;
+      }
+    };
+
+    const getCategoryName = (categoryId) => {
+      const category = categories.value.find((c) => c._id === categoryId);
+      return category ? category.name : "";
     };
 
     const getData = async () => {
@@ -191,22 +236,23 @@ export default {
             token: localStorage.getItem("token"),
           },
         });
+        console.log("Product Data:", productResponse.data);
 
-        const categories = {};
-        categoryResponse.data.data.forEach(category => {
-          categories[category._id] = category.name;
-        });
+        categories.value = categoryResponse.data.data;
 
         item_product.value = productResponse.data.data.reverse().map(item => {
-          if (item.category && categories[item.category]) {
-            return { ...item, category: categories[item.category] };
+          if (item.category && categories.value.find(c => c._id === item.category)) {
+            return { ...item, category: item.category };
           }
           return item;
         });
+
+        item_productFull.value = [...item_product.value]; // ทำการสร้างคัดลอกข้อมูลเพื่อ item_productFull
       } catch (error) {
         console.error(error);
       }
     };
+
 
     const getCategoryData = async () => {
       try {
@@ -223,14 +269,25 @@ export default {
     };
 
     const searchData = () => {
+      const searchTermLower = search.value.toLowerCase();
+      const codeLower = search.value.toLowerCase();
+      let filteredProducts = item_productFull.value;
+
+      if (category) {
+        filteredProducts = filteredProducts.filter(product => product.category === category._value);
+      }
+
       if (search.value === "") {
-        getData();
+        item_product.value = filteredProducts;
       } else {
-        item_product.value = item_product.value.filter(
-          (el) => el.name.includes(search.value)
+        item_product.value = filteredProducts.filter(product =>
+          product.name.toLowerCase().includes(searchTermLower) ||
+          product.code.toLowerCase().includes(codeLower)
         );
       }
     };
+
+
 
     const numberFormat = (number) => {
       return number.toLocaleString("en-US", {
@@ -392,6 +449,7 @@ export default {
 
     });
 
+
     return {
       item_product,
       search,
@@ -410,7 +468,10 @@ export default {
       edit_productImage,
       categories,
       onImageChange,
-      imagePreview
+      imagePreview,
+      filterProductsByCategory,
+      getCategoryName,
+      resetSearch
     };
   },
 };
@@ -451,12 +512,14 @@ export default {
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
   }
 
-  .confirmation-content {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+}
+/* CSS for responsive design */
+@media (max-width: 768px) {
+  .detail-column {
+    display: none; /* ซ่อนคอลัมน์รายละเอียดเมื่อหน้าจอขนาดเล็ก */
   }
 }
+
 </style>
 
 <style >
@@ -466,5 +529,17 @@ export default {
 
 .swal2-container {
   z-index: 9999;
+}
+.p-datatable .p-datatable-thead>tr>th {
+  background-color: #FFFDE3 !important;
+  color: #C21010;
+  border-bottom: 1px solid #CFE8A9;
+  text-align: center !important;
+  justify-content: center;
+}
+.p-datatable .p-column-header-content {
+    /* display: flex; */
+    align-items: center !important;
+    justify-content: center !important;
 }
 </style>
