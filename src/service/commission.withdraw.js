@@ -10,9 +10,6 @@ export class Withdraw {
     let data;
     const config = {
       method: "get",
-      headers: {
-        token: this.#token,
-      },
       url: `${this.#baseUrl}/commission/day`,
     };
     await axios(config)
@@ -33,9 +30,6 @@ export class Withdraw {
     let data;
     const config = {
       method: "get",
-      headers: {
-        token: this.#token,
-      },
       url: `${this.#baseUrl}/commission/register/week`,
     };
     await axios(config)
@@ -56,9 +50,6 @@ export class Withdraw {
     let data;
     const config = {
       method: "get",
-      headers: {
-        token: this.#token,
-      },
       url: `${this.#baseUrl}/commission/week`,
     };
     await axios(config)

@@ -26,7 +26,7 @@
             <Button icon="pi pi-file-export" label="Export" @click="exportCSV()" class="mr-2"></Button>
         </div>
     </div>
-    <div class="grid">
+    <div class="grid mt-2">
         <div class="col-12">
             <DataTable :value="item_order" :paginator="true" :rows="20" ref="dt">
                 <template #empty>
@@ -125,6 +125,9 @@ export default {
     components: {
         OrderDetail,
     },
+    created() {
+        document.title = "Order Product | Dekrub Shop";
+    },
     setup() {
         const OrderService = new ConfirmService();
         return {
@@ -139,6 +142,8 @@ export default {
         item_order: [],
         item_member: [],
         item_product: [],
+        amount: 0,
+        amount1: 0,
         isLoading: false,
 
         day: '',
@@ -312,6 +317,7 @@ export default {
 
         exportCSV() {
             const newData = [];
+
             this.item_order.map((item) => {
                 const status = this.getLastStatus(item.status)
                 if (status === 'ยืนยันออเดอร์') {
@@ -347,20 +353,14 @@ export default {
             XLSX.writeFile(wb, "PreOrder.xlsx");
         },
 
-        // filterproduct() {
-        //     if (this.product_id !== "") {
-        //         const id = this.getCodeProduct(this.product_id);
-        //         const amount = this.item_order.length;
-        //         for (let i = 0; i < amount; i++) {
-        //             const order = this.item_order[i].product_detail.length;
-        //             for (let j = 0; j < order; j++) {
-        //                 this.item_order = this.item_order[i].filter(
-        //                     (item) => this.getCodeProduct(item.product_detail[j].product_id) === id
-        //                 )
-        //             } 
-        //         }
-        //     }
-        // },
+        filterproduct() {
+            if (this.product_id !== "") {
+                const id = this.getCodeProduct(this.product_id);
+                this.item_order = this.item_order.filter(
+                    (item) => this.getCodeProduct(item.product_detail[0].product_id) === id
+                )
+            }
+        },
     },
 };
 </script>

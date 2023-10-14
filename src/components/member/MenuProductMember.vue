@@ -32,6 +32,9 @@ export default {
   setup() {
     return {};
   },
+  created() {
+    document.title = "Product | Dekrub Shop";
+  },
 };
 </script>
 

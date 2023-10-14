@@ -39,7 +39,9 @@ import dayjs from 'dayjs';
 import Swal from "sweetalert2";
 
 export default {
-  name: "TableAdmin",
+  created() {
+    document.title = "Admin | Dekrub Shop";
+  },
   data() {
     return {
       admins: [],
@@ -156,9 +158,9 @@ export default {
         });
     },
 
-    datetimeFormat(date){
-            return dayjs(date).format("DD/MM/YYYY เวลา HH:mm:ss");
-        },
+    datetimeFormat(date) {
+      return dayjs(date).format("DD/MM/YYYY เวลา HH:mm:ss");
+    },
   }
 };
 </script>

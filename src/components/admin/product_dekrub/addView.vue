@@ -138,9 +138,10 @@ export default {
     }),
 
     created() {
-        document.title = "เพิ่มข้อมูลสินค้า";
+        document.title = "Add Product | Dekrub Shop";
         this.fetchProductCategories();
     },
+
     methods: {
 
         async fetchProductCategories() {

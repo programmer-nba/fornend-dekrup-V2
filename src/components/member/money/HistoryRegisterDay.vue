@@ -16,17 +16,17 @@
       </Column>
       <Column header="ค่าคอมมิชชั่น (ก่อนหักภาษี)">
         <template #body="item">
-          {{ getLastCom(item.data.data) }}
+          {{ numberDigitFormat(getLastCom(item.data.data)) }}
         </template>
       </Column>
       <Column header="ภาษี ณ ที่จ่าย 3%">
         <template #body="item">
-          {{ getLastVat(item.data.data) }}
+          {{ numberDigitFormat(getLastVat(item.data.data)) }}
         </template>
       </Column>
       <Column header="ค่าคอมมิชชั่น (หลังหักภาษี)">
         <template #body="item">
-          {{ getLastComnet(item.data.data) }}
+          {{ numberDigitFormat(getLastComnet(item.data.data)) }}
         </template>
       </Column>
       <Column header="ได้รับจาก">
@@ -106,6 +106,13 @@ export default {
 
     datetimeFormat(date) {
       return dayjs(date).format("DD/MM/YYYY เวลา HH:mm:ss");
+    },
+
+    numberDigitFormat(num) {
+      return num.toLocaleString("en-US", {
+        maximumFractionDigits: 2,
+        minimumFractionDigits: 2,
+      });
     },
 
   },

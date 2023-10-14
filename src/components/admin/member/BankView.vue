@@ -46,7 +46,9 @@ import "dayjs/locale/th";
 import { Member } from "../../../service/member";
 
 export default {
-    name: "Tablemember",
+    created() {
+        document.title = "Member Bank | Dekrub Shop";
+    },
     data() {
         return {
             item_bank: [],

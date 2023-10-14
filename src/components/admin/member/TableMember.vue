@@ -18,8 +18,16 @@
       <Column field="name" header="ชื่อผู้ใช้งาน"></Column>
       <Column field="username" header="ชื่อผู้ใช้งานระบบ"></Column>
       <Column field="tel" header="เบอร์โทร"></Column>
-      <Column field="commission_day" header="ค่าคอมมิชชั่นสะสม"></Column>
-      <Column field="commission_week" header="ค่าบริหารสะสม"></Column>
+      <Column header="ค่าคอมมิชชั่นสะสม">
+        <template #body="item">
+          {{ numberDigitFormat(item.data.commission_day) }}
+        </template>
+      </Column>
+      <Column header="ค่าบริหารสะสม">
+        <template #body="item">
+          {{ numberDigitFormat(item.data.commission_week) }}
+        </template>
+      </Column>
       <Column field="member_date_start" header="วันที่เริ่มระบบ">
         <template #body="Props">
           {{ datetimeFormat(Props.data.timestamp) }}
@@ -28,7 +36,7 @@
       <Column field="address" header="ที่อยู่" style="width: 30%;">
         <template #body="{ data }">
           <div>
-            <label class="mr-2">ที่อยู่: {{ data.address }} </label> 
+            <label class="mr-2">ที่อยู่: {{ data.address }} </label>
             <label class="mr-2">ตำบล: {{ data.subdistrict }}</label>
             <label class="mr-2">อำเภอ: {{ data.district }}</label>
             <label class="mr-2">จังหวัด: {{ data.province }}</label>
@@ -113,8 +121,6 @@
       </div>
     </Dialog> -->
 
-
-
     <Dialog :style="{ width: '450px' }" header="แก้ไขข้อมูล" :modal="true">
       <div class="confirmation-content">
         <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
@@ -146,7 +152,9 @@ import dayjs from "dayjs";
 import "dayjs/locale/th";
 
 export default {
-  name: "Tablemember",
+  created() {
+    document.title = "Member | Dekrub Shop";
+  },
   data() {
     return {
       members: [],
@@ -165,25 +173,30 @@ export default {
     this.getdata();
   },
   methods: {
- 
+    numberDigitFormat(num) {
+      return num.toLocaleString("en-US", {
+        maximumFractionDigits: 2,
+        minimumFractionDigits: 2,
+      });
+    },
 
     async searchDataAutomatically() {
       if (this.search !== "") {
-    this.member = this.members.filter((el) => {
-      // ตรวจสอบค่าที่ไม่ใช่ string
-      const memberName = el.name || '';
-      const memberUsername = el.member_username || '';
-      const memberNumber = el.member_number || '';
-      
-      return (
-        memberName.toString().toLowerCase().includes(this.search.toLowerCase()) ||
-        memberUsername.toString().toLowerCase().includes(this.search.toLowerCase()) ||
-        memberNumber.toString().toLowerCase().includes(this.search.toLowerCase())
-      );
-    });
-  } else {
-    this.member = this.members;
-  }
+        this.member = this.members.filter((el) => {
+          // ตรวจสอบค่าที่ไม่ใช่ string
+          const memberName = el.name || '';
+          const memberUsername = el.member_username || '';
+          const memberNumber = el.member_number || '';
+
+          return (
+            memberName.toString().toLowerCase().includes(this.search.toLowerCase()) ||
+            memberUsername.toString().toLowerCase().includes(this.search.toLowerCase()) ||
+            memberNumber.toString().toLowerCase().includes(this.search.toLowerCase())
+          );
+        });
+      } else {
+        this.member = this.members;
+      }
     },
 
     async getdata() {
@@ -203,21 +216,21 @@ export default {
     },
 
     searchData() {
-  if (this.search !== "") {
-    this.member = this.members.filter((el) => {
-      // ตรวจสอบค่าที่ไม่ใช่ string
-      const memberName = el.member_name || '';
-      const memberUsername = el.member_username || '';
-      
-      return (
-        memberName.toString().toLowerCase().includes(this.search.toLowerCase()) ||
-        memberUsername.toString().toLowerCase().includes(this.search.toLowerCase())
-      );
-    });
-  } else {
-    this.member = this.members;
-  }
-},
+      if (this.search !== "") {
+        this.member = this.members.filter((el) => {
+          // ตรวจสอบค่าที่ไม่ใช่ string
+          const memberName = el.member_name || '';
+          const memberUsername = el.member_username || '';
+
+          return (
+            memberName.toString().toLowerCase().includes(this.search.toLowerCase()) ||
+            memberUsername.toString().toLowerCase().includes(this.search.toLowerCase())
+          );
+        });
+      } else {
+        this.member = this.members;
+      }
+    },
 
 
 
@@ -243,8 +256,8 @@ export default {
       try {
         await axios.put(
           `${process.env.VUE_APP_DEKRUP}/member${this.member_id}`,
-          { 
-            
+          {
+
             member_name: this.member_detail.member_name,
             member_username: this.member_detail.member_username,
             member_date_start: this.member_detail.member_date_start,
@@ -293,10 +306,10 @@ export default {
           }
         });
     },
-    
-    datetimeFormat(date){
-            return dayjs(date).format("DD/MM/YYYY เวลา HH:mm:ss");
-        },
+
+    datetimeFormat(date) {
+      return dayjs(date).format("DD/MM/YYYY เวลา HH:mm:ss");
+    },
 
     resetPassword() {
       this.$confirm.require({
@@ -365,23 +378,25 @@ export default {
   margin-top: 1.5rem;
   border-radius: 40px;
 }
+
 .dialog-change .p-dialog-content {
-    background: #FFFDE3;
+  background: #FFFDE3;
 }
 
 .dialog-change .p-dialog-header {
-    background-color: #FFFDE3;
-    color: #C21010;
-    /* เปลี่ยนสีตัวหนังสือที่นี่ */
-    padding: 0.7rem;
-    /* สีเส้นขอบล่าง */
+  background-color: #FFFDE3;
+  color: #C21010;
+  /* เปลี่ยนสีตัวหนังสือที่นี่ */
+  padding: 0.7rem;
+  /* สีเส้นขอบล่าง */
 }
+
 .dialog-change .p-dialog-footer {
-    background-color: #FFFDE3;
-    color: #C21010;
-    /* เปลี่ยนสีตัวหนังสือที่นี่ */
-    padding: 0.7rem;
-    /* สีเส้นขอบล่าง */
+  background-color: #FFFDE3;
+  color: #C21010;
+  /* เปลี่ยนสีตัวหนังสือที่นี่ */
+  padding: 0.7rem;
+  /* สีเส้นขอบล่าง */
 }
 </style>
 

@@ -46,22 +46,22 @@
                 </Column>
                 <Column header="Commission Register Day">
                     <template #body="item">
-                        {{ getCommissionDay(item.data.member_number) }}
+                        {{ numberDigitFormat(getCommissionDay(item.data.member_number)) }}
                     </template>
                 </Column>
                 <Column header="Commission Register Week">
                     <template #body="item">
-                        {{ getCommissionWeek(item.data.member_number) }}
+                        {{ numberDigitFormat(getCommissionWeek(item.data.member_number)) }}
                     </template>
                 </Column>
                 <Column header="Commission Administer">
                     <template #body="item">
-                        {{ getComAdminister(item.data.member_number) }}
+                        {{ numberDigitFormat(getComAdminister(item.data.member_number)) }}
                     </template>
                 </Column>
                 <Column header="รวมยอด ณ ที่จ่าย">
                     <template #body="item">
-                        {{ getComTotal(item.data.member_number) }}
+                        {{ numberDigitFormat(getComTotal(item.data.member_number)) }}
                     </template>
                 </Column>
                 <Column header="สมุดบัญชี (เลขที่บัญชี)">
@@ -86,12 +86,12 @@ export default {
     components: {
         CommissionDetail,
     },
+    created() {
+        document.title = "Commission | Dekrub Shop";
+    },
     setup() {
         const withdrawDay = new Withdraw();
         return { withdrawDay };
-    },
-    created() {
-        document.title = "รายงานการถอน | Commission Day";
     },
     data: () => ({
         dialogCancel: false,
@@ -147,6 +147,7 @@ export default {
                 this.item_member = this.member.reverse();
             })
         },
+
 
         exportCSV() {
             const newData = [];
@@ -248,6 +249,13 @@ export default {
             this.day = "";
             this.getComission();
             this.getMember();
+        },
+
+        numberDigitFormat(num) {
+            return num.toLocaleString("en-US", {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 2,
+            });
         },
     },
 }

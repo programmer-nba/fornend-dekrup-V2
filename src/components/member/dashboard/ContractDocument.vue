@@ -128,6 +128,10 @@ export default {
         const members = new Member();
         return { members }
     },
+
+    created() {
+        document.title = "Order New Member | Dekrub Shop";
+    },
     
     data: () => ({
         visible: false,

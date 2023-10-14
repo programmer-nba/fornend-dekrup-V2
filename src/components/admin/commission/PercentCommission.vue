@@ -126,7 +126,7 @@
 import { Percent } from "../../../service/percent";
 export default {
     created() {
-        document.title = "การแบ่ง Commission";
+        document.title = "แบ่ง Commission | Dekrub Shop";
     },
     setup() {
         const percents = new Percent();

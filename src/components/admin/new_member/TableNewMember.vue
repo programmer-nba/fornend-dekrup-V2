@@ -34,7 +34,11 @@
       <template #empty>ไม่มีข้อมูล</template>
       <Column field="member_number" header="รหัส"></Column>
       <Column field="name" header="ชื่อผู้ใช้งาน"></Column>
-      <Column field="amount" header="จำนวนเงิน"></Column>
+      <Column header="จำนวนเงิน">
+        <template #body="item">
+          {{ numberDigitFormat(item.data.amount) }}
+        </template>
+      </Column>
       <Column header="หลักฐานการโอน">
         <template #body="item">
           <Image :src="getImage(item.data.slip_img)" alt="Image" width="50" preview />
@@ -110,7 +114,11 @@ export default {
       isCancelling: false,
     }
   },
-  name: "Tablemember",
+
+  created() {
+    document.title = "Order New Member | Dekrub Shop";
+  },
+
   data() {
     return {
       loading: false,
@@ -466,9 +474,17 @@ export default {
       }
     },
 
+    numberDigitFormat(num) {
+      return num.toLocaleString("en-US", {
+        maximumFractionDigits: 2,
+        minimumFractionDigits: 2,
+      });
+    },
+
     filterproduct() {
       if (this.product_id !== "") {
         const id = this.getCodeProduct(this.product_id);
+        console.log(this.member)
         this.member = this.member.filter(
           (item) => this.getCodeProduct(item.product_detail[0].product_id) === id
         )

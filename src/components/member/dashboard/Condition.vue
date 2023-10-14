@@ -31,6 +31,9 @@ export default {
         checked: false,
         id: '',
     }),
+    created() {
+        document.title = "เงื่อนไข / สัญญาอิเล็กทรอนิกส์ | Dekrub Shop";
+    },
     setup() {
         const members = new Member();
         return { members }

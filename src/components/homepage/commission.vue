@@ -6,7 +6,7 @@
           <div class="flex justify-content-between mb-3">
             <div>
               <span class="block text-500 font-medium mb-3 text-left">Commission Register Day</span>
-              <div class="text-900 font-medium text-xl">{{ total_regis_day }} บาท</div>
+              <div class="text-900 font-medium text-xl">{{ numberDigitFormat(total_regis_day) }} บาท</div>
             </div>
             <div class="flex align-items-center justify-content-center bg-purple-100 border-round"
               style="width: 2.5rem; height: 2.5rem">
@@ -21,7 +21,7 @@
           <div class="flex justify-content-between mb-3">
             <div>
               <span class="block text-500 font-medium mb-3 text-left">Comission Register Week</span>
-              <div class="text-900 font-medium text-xl">{{ total_regis_week }} บาท</div>
+              <div class="text-900 font-medium text-xl">{{ numberDigitFormat(total_regis_week) }} บาท</div>
             </div>
             <div class="flex align-items-center justify-content-center bg-purple-100 border-round"
               style="width: 2.5rem; height: 2.5rem">
@@ -37,7 +37,7 @@
           <div class="flex justify-content-between mb-3">
             <div>
               <span class="block text-500 font-medium mb-3 text-left">Commission Administer</span>
-              <div class="text-900 font-medium text-xl">{{ total_administer }} บาท</div>
+              <div class="text-900 font-medium text-xl">{{ numberDigitFormat(total_administer) }} บาท</div>
             </div>
             <div class="flex align-items-center justify-content-center bg-purple-100 border-round"
               style="width: 2.5rem; height: 2.5rem">
@@ -126,8 +126,16 @@ export default {
       .catch((err) => {
         console.log(err);
       });
-  }
+  },
 
+  methods: {
+    numberDigitFormat(num) {
+      return num.toLocaleString("en-US", {
+        maximumFractionDigits: 2,
+        minimumFractionDigits: 2,
+      });
+    },
+  },
 
 };
 </script>

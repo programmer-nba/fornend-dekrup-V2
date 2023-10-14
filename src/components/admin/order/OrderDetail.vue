@@ -29,13 +29,13 @@
                         <template #content>ยอดรวมในใบเสร็จ</template>
                     </Card>
                 </div>
-                <div class="col-12 lg:col-3">
+                <!-- <div class="col-12 lg:col-3">
                     <Card class="pb-0 border-1 border-blue-500 bg-blue-500 text-white text-center">
                         <template #title>{{ numberFormat(order.totalprice) }}
                             <small>บาท</small></template>
                         <template #content>ต้นทุนสินค้า</template>
                     </Card>
-                </div>
+                </div> -->
             </div>
             <div class="grid">
                 <div class="col-12">

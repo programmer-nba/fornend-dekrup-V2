@@ -107,6 +107,9 @@ export default {
         iden_number: '',
         bank: '',
     }),
+    created() {
+        document.title = "แนบรูป | Dekrub Shop";
+    },
     setup() {
         const members = new Member();
         return { members }

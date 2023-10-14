@@ -10,36 +10,22 @@
           <div class="col-12 md:col-3">
             <div class="field">
               <label>*ชื่อ-นามสกุล :</label>
-              <InputText
-              v-model="admin.admin_name"
-                class="w-full font"
-                type="text"
-                placeholder="กรอกชื่อ-นามสกุลของผู้ดูแลระบบ"
-              />
+              <InputText v-model="admin.admin_name" class="w-full font" type="text"
+                placeholder="กรอกชื่อ-นามสกุลของผู้ดูแลระบบ" />
             </div>
           </div>
-         
-        
+
+
           <div class="col-12 md:col-3">
             <div class="field">
               <label>*ชื่อผู้ใช้งาน :</label>
-              <InputText
-              v-model="admin.admin_username"
-                class="w-full font"
-                type="text"
-                placeholder="ผู้ใช้งาน"
-              />
+              <InputText v-model="admin.admin_username" class="w-full font" type="text" placeholder="ผู้ใช้งาน" />
             </div>
           </div>
           <div class="col-12 md:col-3">
             <div class="field">
               <label>*รหัสผ่าน :</label>
-              <InputText
-              v-model="admin.admin_password"
-                class="w-full font"
-                type="password"
-                placeholder="รหัสผ่าน"
-              />
+              <InputText v-model="admin.admin_password" class="w-full font" type="password" placeholder="รหัสผ่าน" />
             </div>
           </div>
         </div>
@@ -47,7 +33,8 @@
     </div>
     <div class="col-12">
       <div class="field">
-        <Button @click="save()" label="บันทึก" class="border-red-400" icon="pi pi-fw pi-save" style="background-color: #C21010;" />
+        <Button @click="save()" label="บันทึก" class="border-red-400" icon="pi pi-fw pi-save"
+          style="background-color: #C21010;" />
       </div>
     </div>
 
@@ -74,7 +61,7 @@ export default {
     };
   },
   created() {
-    document.title = "เพิ่มข้อมูลผู้ดูแลระบบ";
+    document.title = "Add Admin | Dekrub Shop";
   },
   methods: {
     save() {
@@ -147,40 +134,43 @@ export default {
       }
     },
   },
-  
+
 };
 </script>
 
 
 
 <style>
-  .custom-header-panel .p-panel-header {
-      background-color: #FFFDE3;
-      color: #C21010;
-      border-bottom: 1px solid #CFE8A9;
-  }
-  .custom-header-panel .p-panel-content {
-    background-color: #FFFDE3;
-    color: #C21010;
-    border: none;
+.custom-header-panel .p-panel-header {
+  background-color: #FFFDE3;
+  color: #C21010;
+  border-bottom: 1px solid #CFE8A9;
 }
+
+.custom-header-panel .p-panel-content {
+  background-color: #FFFDE3;
+  color: #C21010;
+  border: none;
+}
+
 .dialog-change .p-dialog-content {
-    background: #FFFDE3;
+  background: #FFFDE3;
 }
 
 .dialog-change .p-dialog-header {
-    background-color: #FFFDE3;
-    color: #C21010;
-    /* เปลี่ยนสีตัวหนังสือที่นี่ */
-    padding: 0.7rem;
-    /* สีเส้นขอบล่าง */
+  background-color: #FFFDE3;
+  color: #C21010;
+  /* เปลี่ยนสีตัวหนังสือที่นี่ */
+  padding: 0.7rem;
+  /* สีเส้นขอบล่าง */
 }
+
 .dialog-change .p-dialog-footer {
-    background-color: #FFFDE3;
-    color: #C21010;
-    /* เปลี่ยนสีตัวหนังสือที่นี่ */
-    padding: 0.7rem;
-    /* สีเส้นขอบล่าง */
+  background-color: #FFFDE3;
+  color: #C21010;
+  /* เปลี่ยนสีตัวหนังสือที่นี่ */
+  padding: 0.7rem;
+  /* สีเส้นขอบล่าง */
 }
 </style>
 

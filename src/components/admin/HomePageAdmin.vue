@@ -20,8 +20,11 @@ export default {
     Commission,
     OrderList,
     // Examine
-  }
+  },
 
+  created() {
+    document.title = "Admin | Dekrub Shop";
+  },
 }
 </script>
 

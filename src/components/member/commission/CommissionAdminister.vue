@@ -17,8 +17,8 @@ export default {
     async mounted() {
         
     },
-    async created() {
-        document.title = "รายได้คอมมิชชั่นสะสม";
+    created() {
+        document.title = "Commission Administer | Dekrub Shop";
     },
     data: () => ({
         
