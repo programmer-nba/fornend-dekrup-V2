@@ -7,36 +7,34 @@
       aria-orientation="horizontal">
       <!---->
     </div>
-    <div class="grid  z-0 justify-content-center">
+    <div class="grid z-0 justify-content-center">
       <div class="col-12 lg:col-4 mt-2">
         <div class="field">
           <div class="p-inputgroup">
-            <span class="p-inputgroup-addon border-red-400" style="background-color: #C21010;">
+            <span class="p-inputgroup-addon border-red-400" style="background-color: #c21010">
               <i class="pi pi-search text-white"></i>
             </span>
             <InputText v-model="search" @keyup="searchDataAutomatically()" class="w-full font z-0"
               placeholder="ค้นหาสินค้า เช่น ชื่อสินค้า รหัสสินค้า " />
           </div>
-
         </div>
       </div>
       <div class="col-12 lg:col-4 mt-2">
         <div class="field">
           <div class="p-inputgroup">
-            <span class="p-inputgroup-addon border-red-400" style="background-color: #C21010;">
+            <span class="p-inputgroup-addon border-red-400" style="background-color: #c21010">
               <i class="pi pi-search text-white"></i>
             </span>
             <Dropdown class="w-full font z-0" placeholder="เลือกหมวดหมู่สินค้า" :options="categories" v-model="category"
               optionLabel="name" optionValue="_id" @change="filterProductsByCategory" />
-            <Button class="w-8rem font z-0 border-none"  label="รีเซ็ต" @click="resetSearch"  style="background-color: #7D7C7C;"/>
-
+            <Button class="w-8rem font z-0 border-none" label="รีเซ็ต" @click="resetSearch"
+              style="background-color: #7d7c7c" />
           </div>
-
         </div>
       </div>
       <div class="col-12 lg:col-2 mt-2">
         <div class="field">
-          <Button label="Add product" style="background-color: #E60965;" class="border-red-400"
+          <Button label="Add product" style="background-color: #e60965" class="border-red-400"
             @click="$router.push('/admin/product/add')" />
         </div>
       </div>
@@ -49,7 +47,9 @@
           currentPageReportTemplate="แสดง {first} ถึง {last} จาก {totalRecords} สินค้าทั้งหมด" responsiveLayout="stack">
           <!-- ตรวจสอบว่ามีข้อมูลสินค้าหรือไม่ -->
           <template #empty>
-            <p class="font-italic text-center text-5xl" style="color: #BD1616;">ไม่พบข้อมูลสินค้า</p>
+            <p class="font-italic text-center text-5xl" style="color: #bd1616">
+              ไม่พบข้อมูลสินค้า
+            </p>
           </template>
 
           <Column header="รูป" style="width: 10%">
@@ -80,13 +80,11 @@
               {{ getCategoryName(item.data.category) }}
             </template>
           </Column>
-          <Column :exportable="false" class="text-center" header="แก้ไข" style="width: 10%; ">
+          <Column :exportable="false" class="text-center" header="แก้ไข" style="width: 10%">
             <template #body="item">
-              <Button @click="editProduct(item.data)" class="border-none"
-                style="background-color: #E60965;">แก้ไข</Button>
+              <Button @click="editProduct(item.data)" class="border-none" style="background-color: #e60965">แก้ไข</Button>
             </template>
           </Column>
-
         </DataTable>
 
         <Dialog v-model:visible="displayEdit" :modal="true" :breakpoints="{ '960px': '75vw', '640px': '90vw' }"
@@ -122,30 +120,30 @@
             </div>
 
             <div class="field">
-              <label for="image">รูปภาพ</label> <br>
+              <label for="image">รูปภาพ</label> <br />
               <Image v-if="edit_productImage" :src="imagePreview" class="product-image" width="100" height="100"
-                preview /> <br>
+                preview />
+              <br />
               <input type="file" @change="onImageChange" accept="image/*" />
-
             </div>
             <Button @click="saveEdit" class="mr-2 bg-red-600 border-none">บันทึก</Button>
             <Button @click="closeDialog" class="surface-500 border-none">ยกเลิก</Button>
           </div>
         </Dialog>
-
       </div>
     </div>
-
   </div>
 </template>
 
 <script>
 import axios from "axios";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 import { onMounted, ref } from "vue";
 
 export default {
-
+  created() {
+    document.title = "Product | Dekrub Shop";
+  },
 
   setup() {
     const item_product = ref([]);
@@ -158,16 +156,15 @@ export default {
     const categories = ref([]);
     const item_productFull = ref([]);
 
-    const edit_productImage = ref('');
+    const edit_productImage = ref("");
     const edit_productImageFile = ref(null);
     const imagePreview = ref("");
 
     const resetSearch = () => {
-  search.value = ""; // รีเซ็ตค่าค้นหาเป็นข้อความว่าง
-  category.value = ""; // รีเซ็ตค่าหมวดหมู่เป็นค่าว่าง
-  getData(); // เรียกใช้ฟังก์ชัน searchData เพื่อแสดงรายการสินค้าทั้งหมด
-};
-
+      search.value = ""; // รีเซ็ตค่าค้นหาเป็นข้อความว่าง
+      category.value = ""; // รีเซ็ตค่าหมวดหมู่เป็นค่าว่าง
+      getData(); // เรียกใช้ฟังก์ชัน searchData เพื่อแสดงรายการสินค้าทั้งหมด
+    };
 
     const searchDataAutomatically = async () => {
       try {
@@ -179,10 +176,11 @@ export default {
           item_product.value = item_productFull.value;
         } else {
           // มีคำค้นหาให้กรองรายการสินค้าตามคำค้นหา
-          item_product.value = item_productFull.value.filter(product =>
-            (product.category === category._value || !category._value) &&
-            (product.name.toLowerCase().includes(searchTermLower) ||
-              product.code.toLowerCase().includes(codeLower))
+          item_product.value = item_productFull.value.filter(
+            (product) =>
+              (product.category === category._value || !category._value) &&
+              (product.name.toLowerCase().includes(searchTermLower) ||
+                product.code.toLowerCase().includes(codeLower))
           );
         }
       } catch (error) {
@@ -204,12 +202,15 @@ export default {
             },
           });
 
-          item_product.value = response.data.data.reverse().map(item => {
-            if (item.category === category._value) {
-              return item;
-            }
-            return null;
-          }).filter(item => item !== null);
+          item_product.value = response.data.data
+            .reverse()
+            .map((item) => {
+              if (item.category === category._value) {
+                return item;
+              }
+              return null;
+            })
+            .filter((item) => item !== null);
         } catch (error) {
           console.error("Error fetching data:", error);
         }
@@ -225,23 +226,29 @@ export default {
 
     const getData = async () => {
       try {
-        const productResponse = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/list`, {
-          headers: {
-            token: localStorage.getItem("token"),
-          },
-        });
+        const productResponse = await axios.get(
+          `${process.env.VUE_APP_DEKRUP}/product/list`,
+          {
+            headers: {
+              token: localStorage.getItem("token"),
+            },
+          }
+        );
 
-        const categoryResponse = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/category/list`, {
-          headers: {
-            token: localStorage.getItem("token"),
-          },
-        });
+        const categoryResponse = await axios.get(
+          `${process.env.VUE_APP_DEKRUP}/product/category/list`,
+          {
+            headers: {
+              token: localStorage.getItem("token"),
+            },
+          }
+        );
         console.log("Product Data:", productResponse.data);
 
         categories.value = categoryResponse.data.data;
 
-        item_product.value = productResponse.data.data.reverse().map(item => {
-          if (item.category && categories.value.find(c => c._id === item.category)) {
+        item_product.value = productResponse.data.data.reverse().map((item) => {
+          if (item.category && categories.value.find((c) => c._id === item.category)) {
             return { ...item, category: item.category };
           }
           return item;
@@ -253,14 +260,16 @@ export default {
       }
     };
 
-
     const getCategoryData = async () => {
       try {
-        const categoryResponse = await axios.get(`${process.env.VUE_APP_DEKRUP}/product/category/list`, {
-          headers: {
-            token: localStorage.getItem("token"),
-          },
-        });
+        const categoryResponse = await axios.get(
+          `${process.env.VUE_APP_DEKRUP}/product/category/list`,
+          {
+            headers: {
+              token: localStorage.getItem("token"),
+            },
+          }
+        );
 
         categories.value = categoryResponse.data.data;
       } catch (error) {
@@ -274,20 +283,21 @@ export default {
       let filteredProducts = item_productFull.value;
 
       if (category) {
-        filteredProducts = filteredProducts.filter(product => product.category === category._value);
+        filteredProducts = filteredProducts.filter(
+          (product) => product.category === category._value
+        );
       }
 
       if (search.value === "") {
         item_product.value = filteredProducts;
       } else {
-        item_product.value = filteredProducts.filter(product =>
-          product.name.toLowerCase().includes(searchTermLower) ||
-          product.code.toLowerCase().includes(codeLower)
+        item_product.value = filteredProducts.filter(
+          (product) =>
+            product.name.toLowerCase().includes(searchTermLower) ||
+            product.code.toLowerCase().includes(codeLower)
         );
       }
     };
-
-
 
     const numberFormat = (number) => {
       return number.toLocaleString("en-US", {
@@ -320,7 +330,6 @@ export default {
             formData.append("imgCollection", edit_productImageFile.value);
           }
 
-
           console.log("FormData:", formData);
 
           const response = await axios.put(
@@ -337,11 +346,14 @@ export default {
 
           if (response.data.message === "อัพเดทสินค้าสำเร็จ") {
             Swal.fire({
-              icon: 'success',
-              title: 'Success',
-              text: 'บันทึกข้อมูลสำเร็จ',
+              icon: "success",
+              title: "Success",
+              text: "บันทึกข้อมูลสำเร็จ",
             }).then(() => {
-              if (response.data.updatedProduct && 'picture' in response.data.updatedProduct) {
+              if (
+                response.data.updatedProduct &&
+                "picture" in response.data.updatedProduct
+              ) {
                 const updatedImage = getImage(response.data.updatedProduct.picture);
                 edit_productImage = updatedImage; // อัพเดทรูปภาพทันที
               }
@@ -358,16 +370,16 @@ export default {
       } catch (error) {
         console.error("Error saving data:", error);
         Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Failed to save data',
+          icon: "error",
+          title: "Error",
+          text: "Failed to save data",
         });
       }
     };
 
     const getImage = (item) => {
       if (item) {
-        if (typeof item === 'string') {
+        if (typeof item === "string") {
           return `https://drive.google.com/uc?export=view&id=${item}`;
         } else if (Array.isArray(item) && item.length > 0) {
           const firstImageId = item[0];
@@ -377,20 +389,19 @@ export default {
       return "";
     };
 
-
     const onImageChange = (event) => {
-      console.log('onImageChange function called');
+      console.log("onImageChange function called");
 
       const file = event.target.files[0];
-      console.log('Selected file:', file);
+      console.log("Selected file:", file);
 
       if (file && file.size > 1024 * 1024) {
         Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'ขนาดไฟล์รูปภาพต้องไม่เกิน 1 MB',
+          icon: "error",
+          title: "Error",
+          text: "ขนาดไฟล์รูปภาพต้องไม่เกิน 1 MB",
         });
-        event.target.value = '';
+        event.target.value = "";
         return;
       }
 
@@ -411,7 +422,7 @@ export default {
             imagePreview.value = getImage(edit_product.value.picture);
           } else {
             // ไม่มีรูปเดิม
-            imagePreview.value = '';
+            imagePreview.value = "";
           }
         }
       }
@@ -446,9 +457,7 @@ export default {
     onMounted(() => {
       getData();
       getCategoryData();
-
     });
-
 
     return {
       item_product,
@@ -471,12 +480,11 @@ export default {
       imagePreview,
       filterProductsByCategory,
       getCategoryName,
-      resetSearch
+      resetSearch,
     };
   },
 };
 </script>
-
 
 <style scoped>
 .loading {
@@ -505,24 +513,23 @@ export default {
   }
 }
 
-
 @media screen and (max-width: 960px) {
   .product-image {
     width: 100px;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
   }
-
 }
+
 /* CSS for responsive design */
 @media (max-width: 768px) {
   .detail-column {
-    display: none; /* ซ่อนคอลัมน์รายละเอียดเมื่อหน้าจอขนาดเล็ก */
+    display: none;
+    /* ซ่อนคอลัมน์รายละเอียดเมื่อหน้าจอขนาดเล็ก */
   }
 }
-
 </style>
 
-<style >
+<style>
 .p-dialog {
   z-index: 9997;
 }
@@ -530,16 +537,18 @@ export default {
 .swal2-container {
   z-index: 9999;
 }
+
 .p-datatable .p-datatable-thead>tr>th {
-  background-color: #FFFDE3 !important;
-  color: #C21010;
-  border-bottom: 1px solid #CFE8A9;
+  background-color: #fffde3 !important;
+  color: #c21010;
+  border-bottom: 1px solid #cfe8a9;
   text-align: center !important;
   justify-content: center;
 }
+
 .p-datatable .p-column-header-content {
-    /* display: flex; */
-    align-items: center !important;
-    justify-content: center !important;
+  /* display: flex; */
+  align-items: center !important;
+  justify-content: center !important;
 }
 </style>

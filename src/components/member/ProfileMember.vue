@@ -14,10 +14,21 @@
                     <p><strong>เบอร์โทร : </strong>{{ tel }}</p>
                     <p><strong>ที่อยู่ : </strong>{{ address }} {{ subdistrict }} {{ district }} {{ province }} {{
                         postcode }}</p>
-                    <p><strong>รายได้ค่าคอมมิชชั่น : </strong>{{ commission_day }}</p>
-                    <p><strong>รายได้ค่าบริหาร : </strong>{{ commission_week }}</p>
                     <p><strong>สถานะผู้ใช้ : </strong>{{ position }}</p>
-                    <!-- <p><strong>สถานะผู้ใช้ : </strong>{{ status_bank }}</p> -->
+                    <p><strong>บัตรประจำตัวประชาชน : </strong>{{ status_iden }}</p>
+                    <p><strong>หน้าสมุดบัญชีธนาคาร : </strong>{{ status_bank }}</p>
+                    <br>
+                    <p>------ Commission (สะสม) ------</p>
+                    <p><strong>รายได้ค่าคอมมิชชั่น (150 บาท) : </strong>{{ getCommissionDay(member_number) }} บาท</p>
+                    <p><strong>รายได้ค่าคอมมิชชั่น (10 บาท) : </strong>{{ getCommissionWeek(member_number) }} บาท</p>
+                    <p><strong>รายได้ค่าบริหาร (75 บาท) : </strong>{{ getComAdminister(member_number) }} บาท</p>
+                    <p><strong>ยอดสะสมรวม : </strong>{{ getComTotal(member_number) }} บาท</p>
+                    <br>
+                    <p>------ Commission (วันที่ {{ datetimeFormat(day) }}) ------</p>
+                    <p><strong>รายได้ค่าคอมมิชชั่น (150 บาท) : </strong>{{ getCommissionDay1(member_number) }} บาท</p>
+                    <p><strong>รายได้ค่าคอมมิชชั่น (10 บาท) : </strong>{{ getCommissionWeek1(member_number) }} บาท</p>
+                    <p><strong>รายได้ค่าบริหาร (75 บาท) : </strong>{{ getComAdminister1(member_number) }} บาท</p>
+                    <p><strong>ยอดสะสมรวม : </strong>{{ getComTotal1(member_number) }} บาท</p>
                 </Panel>
             </div>
             <div class="col-12 lg:col-6">
@@ -45,7 +56,8 @@
             </div>
 
             <div class="col-12 lg:col-6 xl:col-3">
-                <Panel header="ท่านยังไม่ได้ยืนยันสมุดบัญชีธนาคาร" class="custom-header-panel font-profile" v-if="status_bank === ''">
+                <Panel header="ท่านยังไม่ได้ยืนยันสมุดบัญชีธนาคาร" class="custom-header-panel font-profile"
+                    v-if="status_bank === ''">
                     <div class="col-12">
                         <Message><strong>เวลาทำการ : </strong> เวลาทำการตรวจสอบ ทุกวัน เวลา 9.00 น. ถึง 18.00 น.
                             หากนอกเวลาทำการจะทำการตรวจสอบในเวลาทำการของวันถัดไป</Message>
@@ -82,19 +94,22 @@
                         </div>
                     </div>
                 </Panel>
-                <Panel header="ยืนยันสมุดบัญชีธนาคาร" class="custom-header-panel font-profile" v-if="status_bank === 'รอการตรวจสอบ'">
+                <Panel header="ยืนยันสมุดบัญชีธนาคาร" class="custom-header-panel font-profile"
+                    v-if="status_bank === 'อยู่ระหว่างการตรวจสอบ'">
                     <Message style="color: red; -webkit-text-stroke: 1px;" class="mb-2"><strong>สถานะการตรวจสอบ :
                         </strong>ท่านได้แนบสมุดบัญชีแล้ว เจ้าหน้าที่กำลังตรวจสอบ </Message>
                     <Message><strong>เวลาทำการ : </strong>รอตรวจสอบจากเจ้าหน้าที่ เวลาทำการตรวจสอบ ทุกวัน เวลา 9.00 น. ถึง
                         18.00 น.
                         หากนอกเวลาทำการจะทำการตรวจสอบในเวลาทำการของวันถัดไป</Message>
                 </Panel>
-                <Panel header="สมุดบัญชีธนาคาร" class="custom-header-panel font-profile text-center" v-if="status_bank === 'ยืนยันเรียบร้อยแล้ว'">
+                <Panel header="สมุดบัญชีธนาคาร" class="custom-header-panel font-profile text-center"
+                    v-if="status_bank === 'ยืนยันเรียบร้อยแล้ว'">
                     <Image :src="getImage(image_bank)" preview />
                 </Panel>
             </div>
             <div class="col-12 lg:col-6 xl:col-3 ">
-                <Panel header="ท่านยังไม่ได้ยืนยันบัตรประชาชน" class="custom-header-panel font-profile" v-if="status_iden === ''">
+                <Panel header="ท่านยังไม่ได้ยืนยันบัตรประชาชน" class="custom-header-panel font-profile"
+                    v-if="status_iden === ''">
                     <div class="col-12">
                         <Message><strong>เวลาทำการ : </strong> เวลาทำการตรวจสอบ ทุกวัน เวลา 9.00 น. ถึง 18.00 น.
                             หากนอกเวลาทำการจะทำการตรวจสอบในเวลาทำการของวันถัดไป</Message>
@@ -128,14 +143,16 @@
                         </div>
                     </div>
                 </Panel>
-                <Panel header="ยืนยันบัตรประชาชน" class="custom-header-panel font-profile" v-if="status_iden === 'รอการตรวจสอบ'">
+                <Panel header="อยู่ระหว่างการตรวจสอบ" class="custom-header-panel font-profile"
+                    v-if="status_iden === 'อยู่ระหว่างการตรวจสอบ'">
                     <Message style="color: red; -webkit-text-stroke: 1px;" class="mb-2"><strong>สถานะการตรวจสอบ :
                         </strong>ท่านได้แนบบัตรประชาชนแล้ว เจ้าหน้าที่กำลังตรวจสอบ </Message>
                     <Message><strong>เวลาทำการ : </strong>รอตรวจสอบจากเจ้าหน้าที่ เวลาทำการตรวจสอบ ทุกวัน เวลา 9.00 น. ถึง
                         18.00 น.
                         หากนอกเวลาทำการจะทำการตรวจสอบในเวลาทำการของวันถัดไป</Message>
                 </Panel>
-                <Panel header="บัตรประชาชน" class="custom-header-panel font-profile text-center" v-if="status_iden === 'ยืนยันเรียบร้อยแล้ว'">
+                <Panel header="บัตรประชาชน" class="custom-header-panel font-profile text-center"
+                    v-if="status_iden === 'ยืนยันเรียบร้อยแล้ว'">
                     <Image :src="getImage(image_iden)" preview />
                 </Panel>
             </div>
@@ -148,17 +165,20 @@
 import axios from 'axios';
 import jwtDecode from "jwt-decode";
 import { Member } from "../../service/member";
+import { Withdraw } from "../../service/commission.withdraw";
 import Swal from 'sweetalert2';
+import dayjs from 'dayjs';
 export default ({
     created() {
-        document.title = "ข้อมูลสมาชิก | Dekrub Shop";
+        document.title = "Profile Member | Dekrub Shop";
     },
     components: {
         Member,
     },
     setup() {
         const members = new Member();
-        return { members }
+        const commission = new Withdraw();
+        return { members, commission }
     },
     async beforeCreate() {
         this.$store.commit('setLoading', true);
@@ -219,9 +239,9 @@ export default ({
             });
     },
 
-
-
-
+    async mounted() {
+        await this.getComission();
+    },
 
     data: () => ({
         name: '',
@@ -237,6 +257,10 @@ export default ({
         commission_week: '',
         position: '',
 
+        com_day: [],
+        com_week: [],
+        com_administer: [],
+
         password: null,
         confirm_password: null,
 
@@ -249,13 +273,12 @@ export default ({
         iden_number: '',
         bank: '',
 
-
         status_bank: '',
         image_bank: '',
         status_iden: '',
         image_iden: '',
 
-
+        day: dayjs(Date.now()),
     }),
 
     methods: {
@@ -292,6 +315,33 @@ export default ({
             })
         },
 
+        async getComission() {
+            this.$store.commit('setLoading', true);
+            await this.commission.GetComRegisterDay().then(result => {
+                const order = result.data;
+                this.com_day = order.reverse();
+            }).catch((err) => {
+                this.$store.commit('setLoading', false);
+                this.$toast.add({ severity: 'error', summary: 'ผิดพลาด', detail: err.response.data.message, life: 3000 })
+            })
+
+            await this.commission.GetComRegisterWeek().then(result => {
+                const order = result.data;
+                this.com_week = order.reverse();
+            }).catch((err) => {
+                this.$store.commit('setLoading', false);
+                this.$toast.add({ severity: 'error', summary: 'ผิดพลาด', detail: err.response.data.message, life: 3000 })
+            })
+
+            await this.commission.GetComAdminister().then(result => {
+                const order = result.data;
+                this.com_administer = order.reverse();
+            }).catch((err) => {
+                this.$store.commit('setLoading', false);
+                this.$toast.add({ severity: 'error', summary: 'ผิดพลาด', detail: err.response.data.message, life: 3000 })
+            })
+        },
+
         getImage(item) {
             return "https://drive.google.com/uc?export=view&id=" + item;
         },
@@ -311,6 +361,10 @@ export default ({
         chooseImageMember(event) {
             this.member_img = event.files[0];
             this.img_previewMember = event.files[0].objectURL;
+        },
+
+        datetimeFormat(date) {
+            return dayjs(date).format("DD/MM/YYYY");
         },
 
         async confirmBank() {
@@ -384,6 +438,114 @@ export default ({
                 }
             });
         },
+
+        getCommissionDay(item) {
+            const id = item;
+            const list = this.com_day.filter(
+                (item) => item.data[0].member_number === id
+            )
+            const total_com_day = list.reduce((sum, item) => sum + item.data[0].remainding_commission, 0);
+            return total_com_day;
+        },
+
+        getCommissionDay1(item) {
+            const id = item;
+            const list = this.com_day.filter(
+                (item) => item.data[0].member_number === id
+            )
+            const day = list.filter(
+                (item) => this.datetimeFormat(item.timestamp) === this.datetimeFormat(this.day)
+            )
+            const total_com_day = day.reduce((sum, item) => sum + item.data[0].remainding_commission, 0);
+            return total_com_day;
+        },
+
+        getCommissionWeek(item) {
+            const id = item;
+            const list = this.com_week.filter(
+                (item) => item.data[0].member_number === id
+            )
+            const total_com_week = list.reduce((sum, item) => sum + item.data[0].remainding_commission, 0);
+            return total_com_week;
+        },
+
+        getCommissionWeek1(item) {
+            const id = item;
+            const list = this.com_week.filter(
+                (item) => item.data[0].member_number === id
+            )
+            const day = list.filter(
+                (item) => this.datetimeFormat(item.timestamp) === this.datetimeFormat(this.day)
+            )
+            const total_com_week = day.reduce((sum, item) => sum + item.data[0].remainding_commission, 0);
+            return total_com_week;
+        },
+
+        getComAdminister(item) {
+            const id = item;
+            const list = this.com_administer.filter(
+                (item) => item.data[0].member_number === id
+            )
+            const total_com_administer = list.reduce((sum, item) => sum + item.data[0].remainding_commission, 0);
+            return total_com_administer;
+        },
+
+        getComAdminister1(item) {
+            const id = item;
+            const list = this.com_administer.filter(
+                (item) => item.data[0].member_number === id
+            )
+            const day = list.filter(
+                (item) => this.datetimeFormat(item.timestamp) === this.datetimeFormat(this.day)
+            )
+            const total_com_administer = day.reduce((sum, item) => sum + item.data[0].remainding_commission, 0);
+            return total_com_administer;
+        },
+
+        getComTotal(item) {
+            const id = item;
+            const list1 = this.com_day.filter(
+                (item) => item.data[0].member_number === id
+            )
+            const list2 = this.com_week.filter(
+                (item) => item.data[0].member_number === id
+            )
+            const list3 = this.com_administer.filter(
+                (item) => item.data[0].member_number === id
+            )
+            const total_com_day = list1.reduce((sum, item) => sum + item.data[0].remainding_commission, 0);
+            const total_com_week = list2.reduce((sum, item) => sum + item.data[0].remainding_commission, 0);
+            const total_com_administer = list3.reduce((sum, item) => sum + item.data[0].remainding_commission, 0);
+            const total = total_com_day + total_com_week + total_com_administer;
+            return total;
+        },
+
+        getComTotal1(item) {
+            const id = item;
+            const list1 = this.com_day.filter(
+                (item) => item.data[0].member_number === id
+            )
+            const day1 = list1.filter(
+                (item) => this.datetimeFormat(item.timestamp) === this.datetimeFormat(this.day)
+            )
+            const list2 = this.com_week.filter(
+                (item) => item.data[0].member_number === id
+            )
+            const day2 = list2.filter(
+                (item) => this.datetimeFormat(item.timestamp) === this.datetimeFormat(this.day)
+            )
+            const list3 = this.com_administer.filter(
+                (item) => item.data[0].member_number === id
+            )
+            const day3 = list3.filter(
+                (item) => this.datetimeFormat(item.timestamp) === this.datetimeFormat(this.day)
+            )
+            const total_com_day = day1.reduce((sum, item) => sum + item.data[0].remainding_commission, 0);
+            const total_com_week = day2.reduce((sum, item) => sum + item.data[0].remainding_commission, 0);
+            const total_com_administer = day3.reduce((sum, item) => sum + item.data[0].remainding_commission, 0);
+            const total = total_com_day + total_com_week + total_com_administer;
+            return total;
+        },
     }
 })
 </script>
@@ -444,5 +606,4 @@ export default ({
     .footer {
         margin-top: 80px;
     }
-}
-</style>
+}</style>
