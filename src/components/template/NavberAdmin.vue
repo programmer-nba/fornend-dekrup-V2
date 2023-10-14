@@ -1,5 +1,10 @@
 <template>
-    <div class="grid mb-3" style="background: red;">
+    <div class="grid mb-3 custom-nav-admin " style=" background: red;
+        position: sticky;
+        top:0;
+        z-index: 100;
+        "
+        >
         <div class="lg:col-10 md:col-2 col-2" >
             <Menubar :model="item_manu"
                 class="custom-menu  border-round-3xl p-0 mt-2 w-auto hover:border-2 hover:border-purple-900 flex align-items-center justify-content-center bg-white">
@@ -183,6 +188,7 @@ export default {
     z-index: 150;
     width: 270px;
 }
+
 @media only screen and (max-width:976px) {
     .p-menubar .p-submenu-list {
     display: none;

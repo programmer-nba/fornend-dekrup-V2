@@ -45,7 +45,7 @@
             </div>
 
             <div class="col-12 lg:col-6 xl:col-3">
-                <Panel header="ท่านยังไม่ได้ยืนยันสมุดบัญชีธนาคาร" class="custom-header-panel font-profile" v-if="status_bank === ''">
+                <Panel header="ท่านยังไม่ได้ยืนยันสมุดบัญชีธนาคาร" class="custom-header-panel font-profile" v-if="status_bank === '-'">
                     <div class="col-12">
                         <Message><strong>เวลาทำการ : </strong> เวลาทำการตรวจสอบ ทุกวัน เวลา 9.00 น. ถึง 18.00 น.
                             หากนอกเวลาทำการจะทำการตรวจสอบในเวลาทำการของวันถัดไป</Message>
@@ -82,7 +82,7 @@
                         </div>
                     </div>
                 </Panel>
-                <Panel header="ยืนยันสมุดบัญชีธนาคาร" class="custom-header-panel font-profile" v-if="status_bank === 'รอการตรวจสอบ'">
+                <Panel header="ยืนยันสมุดบัญชีธนาคาร" class="custom-header-panel font-profile" v-if="status_bank === 'อยู่ระหว่างการตรวจสอบ'">
                     <Message style="color: red; -webkit-text-stroke: 1px;" class="mb-2"><strong>สถานะการตรวจสอบ :
                         </strong>ท่านได้แนบสมุดบัญชีแล้ว เจ้าหน้าที่กำลังตรวจสอบ </Message>
                     <Message><strong>เวลาทำการ : </strong>รอตรวจสอบจากเจ้าหน้าที่ เวลาทำการตรวจสอบ ทุกวัน เวลา 9.00 น. ถึง
@@ -94,7 +94,7 @@
                 </Panel>
             </div>
             <div class="col-12 lg:col-6 xl:col-3 ">
-                <Panel header="ท่านยังไม่ได้ยืนยันบัตรประชาชน" class="custom-header-panel font-profile" v-if="status_iden === ''">
+                <Panel header="ท่านยังไม่ได้ยืนยันบัตรประชาชน" class="custom-header-panel font-profile" v-if="status_iden === '-'">
                     <div class="col-12">
                         <Message><strong>เวลาทำการ : </strong> เวลาทำการตรวจสอบ ทุกวัน เวลา 9.00 น. ถึง 18.00 น.
                             หากนอกเวลาทำการจะทำการตรวจสอบในเวลาทำการของวันถัดไป</Message>
@@ -103,8 +103,7 @@
                         <div class="field">
                             <span class="p-float-label">
                                 <div>กรอกเลขบัตรประชาชน</div>
-                                <InputText v-model="iden_number" inputClass="font"
-                                    placeholder="กรอกเลขบัตรประจำตัวประชาชน" />
+                                    <InputText v-model="iden_number" inputClass="font" placeholder="กรอกเลขบัตรประจำตัวประชาชน" />
                                 <div>แนบรูปภาพบัตรประชาชนของท่าน</div>
                                 <FileUpload mode="basic" :auto="true" chooseLabel="แนบรูปภาพบัตรประชาชนของท่าน"
                                     uploadIcon="pi pi-paperclip" @uploader="chooseImageMember" :customUpload="true"
@@ -128,7 +127,7 @@
                         </div>
                     </div>
                 </Panel>
-                <Panel header="ยืนยันบัตรประชาชน" class="custom-header-panel font-profile" v-if="status_iden === 'รอการตรวจสอบ'">
+                <Panel header="ยืนยันบัตรประชาชน" class="custom-header-panel font-profile" v-if="status_iden === 'อยู่ระหว่างการตรวจสอบ'">
                     <Message style="color: red; -webkit-text-stroke: 1px;" class="mb-2"><strong>สถานะการตรวจสอบ :
                         </strong>ท่านได้แนบบัตรประชาชนแล้ว เจ้าหน้าที่กำลังตรวจสอบ </Message>
                     <Message><strong>เวลาทำการ : </strong>รอตรวจสอบจากเจ้าหน้าที่ เวลาทำการตรวจสอบ ทุกวัน เวลา 9.00 น. ถึง
@@ -194,7 +193,7 @@ export default ({
                 };
                 this.$store.commit("setLogin", data_login);
                 this.$store.commit('setLoading', false);
-                this.name = data_login.name;
+                console.log(data_login);
                 this.username = data_login.username;
                 this.member_number = data_login.member_number;
                 this.tel = data_login.tel;
@@ -381,6 +380,7 @@ export default ({
                             'รอการตรวจสอบจากส่วนกลางในวันเวลาทำการภายใน 10-15 นาที',
                         showConfirmButton: true,
                     })
+                    window.location.reload();
                 }
             });
         },
