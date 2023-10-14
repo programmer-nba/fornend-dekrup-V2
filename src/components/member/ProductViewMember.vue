@@ -26,7 +26,7 @@
   </div>
 
   <div class="grid">
-    <div class="col-6 md:col-4 xl:col-3" v-for="product in filteredProducts" :key="product.id">
+    <div class="col-6 md:col-4 lg:col-4 xl:col-3 mt-3" v-for="product in filteredProducts" :key="product.id">
       <div class="card-background">
 
         <div class="size-img-product">
@@ -42,12 +42,14 @@
         <p class="txt-price">
           ราคา <span>{{ product.price }}</span> บาท
         </p>
-        <div class="flex">
+      
+      </div>
+      <div class="flex" style="margin-top: -65px; margin-left: 10px; margin-right: 5px;">
           <Button severity="warning" icon="pi pi-shopping-cart" style="margin-right: 5px" @click="addAmount(product)" />
           <Button @click="chooseProduct(product)" class="btn-description" label="รายละเอียด" severity="danger" />
         </div>
-      </div>
     </div>
+    
   </div>
 
   <!-- Dialog จำนวนสั่งซื้อ -->
@@ -107,7 +109,7 @@ import Image from "primevue/image";
 import { useToast } from "vue-toastification";
 export default {
   components: {
-    
+    // ScrollTop,
     Image,
   },
   setup() {
@@ -210,12 +212,7 @@ export default {
       this.total = this.data.price * this.amount;
 
       if (this.amount > this.data.quantity) {
-        return this.$toast.add({
-          severity: "danger",
-          summary: "ไม่สำเร็จ",
-          detail: "รายการสินค้าไม่เพียงพอ",
-          life: 3000,
-        });
+        return this.toast.error("ขออภัยจำนวนสินค้าไม่เพียงพอ");
       }
 
       const order = {
@@ -242,12 +239,6 @@ export default {
       this.$store.commit("setCus", cus);
       this.$store.dispatch("addOrder", order);
       this.$store.dispatch("addOrderDetail", order_detail);
-      this.$toast.add({
-        severity: "success",
-        summary: "สำเร็จ",
-        detail: "เพิ่มรายการเรียบร้อยแล้ว",
-        life: 3000,
-      });
       this.clearData();
     },
 
@@ -375,7 +366,7 @@ export default {
 .card-background {
   background: #fff1f1;
   width: 100%;
-  height: auto;
+  height: 450px;
   padding: 15px;
 }
 
@@ -410,7 +401,17 @@ export default {
   width: 14rem;
 }
 
+
+@media only screen and (max-width: 1440px) {
+  .card-background {
+  height: 475px;
+}
+}
+
 @media only screen and (max-width: 576px) {
+  .card-background {
+  height: 370px;
+}
   .txt-head {
     font-size: 15px;
   }

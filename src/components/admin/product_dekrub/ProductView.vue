@@ -187,7 +187,7 @@ export default {
         console.error("Error fetching data:", error);
       }
     };
-
+    
     const filterProductsByCategory = async () => {
       console.log("Selected Category:", category);
 
