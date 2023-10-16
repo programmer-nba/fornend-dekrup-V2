@@ -5,7 +5,7 @@
         z-index: 100;
         "
         >
-        <div class="lg:col-10 md:col-2 col-2" >
+        <div class="lg:col-10 md:col-2 col-2  lg:px-8" >
             <Menubar :model="item_manu"
                 class="custom-menu  border-round-3xl p-0 mt-2 w-auto hover:border-2 hover:border-purple-900 flex align-items-center justify-content-center bg-white">
             </Menubar>
@@ -66,7 +66,7 @@ export default {
                 },
                 {
                     label: "รายการสมาชิกใหม่",
-                    icon: 'pi pi-shopping-cart',
+                    icon: 'pi pi-users',
                     to: "/admin/new_member",
                 },
                 // {
@@ -81,7 +81,7 @@ export default {
                 },
                 {
                     label: "รายงาน Commission",
-                    icon: 'pi pi-shopping-cart',
+                    icon: 'pi pi-dollar',
                     items: [
                         {
                             label: "Commission Register Day",
@@ -112,7 +112,7 @@ export default {
                 },
                 {
                     label: "จัดการผู้ใช้งาน",
-                    icon: 'pi pi-shopping-cart',
+                    icon: 'pi pi-user-edit',
                     items: [
                         {
                             label: "ผู้ใช้งานทั้งหมด",
@@ -138,7 +138,7 @@ export default {
                 },
                 {
                     label: "จัดการระบบ",
-                    icon: 'pi pi-shopping-cart',
+                    icon: 'pi pi-desktop',
                     items: [
                         {
                             label: "ผู้ใช้งานทั้งหมด",
@@ -196,5 +196,7 @@ export default {
     z-index: 150;
 }
 }
-
+.p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-content .p-menuitem-link .p-menuitem-text {
+    margin-left: 4px;
+}
 </style>

@@ -3,15 +3,15 @@
         <div class="grid mt-3">
             <div class="col-12 md:col-6 lg:col-3">
                 <div
-                    class="surface-card shadow-2 p-3 border-round border-round border-purple-500 surface-overlay border-left-3">
+                    class="surface-card shadow-2 p-3 border-round surface-overlay border-left-3">
                     <div class="flex justify-content-between mb-3">
                         <div>
                             <span class="block text-500 font-medium mb-3 text-left">Commission Register Day</span>
                             <div class="text-900 font-medium text-xl">{{ total_regis_day }} บาท</div>
                         </div>
                         <div class="flex align-items-center justify-content-center bg-purple-100 border-round"
-                            style="width: 2.5rem; height: 2.5rem">
-                            <i class="pi pi-dollar text-purple-500 text-xl"></i>
+                            style="width: 2.5rem; height: 2.5rem; background-color: #FFCEE4;">
+                            <i class="pi pi-dollar text-red-500 text-xl"></i>
                         </div>
                     </div>
                     <span class="text-green-500 font-medium">{{ commission_regis_day.length }} รายการ </span>

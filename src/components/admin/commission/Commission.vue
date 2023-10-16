@@ -3,9 +3,9 @@
         <div class="col-12 text-center">
             <h1>สรุป Commission ณ ที่จ่าย</h1>
         </div>
-        <div class="col-3">
+        <div class="col-6  lg:ml-3 sm:col-6  lg:col-3">
             <div class="p-inputgroup">
-                <span class="p-inputgroup-addon bg-purple-500 text-white">
+                <span class="p-inputgroup-addon backgroud-com text-white">
                     <i class="pi pi-calendar text-xl"></i>
                 </span>
                 <Calendar inputId="range" icon="pi pi-calendar" selectionMode="range" placeholder="FILTER DATE"
@@ -16,11 +16,11 @@
             <Dropdown v-model="member_id" :options="item_member" optionLabel="name" optionValue="_id" placeholder="Select Member"
                 class="w-full" @change="filtermember()" />
         </div> -->
-        <div class="col-1">
+        <div class="col-6  lg:col-1">
             <Button label="Clear All" class="p-button-text p-button-plain" @click="clear"></Button>
         </div>
         <div class="col-3">
-            <Button icon="pi pi-file-export" label="Download" @click="exportCSV()" class="mr-2"></Button>
+            <Button icon="pi pi-file-export" label="Download" @click="exportCSV()" class="mr-2 border-red-600 backgroud-com"></Button>
         </div>
     </div>
     <div class="grid">
@@ -261,3 +261,9 @@ export default {
 }
 
 </script>
+
+<style>
+.backgroud-com {
+    background-color: #c21010;
+}
+</style>

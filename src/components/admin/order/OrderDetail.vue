@@ -1,5 +1,5 @@
 <template>
-    <Button @click="getOrder" icon="pi pi-list" class="p-button-purple" :label="title" :loading="loading" />
+    <Button @click="getOrder" icon="pi pi-list" class="border-none" :label="title" :loading="loading" style="background-color: #753188;" />
 
     <Sidebar v-model:visible="sidebar" class="p-sidebar-lg" position="right">
         <div v-if="order !== null">

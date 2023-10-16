@@ -14,14 +14,14 @@
                                 <div v-for="(preview, index) in imagePreviews" :key="index" class=" ">
                                     <Image :src="preview" width="200" height="200" class="mr-2" />
                                     <div class="col-12">
-                                        <Button @click="removeImage(index)" class="p-button-danger p-mt-2">ลบรูป</Button>
+                                        <Button @click="removeImage(index)" class="h-3rem border-none" style="background-color: #D71313;">ลบรูป</Button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-12">
                             <div class="flex justify-content-center ">
-                                <label for="file" class="p-button p-button-secondary">
+                                <label for="file" class="p-button border-none" style="background-color: #1D5D9B;">
                                     <span>เลือกรูปหน้าปก</span>
                                 </label>
                                 <input id="file" type="file" @change="SetImages" multiple class="p-d-none" />

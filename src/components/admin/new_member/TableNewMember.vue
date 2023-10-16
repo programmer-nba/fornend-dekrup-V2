@@ -6,9 +6,9 @@
     <div class="col-12 text-center">
       <h1>รายงานสมัครสมาชิก</h1>
     </div>
-    <div class="col-3">
+    <div class="ml-4 col-3">
       <div class="p-inputgroup">
-        <span class="p-inputgroup-addon bg-purple-500 text-white">
+        <span class="p-inputgroup-addon  text-white" style="background-color: #c21010">
           <i class="pi pi-calendar text-xl"></i>
         </span>
         <Calendar inputId="range" icon="pi pi-calendar" selectionMode="range" placeholder="FILTER DATE" class="w-full"
@@ -23,7 +23,8 @@
       <Button label="Clear All" class="p-button-text p-button-plain" @click="clear"></Button>
     </div>
     <div class="col-1">
-      <Button icon="pi pi-file-export" label="Export" @click="exportCSV()" class="mr-2"></Button>
+      <Button icon="pi pi-file-export" label="Export" @click="exportCSV()" class="mr-2 border-red-700"
+        style="background-color: #c21010"></Button>
     </div>
   </div>
   <div>
@@ -59,7 +60,7 @@
       </Column>
       <Column header="ตัวเลือก" style="width: 15%">
         <template #body="item">
-          <Button class="p-button-rounded p-button-warning p-button-icon mr-2" @click="confirmOrder(item.data)"
+          <Button class="p-button-rounded icon-confirm  p-button-icon mr-2" @click="confirmOrder(item.data)"
             v-if="item.data.status[item.data.status.length - 1].status === 'รอตรวจสอบ' && item.data.status[0].status !== 'ยืนยันออเดอร์'">
             <i class="pi pi-check"></i> <!-- ไอคอนถูก -->
           </Button>
@@ -69,8 +70,18 @@
             <i class="pi pi-times"></i>
           </Button>
           <Button v-if="item.data.status[item.data.status.length - 1].status === 'ยืนยันออเดอร์'"
-            class="p-button-rounded p-button-info p-button-icon mr-2" @click="showOrderDetail(item.data)">
-            <i class="pi pi-info-circle"></i>
+            class="p-button-rounded border-none mr-2" @click="showOrderDetail(item.data)"
+            style="background-color: #448EF6;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="8" y1="6" x2="21" y2="6"></line>
+              <line x1="8" y1="12" x2="21" y2="12"></line>
+              <line x1="8" y1="18" x2="21" y2="18"></line>
+              <line x1="3" y1="6" x2="3.01" y2="6"></line>
+              <line x1="3" y1="12" x2="3.01" y2="12"></line>
+              <line x1="3" y1="18" x2="3.01" y2="18"></line>
+            </svg>
+
           </Button>
 
         </template>
@@ -78,18 +89,26 @@
     </DataTable>
 
     <Dialog v-model:visible="displayOrderDetail" :breakpoints="{ '960px': '75vw', '640px': '90vw' }"
-      :style="{ width: '700px' }" header="รายละเอียดออเดอร์">
+      :style="{ width: '355px' }" header="รายละเอียดออเดอร์" class="dialog-detail">
       <div v-if="selectedOrder">
         <div v-for="(product, index) in selectedOrder.product_detail" :key="index">
-          <h1>{{ product.product_name }}</h1>
-          <p>รายละเอียด: {{ product.product_detail }}</p>
-          <p>จำนวน: {{ product.quantity }}</p>
-          <p>ราคา: {{ product.price }}</p>
-          <p>รวม: {{ product.totalprice }}</p>
+          <p class="text-center product-name">{{ product.product_name }}</p>
+          <p class="text-center product-detail">รายละเอียด </p>
+
+          <p class="text-center description">{{ product.product_detail }}</p>
+
+
+          <ul style="list-style-type: none; padding: 0;">
+            <li><strong class="description">จำนวน:</strong> {{ product.quantity }}</li>
+            <li><strong class="description">ราคา:</strong> {{ product.price }}</li>
+            <li><strong class="description">รวม:</strong> {{ product.totalprice }}</li>
+          </ul>
         </div>
+
       </div>
+
       <template #footer>
-        <Button label="ปิด" class=" p-button-danger" icon="pi pi-times" @click="closeOrderDetailDialog" />
+        <Button label="ปิด" class="border-red-600 close" @click="closeOrderDetailDialog" />
       </template>
     </Dialog>
 
@@ -98,11 +117,11 @@
 
 <script>
 import { ConfirmService } from '@/components/lib/OrderService';
+import axios from 'axios';
 import dayjs from "dayjs";
 import "dayjs/locale/th";
 import Swal from 'sweetalert2';
 import { ref } from "vue";
-import axios from 'axios';
 import * as XLSX from "xlsx";
 export default {
   setup() {
@@ -188,7 +207,6 @@ export default {
         }
       } catch (error) {
         console.error("Error fetching order detail:", error);
-        // แสดงข้อความผิดพลาดหรือดำเนินการเพิ่มตามที่คุณต้องการ
       }
     },
 
@@ -547,5 +565,70 @@ export default {
     transform: rotate(360deg);
   }
 }
-</style>
+
+.icon-confirm {
+  background-color: #379237;
+  border: none;
+}
+
+.dialog-detail .p-dialog-content {
+  background-color: #ecf0ff;
+  padding: 20px;
+
+}
+
+.dialog-detail .p-dialog-header {
+  background-color: #ecf0ff;
+  color: #C21010;
+  padding: 0.7rem;
+}
+
+.dialog-detail .p-dialog-footer {
+  background-color: #bed6fb;
+  color: #C21010;
+  padding: 0 0 0 0;
+}
+
+.close {
+  background-color: #D92027;
+  width: 100%;
+}
+
+.close:hover {
+  background-color: #B20600;
+}
+
+.product-name {
+  font-size: 3rem;
+  line-height: 1;
+  font-weight: 700;
+  gap: 4px;
+  color: #072541;
+}
+
+.product-detail {
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.25;
+  margin-top: 10px;
+  color: #072541;
+
+}
+
+.description {
+  font-size: 1rem;
+  text-align: center;
+  margin-top: 2px;
+  color: #072541;
+
+}
+
+.full-width-footer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0px;
+  /* ปรับระยะขอบต่าง ๆ ตามที่คุณต้องการ */
+}</style>
 

@@ -2,30 +2,30 @@
   <div class="px-4 py-5 md:px-6 lg:px-8">
     <div class="grid mt-3">
       <div class="col-12 md:col-6 lg:col-3">
-        <div class="surface-card shadow-2 p-3 border-round border-round border-purple-500 surface-overlay border-left-3">
+        <div class="surface-card shadow-2 p-3 border-round border-round  surface-overlay border-left-3" style="border-left: 2px solid #D80032;">
           <div class="flex justify-content-between mb-3">
             <div>
               <span class="block text-500 font-medium mb-3 text-left">Commission Register Day</span>
               <div class="text-900 font-medium text-xl">{{ numberDigitFormat(total_regis_day) }} บาท</div>
             </div>
-            <div class="flex align-items-center justify-content-center bg-purple-100 border-round"
-              style="width: 2.5rem; height: 2.5rem">
-              <i class="pi pi-dollar text-purple-500 text-xl"></i>
+            <div class="flex align-items-center justify-content-center  border-round" 
+              style="width: 2.5rem; height: 2.5rem; background-color: #FFCEE4;">
+              <i class="pi pi-dollar text-red-500 text-xl"></i>
             </div>
           </div>
-          <span class="text-green-500 font-medium">{{ commission_regis_day.length }} รายการ </span>
+          <span class="font-medium" style="color: #5D9C59;">{{ commission_regis_day.length }} รายการ </span>
         </div>
       </div>
       <div class="col-12 md:col-6 lg:col-3">
-        <div class="surface-card shadow-2 p-3 border-round border-round border-purple-500 surface-overlay border-left-3">
+        <div class="surface-card shadow-2 p-3 border-round border-round surface-overlay border-left-3" style="border-left: 2px solid #D80032;">
           <div class="flex justify-content-between mb-3">
             <div>
               <span class="block text-500 font-medium mb-3 text-left">Comission Register Week</span>
               <div class="text-900 font-medium text-xl">{{ numberDigitFormat(total_regis_week) }} บาท</div>
             </div>
-            <div class="flex align-items-center justify-content-center bg-purple-100 border-round"
-              style="width: 2.5rem; height: 2.5rem">
-              <i class="pi pi-dollar text-purple-500 text-xl"></i>
+            <div class="flex align-items-center justify-content-center border-round"
+              style="width: 2.5rem; height: 2.5rem; background-color: #FFCEE4;">
+              <i class="pi pi-dollar text-red-500 text-xl"></i>
             </div>
           </div>
           <span class="text-green-500 font-medium">{{ commission_regis_week.length }} รายการ </span>
@@ -33,15 +33,15 @@
       </div>
 
       <div class="col-12 md:col-6 lg:col-3">
-        <div class="surface-card shadow-2 p-3 border-round border-round border-purple-500 surface-overlay border-left-3">
+        <div class="surface-card shadow-2 p-3 border-round border-round surface-overlay border-left-3" style="border-left: 2px solid #D80032;">
           <div class="flex justify-content-between mb-3">
             <div>
               <span class="block text-500 font-medium mb-3 text-left">Commission Administer</span>
               <div class="text-900 font-medium text-xl">{{ numberDigitFormat(total_administer) }} บาท</div>
             </div>
-            <div class="flex align-items-center justify-content-center bg-purple-100 border-round"
-              style="width: 2.5rem; height: 2.5rem">
-              <i class="pi pi-dollar text-purple-500 text-xl"></i>
+            <div class="flex align-items-center justify-content-center  border-round"
+              style="width: 2.5rem; height: 2.5rem; background-color: #FFCEE4;">
+              <i class="pi pi-dollar text-red-500 text-xl"></i>
             </div>
           </div>
           <span class="text-green-500 font-medium">{{ commission_administer.length }} รายการ</span>

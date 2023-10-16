@@ -4,7 +4,7 @@
     <div class="grid p-fluid px-3 justify-content-center mt-3">
       <div class="col-12 md:col-4">
         <div class="p-inputgroup  flex-1 ">
-          <Button icon="pi pi-search" severity="warning" />
+          <Button icon="pi pi-search" class="border-red-600" style=" background-color: #c21010;" />
           <InputText v-model="search" placeholder="ค้นหาข้อมูล" @keyup="searchDataAutomatically()" class=" font p-3 " />
         </div>
       </div>
@@ -17,23 +17,23 @@
       <Column field="member_number" header="ไอดีผู้ใช้งาน"></Column>
       <Column field="name" header="ชื่อผู้ใช้งาน"></Column>
       <Column field="username" header="ชื่อผู้ใช้งานระบบ"></Column>
-      <Column field="tel" header="เบอร์โทร"></Column>
-      <Column header="ค่าคอมมิชชั่นสะสม">
+      <Column field="tel" header="เบอร์โทร" style="width: 10%;"></Column>
+      <Column header="ค่าคอมมิชชั่นสะสม" style="width: 10%;">
         <template #body="item">
           {{ numberDigitFormat(item.data.commission_day) }}
         </template>
       </Column>
-      <Column header="ค่าบริหารสะสม">
+      <Column header="ค่าบริหารสะสม" style="width: 10%;">
         <template #body="item">
           {{ numberDigitFormat(item.data.commission_week) }}
         </template>
       </Column>
-      <Column field="member_date_start" header="วันที่เริ่มระบบ">
+      <Column field="member_date_start" header="วันที่เริ่มระบบ" style="width: 10%;">
         <template #body="Props">
           {{ datetimeFormat(Props.data.timestamp) }}
         </template>
       </Column>
-      <Column field="address" header="ที่อยู่" style="width: 30%;">
+      <Column field="address" header="ที่อยู่" style="width: 25%;">
         <template #body="{ data }">
           <div>
             <label class="mr-2">ที่อยู่: {{ data.address }} </label>
@@ -379,24 +379,6 @@ export default {
   border-radius: 40px;
 }
 
-.dialog-change .p-dialog-content {
-  background: #FFFDE3;
-}
 
-.dialog-change .p-dialog-header {
-  background-color: #FFFDE3;
-  color: #C21010;
-  /* เปลี่ยนสีตัวหนังสือที่นี่ */
-  padding: 0.7rem;
-  /* สีเส้นขอบล่าง */
-}
-
-.dialog-change .p-dialog-footer {
-  background-color: #FFFDE3;
-  color: #C21010;
-  /* เปลี่ยนสีตัวหนังสือที่นี่ */
-  padding: 0.7rem;
-  /* สีเส้นขอบล่าง */
-}
 </style>
 

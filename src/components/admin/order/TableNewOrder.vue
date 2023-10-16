@@ -6,9 +6,9 @@
         <div class="col-12 text-center">
             <h1>Order Product Dekrub</h1>
         </div>
-        <div class="col-3">
+        <div class="col-3 ml-3">
             <div class="p-inputgroup">
-                <span class="p-inputgroup-addon bg-purple-500 text-white">
+                <span class="p-inputgroup-addon text-white" style="background-color: #c21010">
                     <i class="pi pi-calendar text-xl"></i>
                 </span>
                 <Calendar inputId="range" icon="pi pi-calendar" selectionMode="range" placeholder="FILTER DATE"
@@ -23,7 +23,7 @@
             <Button label="Clear All" class="p-button-text p-button-plain" @click="clear"></Button>
         </div>
         <div class="col-1">
-            <Button icon="pi pi-file-export" label="Export" @click="exportCSV()" class="mr-2"></Button>
+            <Button icon="pi pi-file-export" label="Export" @click="exportCSV()" class="mr-2 border-red-600" style="background-color: #c21010"></Button>
         </div>
     </div>
     <div class="grid mt-2">
@@ -81,10 +81,10 @@
                 </Column>
                 <Column header="เพิ่มเติม">
                     <template #body="item">
-                        <div class="mt-1">
-                            <Button class="p-button-success mr-1" icon="pi pi-check" @click="confirmOrder(item.data)"
+                        <div class="mt-1 ">
+                            <Button class="p-button-success mr-1 " icon="pi pi-check" @click="confirmOrder(item.data)"
                                 v-if="getLastStatus(item.data.status) === 'รอตรวจสอบ'" />
-                            <Button v-if="getLastStatus(item.data.status) === 'รอตรวจสอบ'" class="p-button-danger"
+                            <Button v-if="getLastStatus(item.data.status) === 'รอตรวจสอบ'" class="p-button-danger mt-2"
                                 icon="pi pi-times" @click="cancelOrder(item.data)" />
                         </div>
                     </template>

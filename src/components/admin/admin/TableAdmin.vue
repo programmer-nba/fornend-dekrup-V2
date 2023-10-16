@@ -4,7 +4,7 @@
     <div class="grid p-fluid px-3 justify-content-center mt-3">
       <div class="col-12 md:col-4">
         <div class="p-inputgroup  flex-1 ">
-          <Button icon="pi pi-search" severity="warning" />
+          <Button icon="pi pi-search" class="border-red-600" style="background-color: #c21010;" />
           <InputText v-model="search" placeholder="ค้นหาข้อมูล" @keyup="searchDataAutomatically()" class="font p-3" />
         </div>
       </div>

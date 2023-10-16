@@ -30,7 +30,7 @@
                             </li>
                         </ul>
                         <hr class="mb-3 mx-0 border-top-1 border-none surface-border mt-auto" />
-                        <Button label="อัพเดท" class="p-3 w-full mt-auto" @click="openDialogRegister()"></Button>
+                        <Button label="อัพเดท" class="p-3 w-full mt-auto button-up" @click="openDialogRegister()"></Button>
                     </div>
                 </div>
             </div>
@@ -61,7 +61,7 @@
                             </li>
                         </ul>
                         <hr class="mb-3 mx-0 border-top-1 border-none surface-border mt-auto" />
-                        <Button label="อัพเดท" class="p-3 w-full mt-auto" @click="openDialogAdminister()"></Button>
+                        <Button label="อัพเดท" class="p-3 w-full mt-auto button-up" @click="openDialogAdminister()"></Button>
                     </div>
                 </div>
             </div>
@@ -251,4 +251,11 @@ export default {
     },
 };
 </script>
+
+<style>
+.button-up {
+    background-color: #EA1179;
+    border: 2px solid #F79BD3;
+}
+</style>
   

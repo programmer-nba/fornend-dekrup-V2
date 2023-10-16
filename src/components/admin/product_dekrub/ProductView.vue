@@ -82,7 +82,7 @@
           </Column>
           <Column :exportable="false" class="text-center" header="แก้ไข" style="width: 10%">
             <template #body="item">
-              <Button @click="editProduct(item.data)" class="border-none" style="background-color: #e60965">แก้ไข</Button>
+              <Button @click="editProduct(item.data)" class="border-none" style="background-color: #FF7315">แก้ไข</Button>
             </template>
           </Column>
         </DataTable>
@@ -121,7 +121,7 @@
 
             <div class="field">
               <label for="image">รูปภาพ</label> <br />
-              <Image v-if="edit_productImage" :src="imagePreview" class="product-image" width="100" height="100"
+              <Image v-if="edit_productImage" :src="imagePreview" width="80" 
                 preview />
               <br />
               <input type="file" @change="onImageChange" accept="image/*" />
@@ -514,17 +514,13 @@ export default {
 }
 
 @media screen and (max-width: 960px) {
-  .product-image {
-    width: 100px;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-  }
+
 }
 
 /* CSS for responsive design */
 @media (max-width: 768px) {
   .detail-column {
     display: none;
-    /* ซ่อนคอลัมน์รายละเอียดเมื่อหน้าจอขนาดเล็ก */
   }
 }
 </style>
@@ -551,4 +547,7 @@ export default {
   align-items: center !important;
   justify-content: center !important;
 }
+
+
+
 </style>
