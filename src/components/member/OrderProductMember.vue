@@ -26,7 +26,6 @@
                   padding-right: 20px;
                   color: rgb(255, 0, 0);
                   "><strong></strong>{{ $store.getters.order_total }} บาท</label>
-         
         </div>
       </div>
     </div>
@@ -72,7 +71,6 @@
             </template>
           </Column>
         </DataTable>
-
         <Button label="กดเพื่อชำระเงิน" icon="pi pi-external-link" @click="visible = true"
           style="width: -webkit-fill-available;" v-if="$store.getters.order_detail.length > 0" />
         <Dialog v-model:visible="visible" header="ยอดเงินที่ต้องชำระ">
@@ -86,14 +84,7 @@
           </template>
         </Dialog>
       </div>
-
-
-
       <div class="col-12">
-
-
-
-
         <Dialog v-model:visible="DialogPayment" header="ชำระเงิน">
           <TabView>
             <TabPanel header="QR CODE">
@@ -110,7 +101,6 @@
                     <FileUpload mode="basic" :auto="true" chooseLabel="แนบรูปภาพหลักฐานการโอน" uploadIcon="pi pi-paperclip"
                     class="input-image" @change="SetImage"/>
                   </label> -->
-
                   <label v-if="!img_preview" class="file-input-label">
                     <span>แนบรูป</span>
                     <input type="file" class="input-image" @change="SetImage" />
@@ -132,7 +122,6 @@
             <Button label="ยืนยันการชำระเงิน" icon="pi pi-check" @click="moneySlip()" autofocus />
           </template>
         </Dialog>
-
       </div>
     </div>
   </div>
@@ -242,7 +231,7 @@ export default {
         }
       }).then((res) => {
         this.$store.commit('setLoading', false);
-        this.res = res.data;
+        this.res = res.data.data;
         console.log(this.res)
         this.$toast.add({
           severity: "success",
