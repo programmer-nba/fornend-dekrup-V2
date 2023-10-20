@@ -1,6 +1,8 @@
 <template>
   <div class="container">
     <div class="radio-tile-group">
+
+      <!-- รับสินค้าเอง -->
       <div class="input-container">
         <input
           v-model="selectedDeliveryOption"
@@ -29,6 +31,7 @@
         </div>
       </div>
 
+      <!-- จัดส่งสินค้าตามที่อยู่ที่กรอก -->
       <div class="input-container">
         <input
           v-model="selectedDeliveryOption"
@@ -58,6 +61,7 @@
         </div>
       </div>
 
+      <!-- จัดส่งตามที่อยู่บัตรประชาชน -->
       <div class="input-container">
         <input
           v-model="selectedDeliveryOption"
