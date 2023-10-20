@@ -70,6 +70,7 @@ import ConfirmPopup from "primevue/confirmpopup";
 import Editor from "primevue/editor";
 import OrganizationChart from "primevue/organizationchart";
 import JsonCSV from 'vue-json-csv';
+import Tag from "primevue/tag";
 
 const app = createApp(App);
 
@@ -143,5 +144,6 @@ app.component("OrganizationChart", OrganizationChart);
 app.component("Editor", Editor);
 app.component("ConfirmPopup", ConfirmPopup);
 app.component("downloadCsv", JsonCSV);
+app.component("Tag", Tag);
 
 app.mount("#app");

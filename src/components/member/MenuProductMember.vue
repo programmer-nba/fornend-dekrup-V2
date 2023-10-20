@@ -9,7 +9,6 @@
           </div>
         </div>
       </div>
-
       <div class="col-12 lg:col-8">
         <!-- ใช้ v-if เพื่อตรวจสอบหน้าปัจจุบันว่าเป็น /profile หรือไม่ -->
         <Menu />

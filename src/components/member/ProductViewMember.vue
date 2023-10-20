@@ -19,12 +19,10 @@
       <Dropdown v-model="selectedCategory" :options="category" optionValue="_id" optionLabel="name" placeholder="เลือกหมวดหมู่"
               class=" responsive-dropdown" @change="searchDataAutomatically()" />
               <Button style="margin-left: 5px;" label="สินค้าทั้งหมด" severity="danger" rounded  @click="resetDropdown"/>
-
         </div>
       </div>
     </div>
   </div>
-
   <div class="grid">
     <div class="col-6 md:col-4 lg:col-4 xl:col-3 mt-3" v-for="product in filteredProducts" :key="product.id">
       <div class="card-background">
@@ -42,16 +40,13 @@
         <p class="txt-price">
           ราคา <span>{{ product.price }}</span> บาท
         </p>
-      
       </div>
       <div class="flex" style="margin-top: -65px; margin-left: 10px; margin-right: 5px;">
           <Button severity="warning" icon="pi pi-shopping-cart" style="margin-right: 5px" @click="addAmount(product)" />
           <Button @click="chooseProduct(product)" class="btn-description" label="รายละเอียด" severity="danger" />
         </div>
     </div>
-    
   </div>
-
   <!-- Dialog จำนวนสั่งซื้อ -->
   <Dialog v-model:visible="DialogaddAmount" modal header="จำนวนสั่งซื้อ">
     <InputNumber v-model="amount" inputId="minmax-buttons" mode="decimal" showButtons :min="0" />
