@@ -212,23 +212,17 @@
       <div class="col-6 md:col-6 lg:col-12 xl:col-6">
         <div
           class="flex flex-column align-items-center justify-content-center h-7rem font-bold text-white border-round m-2"
-          style="background-color: #da2121"
-        >
-          <label style="font-size: 18px; -webkit-text-stroke: 0.5px"
-            >ยอดเงินที่ต้องชำระ</label
-          >
-          <label
-            style="
-              font-size: 20px;
-              background: #ffff;
-              -webkit-text-stroke: 1px;
-              border-radius: 15px;
-              padding-left: 20px;
-              padding-right: 20px;
-              color: rgb(255, 0, 0);
-            "
-            ><strong></strong>{{ $store.getters.order_total }} บาท</label
-          >
+          style="background-color: #da2121">
+          <label style="font-size: 18px; -webkit-text-stroke: 0.5px;">ยอดเงินที่ต้องชำระ</label>
+          <label style="font-size: 20px;
+                  background: #ffff;
+                  -webkit-text-stroke: 1px;
+                  border-radius: 15px;
+                  padding-left: 20px;
+                  padding-right: 20px;
+                  color: rgb(255, 0, 0);
+                  "><strong></strong>{{ $store.getters.order_total }} บาท</label>
+         
         </div>
       </div>
     </div>
@@ -281,13 +275,8 @@
           </Column>
         </DataTable>
 
-        <Button
-          label="กดเพื่อชำระเงิน"
-          icon="pi pi-external-link"
-          @click="visible = true"
-          style="width: -webkit-fill-available"
-          v-if="$store.getters.order_detail.length > 0"
-        />
+        <Button label="กดเพื่อชำระเงิน" icon="pi pi-external-link" @click="visible = true"
+          style="width: -webkit-fill-available;" v-if="$store.getters.order_detail.length > 0" />
         <Dialog v-model:visible="visible" header="ยอดเงินที่ต้องชำระ">
           <div class="flex justify-content-center">
             <label
@@ -312,6 +301,8 @@
         </Dialog>
       </div>
 
+
+
       <div class="col-12">
         <Dialog v-model:visible="DialogPayment" header="ชำระเงิน">
           <TabView>
@@ -331,7 +322,6 @@
                     <FileUpload mode="basic" :auto="true" chooseLabel="แนบรูปภาพหลักฐานการโอน" uploadIcon="pi pi-paperclip"
                     class="input-image" @change="SetImage"/>
                   </label> -->
-
                   <label v-if="!img_preview" class="file-input-label">
                     <span>แนบรูป</span>
                     <input type="file" class="input-image" @change="SetImage" />
@@ -552,33 +542,25 @@ export default {
         customer_address: this.address,
         customer_line: this.line,
         product_detail: this.$store.getters.order,
-      };
-      await axios
-        .post(`${process.env.VUE_APP_DEKRUP}/product/order`, data, {
-          headers: {
-            token: `${this.$store.getters.token}`,
-          },
-        })
-        .then((res) => {
-          this.$store.commit("setLoading", false);
-          this.res = res.data;
-          console.log(this.res);
-          this.$toast.add({
-            severity: "success",
-            summary: "สำเร็จ",
-            detail: "ทำรายการสำเร็จ",
-            life: 3000,
-          });
-        })
-        .catch((err) => {
-          this.$store.commit("setLoading", false);
-          this.$toast.add({
-            severity: "error",
-            summary: "ไม่สำเร็จ",
-            detail: err.response.data.message,
-            life: 3000,
-          });
+      }
+      await axios.post(`${process.env.VUE_APP_DEKRUP}/product/order`, data, {
+        headers: {
+          'token': `${this.$store.getters.token}`
+        }
+      }).then((res) => {
+        this.$store.commit('setLoading', false);
+        this.res = res.data;
+        console.log(this.res)
+        this.$toast.add({
+          severity: "success",
+          summary: "สำเร็จ",
+          detail: "ทำรายการสำเร็จ",
+          life: 3000,
         });
+      }).catch((err) => {
+        this.$store.commit('setLoading', false);
+        this.$toast.add({ severity: 'error', summary: 'ไม่สำเร็จ', detail: err.response.data.message, life: 3000 });
+      })
     },
 
     async moneySlip() {

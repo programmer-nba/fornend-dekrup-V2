@@ -14,7 +14,8 @@
                                 <div v-for="(preview, index) in imagePreviews" :key="index" class=" ">
                                     <Image :src="preview" width="200" height="200" class="mr-2" />
                                     <div class="col-12">
-                                        <Button @click="removeImage(index)" class="h-3rem border-none" style="background-color: #D71313;">ลบรูป</Button>
+                                        <Button @click="removeImage(index)" class="h-3rem border-none"
+                                            style="background-color: #D71313;">ลบรูป</Button>
                                     </div>
                                 </div>
                             </div>
@@ -224,34 +225,34 @@ export default {
         },
 
         SetImages(e) {
-    const files = e.target.files;
+            const files = e.target.files;
 
-    for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const fileSizeInBytes = file.size;
-        const maxSizeInBytes = 1000000; // 1 MB
-        const allowedFileTypes = ['image/jpeg', 'image/png']; // ยอมรับไฟล์ JPEG และ PNG
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const fileSizeInBytes = file.size;
+                const maxSizeInBytes = 1000000; // 1 MB
+                const allowedFileTypes = ['image/jpeg', 'image/png']; // ยอมรับไฟล์ JPEG และ PNG
 
-        if (!allowedFileTypes.includes(file.type)) {
-            Swal.fire('แจ้งเตือน', 'รูปภาพต้องเป็นไฟล์ประเภท JPEG หรือ PNG เท่านั้น', 'warning');
-            return;
-        }
+                if (!allowedFileTypes.includes(file.type)) {
+                    Swal.fire('แจ้งเตือน', 'รูปภาพต้องเป็นไฟล์ประเภท JPEG หรือ PNG เท่านั้น', 'warning');
+                    return;
+                }
 
-        if (fileSizeInBytes > maxSizeInBytes) {
-            Swal.fire('แจ้งเตือน', 'ขนาดของรูปภาพใหญ่เกินกำหนด (มากกว่า 1 MB)', 'warning');
-            return;
-        }
+                if (fileSizeInBytes > maxSizeInBytes) {
+                    Swal.fire('แจ้งเตือน', 'ขนาดของรูปภาพใหญ่เกินกำหนด (มากกว่า 1 MB)', 'warning');
+                    return;
+                }
 
-        const fileReader = new FileReader();
-        fileReader.readAsDataURL(file);
+                const fileReader = new FileReader();
+                fileReader.readAsDataURL(file);
 
-        fileReader.addEventListener("load", (event) => {
-            this.imagePreviews.push(event.target.result);
-        });
+                fileReader.addEventListener("load", (event) => {
+                    this.imagePreviews.push(event.target.result);
+                });
 
-        this.img_upload.push(file);
-    }
-},
+                this.img_upload.push(file);
+            }
+        },
 
 
 

@@ -97,6 +97,12 @@ routes = [
     component: () =>
       import("../components/admin/commission/PercentCommission.vue"),
   },
+  {
+    path: "/admin/function",
+    name: "admin-function",
+    component: () =>
+      import("../components/template/FunctionMore.vue"),
+  },
 ];
 
 const router = createRouter({
