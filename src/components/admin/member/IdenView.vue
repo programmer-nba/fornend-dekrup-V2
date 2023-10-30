@@ -1,6 +1,6 @@
 <template>
     <div class="mt-4 ">
-        <h1 class="md:m-0 text-center">ตรวจสอบ สมุดบัญชีธนาคาร</h1>
+        <h1 class="md:m-0 text-center">ตรวจสอบ บัตรประชาชน</h1>
         <DataTable :value="item_iden" :paginator="true" :rows="10" class="px-3 py-3"
             paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink  RowsPerPageDropdown"
             :rowsPerPageOptions="[5, 10, 25]" currentPageReportTemplate=" แสดง {first} ถึง {last} ของ {totalRecords} รายการ"
