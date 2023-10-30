@@ -567,7 +567,7 @@ export default {
         this.toast.warning("กรุณาแนบสลิปการโอนเงิน");
       } else {
         // เมื่อมีไฟล์ที่ถูกเลือก, ให้ดำเนินการส่งข้อมูล
-        const id = this.res._id;
+        const id = this.res.data._id;
         const formData = new FormData();
         formData.append("imgCollection", this.img_upload[0]);
         this.product
