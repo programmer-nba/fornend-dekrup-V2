@@ -178,6 +178,11 @@ export default {
         },
 
         chooseImage(event) {
+            if (event.files[0].size > 1048576) {
+        // Check if the image size exceeds 1 MB
+        Swal.fire("แจ้งเตือน", "ขนาดรูปภาพเกิน 1 MB", "error");
+        return; // Don't set the image if it exceeds the size limit
+      }
             this.slip_img = event.files[0];
             this.img_preview = event.files[0].objectURL;
         },

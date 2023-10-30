@@ -262,6 +262,8 @@ import axios from "axios";
 import Dialog from "primevue/dialog";
 import { useToast } from "vue-toastification";
 import { Product } from "../../service/product";
+import Swal from 'sweetalert2';
+
 export default {
   components: {
     Dialog,
@@ -422,7 +424,12 @@ export default {
     SetImage(e) {
       const file = e.target.files;
       if (file) {
-        this.img_size = file[0].size;
+        const fileSize = file[0].size;
+        
+        if (fileSize > 1048576) { // Check if the file size exceeds 1 MB (1,048,576 bytes)
+          Swal.fire('แจ้งเตือน', 'ขนาดรูปภาพเกิน 1 MB', 'error');
+          return; // Don't proceed with the image upload
+        }
 
         const fileReader = new FileReader();
         fileReader.readAsDataURL(file[0]);
@@ -698,5 +705,9 @@ export default {
 .radio-tile-group .input-container .radio-button:checked+.radio-tile .radio-tile-label {
   color: white;
   background-color: #d21312;
+}
+
+.swal2-container {
+  z-index: 9999;
 }
 </style>
