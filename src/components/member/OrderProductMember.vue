@@ -425,7 +425,7 @@ export default {
       const file = e.target.files;
       if (file) {
         const fileSize = file[0].size;
-        
+
         if (fileSize > 1048576) { // Check if the file size exceeds 1 MB (1,048,576 bytes)
           Swal.fire('แจ้งเตือน', 'ขนาดรูปภาพเกิน 1 MB', 'error');
           return; // Don't proceed with the image upload
