@@ -119,13 +119,9 @@ export default {
                             icon: 'pi pi-user',
                             to: "/admin/member",
                         },
+                  
                         {
-                            label: "สมุดบัญชี",
-                            icon: 'pi pi-user',
-                            to: "/admin/member/bank",
-                        },
-                        {
-                            label: "บัตรประชาชน",
+                            label: "ยืนยันตัวตน",
                             icon: 'pi pi-user',
                             to: "/admin/member/iden",
                         },

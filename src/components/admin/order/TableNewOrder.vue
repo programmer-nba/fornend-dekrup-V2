@@ -6,7 +6,7 @@
         <div class="col-12 text-center">
             <h1>Order Product Dekrub</h1>
         </div>
-        <div class="col-3 ml-3">
+        <div class="col-8 lg:col-3 ml-3">
             <div class="p-inputgroup">
                 <span class="p-inputgroup-addon text-white" style="background-color: #c21010">
                     <i class="pi pi-calendar text-xl"></i>
@@ -22,7 +22,7 @@
         <div class="col-1">
             <Button label="Clear All" class="p-button-text p-button-plain" @click="clear"></Button>
         </div>
-        <div class="col-1">
+        <div class="col-12 lg:col-1 ">
             <Button icon="pi pi-file-export" label="Export" @click="exportCSV()" class="mr-2 border-red-600" style="background-color: #c21010"></Button>
         </div>
     </div>
@@ -86,6 +86,8 @@
                                 v-if="getLastStatus(item.data.status) === 'รอตรวจสอบ'" />
                             <Button v-if="getLastStatus(item.data.status) === 'รอตรวจสอบ'" class="p-button-danger mt-2"
                                 icon="pi pi-times" @click="cancelOrder(item.data)" />
+                                <PrintReceipt title="ใบออเดอร์" :order_id="item.data._id" :order="item.data"
+                            :categoty="item.data.servicename" v-if="getLastStatus(item.data.status) === 'ยืนยันออเดอร์'" />
                         </div>
                     </template>
                 </Column>
@@ -114,7 +116,10 @@
 <script>
 import { ConfirmService } from '@/components/lib/OrderService';
 import { datetimeFormat, numberDigitFormat, numberFormat } from '../../lib/function';
+import Order from './Order.vue';
 import OrderDetail from './OrderDetail.vue';
+import PrintReceipt from './PrintReceipt.vue';
+
 import dayjs from "dayjs";
 import "dayjs/locale/th";
 // import Swal from 'sweetalert2';
@@ -124,6 +129,8 @@ import * as XLSX from "xlsx";
 export default {
     components: {
         OrderDetail,
+        Order,
+        PrintReceipt
     },
     created() {
         document.title = "Order Product | Dekrub Shop";
@@ -162,6 +169,7 @@ export default {
                 headers: {
                     'token': `${localStorage.getItem('token')}`
                 }
+                
             }).then((res) => {
                 const order = res.data.data;
                 this.item_order = order.reverse();

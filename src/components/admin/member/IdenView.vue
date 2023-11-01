@@ -1,163 +1,278 @@
 <template>
-    <div class="mt-4 ">
-        <h1 class="md:m-0 text-center">ตรวจสอบ บัตรประชาชน</h1>
-        <DataTable :value="item_iden" :paginator="true" :rows="10" class="px-3 py-3"
-            paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink  RowsPerPageDropdown"
-            :rowsPerPageOptions="[5, 10, 25]" currentPageReportTemplate=" แสดง {first} ถึง {last} ของ {totalRecords} รายการ"
-            responsiveLayout="scroll">
-            <template #empty>ไม่มีข้อมูล</template>
-            <Column header="รหัสสมาชิก">
-                <template #body="item">
-                    {{ item.data.member_number }}
-                </template>
-            </Column>
-            <Column header="ชื่อ">
-                <template #body="item">
-                    {{ item.data.name }}
-                </template>
-            </Column>
-            <Column header="รูปภาพ">
-                <template #body="item">
-                    <Image :src="getImage(item.data.picture)" width="100" preview />
-                </template>
-            </Column>
-            <Column header="สถานะ">
-                <template #body="item">
-                    {{ getLaststatus(item.data.status) }}
-                </template>
-            </Column>
-            <Column header="เพิ่มเติม">
-                <template #body="item">
-                    <Button class="p-button-success mr-1" icon="pi pi-check" @click="confirmIden(item.data)"
-                        v-if="getLaststatus(item.data.status) !== 'ยืนยันเรียบร้อยแล้ว'" />
-                    <!-- <Button class="p-button-danger" icon="pi pi-times" @click="showCancelDialog(item.data)"
-                        v-if="getLaststatus(item.data.status) !== 'ยืนยันเรียบร้อยแล้ว'" /> -->
-                </template>
-            </Column>
-        </DataTable>
+    <div class="flex  align-items-center justify-content-center ">
+  <Button
+  class="w-5 border-noround " style="border: 2px solid #FF52A2;"
+    :style="{ 'background-color': currentPage === 'iden' ? '#F31559' : 'white', 
+    'color': currentPage === 'iden' ? ' #fff' : '#D71313'}"
+    label="บัตรประชาชน"
+    @click="switchPage('iden')"
+  />
+  <Button
+  class="w-5 border-noround" style="border: 2px solid #FF52A2;"
+  :style="{ 'background-color': currentPage === 'book' ? '#F31559' : 'white',
+  'color': currentPage === 'book' ? ' #fff' : '#D71313' }"
+    label="สมุดบัญชี"
+    @click="switchPage('book')"
+  />
+</div>
+  <div class="mt-4" v-if="currentPage === 'iden'">
+    <h1 class="md:m-0 text-center">ตรวจสอบ บัตรประชาชน</h1>
 
-    </div>
+    <DataTable
+      :value="item_iden"
+      :paginator="true"
+      :rows="10"
+      class="px-3 py-3"
+      paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink  RowsPerPageDropdown"
+      :rowsPerPageOptions="[5, 10, 25]"
+      currentPageReportTemplate=" แสดง {first} ถึง {last} ของ {totalRecords} รายการ"
+      responsiveLayout="scroll"
+    >
+      <template #empty>ไม่มีข้อมูล</template>
+      <Column header="รหัสสมาชิก">
+        <template #body="item">
+          {{ item.data.member_number }}
+        </template>
+      </Column>
+      <Column header="ชื่อ">
+        <template #body="item">
+          {{ item.data.name }}
+        </template>
+      </Column>
+      <Column header="รูปภาพ">
+        <template #body="item">
+          <Image :src="getImage(item.data.picture)" width="100" preview />
+        </template>
+      </Column>
+      <Column header="สถานะ">
+        <template #body="item">
+          {{ getLaststatus(item.data.status) }}
+        </template>
+      </Column>
+      <Column header="เพิ่มเติม">
+        <template #body="item">
+          <Button
+            class="p-button-success mr-1"
+            icon="pi pi-check"
+            @click="confirmIden(item.data)"
+            v-if="getLaststatus(item.data.status) !== 'ยืนยันเรียบร้อยแล้ว'"
+          />
+          <!-- <Button class="p-button-danger" icon="pi pi-times" @click="showCancelDialog(item.data)"
+                        v-if="getLaststatus(item.data.status) !== 'ยืนยันเรียบร้อยแล้ว'" /> -->
+        </template>
+      </Column>
+    </DataTable>
+  </div>
+
+  <div class="mt-4" v-if="currentPage === 'book'">
+    <h1 class="md:m-0 text-center">ตรวจสอบ สมุดบัญชีธนาคาร</h1>
+    <DataTable
+      :value="item_bank"
+      :paginator="true"
+      :rows="10"
+      class="px-3 py-3"
+      paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink  RowsPerPageDropdown"
+      :rowsPerPageOptions="[5, 10, 25]"
+      currentPageReportTemplate=" แสดง {first} ถึง {last} ของ {totalRecords} รายการ"
+      responsiveLayout="scroll"
+    >
+      <template #empty>ไม่มีข้อมูล</template>
+      <Column header="รหัสสมาชิก">
+        <template #body="item">
+          {{ item.data.member_number }}
+        </template>
+      </Column>
+      <Column header="ชื่อ">
+        <template #body="item">
+          {{ item.data.name }}
+        </template>
+      </Column>
+      <Column header="รูปภาพ">
+        <template #body="item">
+          <Image :src="getImage(item.data.picture)" width="100" preview />
+        </template>
+      </Column>
+      <Column header="สถานะ">
+        <template #body="item">
+          {{ getLaststatus(item.data.status) }}
+        </template>
+      </Column>
+      <Column header="เพิ่มเติม">
+        <template #body="item">
+          <Button
+            class="p-button-success mr-1"
+            icon="pi pi-check"
+            @click="confirmBank(item.data)"
+            v-if="getLaststatus(item.data.status) !== 'ยืนยันเรียบร้อยแล้ว'"
+          />
+          <!-- <Button class="p-button-danger" icon="pi pi-times" @click="showCancelDialog(item.data)"
+                        v-if="getLaststatus(item.data.status) !== 'ยืนยันเรียบร้อยแล้ว'" /> -->
+        </template>
+      </Column>
+    </DataTable>
+  </div>
 </template>
-  
+
 <script>
 import axios from "axios";
 import dayjs from "dayjs";
 import "dayjs/locale/th";
 import { Member } from "../../../service/member";
-
 export default {
-    created() {
-        document.title = "Member Iden | Dekrub Shop";
+  components: {},
+  created() {
+    document.title = "Member Iden / Bank | Dekrub Shop";
+  },
+  data() {
+    return {
+      item_iden: [],
+      item_bank: [],
+      imagePreview: null,
+      currentPage: "iden",
+    };
+  },
+  setup() {
+    const confirms = new Member();
+    return { confirms };
+  },
+  mounted() {
+    this.getiden();
+    this.getbank();
+  },
+  methods: {
+    switchPage(page) {
+      this.currentPage = page;
     },
-    data() {
-        return {
-            item_iden: [],
-        };
+    dateformat(date) {
+      return dayjs(date).locale("th").add(543, "year").format("DD/MMMM/YYYY");
     },
-    setup() {
-        const confirms = new Member();
-        return { confirms };
+    datetimeFormat(date) {
+      return dayjs(date).format("DD/MM/YYYY เวลา HH:mm:ss");
     },
-    mounted() {
-        this.getdata();
+
+    async getiden() {
+      let res = await axios
+        .get(`${process.env.VUE_APP_DEKRUP}/verify_iden`, {
+          headers: {
+            token: localStorage.getItem("token"),
+          },
+        })
+        .catch((e) => {
+          if (e.res.status === 408) {
+            window.location.reload();
+          }
+        });
+      const idens = res.data.data;
+      const iden_list = idens.filter(
+        (item) => this.getLaststatus(item.status) === "อยู่ระหว่างการตรวจสอบ"
+      );
+      this.item_iden = iden_list.reverse();
     },
-    methods: {
-        dateformat(date) {
-            return dayjs(date).locale("th").add(543, "year").format("DD/MMMM/YYYY");
-        },
-        datetimeFormat(date) {
-            return dayjs(date).format("DD/MM/YYYY เวลา HH:mm:ss");
-        },
 
-        async getdata() {
-            let res = await axios
-                .get(`${process.env.VUE_APP_DEKRUP}/verify_iden`, {
-                    headers: {
-                        "token": localStorage.getItem("token"),
-                    },
-                })
-                .catch((e) => {
-                    if (e.res.status === 408) {
-                        window.location.reload();
-                    }
-                });
-            const idens = res.data.data;
-            const iden_list = idens.filter(
-                (item) => this.getLaststatus(item.status) === 'อยู่ระหว่างการตรวจสอบ'
-            )
-            this.item_iden = iden_list.reverse();
-        },
+    async getbank() {
+      let res = await axios
+        .get(`${process.env.VUE_APP_DEKRUP}/verify_bank`, {
+          headers: {
+            token: localStorage.getItem("token"),
+          },
+        })
+        .catch((e) => {
+          if (e.res.status === 408) {
+            window.location.reload();
+          }
+        });
+      const banks = res.data.data;
+      const bank_list = banks.filter(
+        (item) => this.getLaststatus(item.status) === "อยู่ระหว่างการตรวจสอบ"
+      );
+      this.item_bank = bank_list.reverse();
+    },
 
-        getLaststatus(item) {
-            const data = item[item.length - 1].status;
-            return data
-        },
+    getLaststatus(item) {
+      const data = item[item.length - 1].status;
+      return data;
+    },
 
-        getImage(item) {
-            return "https://drive.google.com/uc?export=view&id=" + item;
-        },
+    getImage(item) {
+      return "https://drive.google.com/uc?export=view&id=" + item;
+    },
 
-        async confirmIden(item) {
-            const id = item._id
-            this.$store.commit('setLoading', true);
-            await this.confirms.Confirmiden(id).then(async (result) => {
-                if (result) {
-                    this.loading = false;
-                    this.$toast.add({
-                        severity: "success",
-                        summary: "สำเร็จ",
-                        detail: "อัพเดตรายการสำเร็จ",
-                        life: 3000,
-                    })
-                    this.getdata();
-                }
-            })
+    async confirmIden(item) {
+      const id = item._id;
+      this.$store.commit("setLoading", true);
+      await this.confirms.Confirmiden(id).then(async (result) => {
+        if (result) {
+          this.loading = false;
+          this.$toast.add({
+            severity: "success",
+            summary: "สำเร็จ",
+            detail: "อัพเดตรายการสำเร็จ",
+            life: 3000,
+          });
+          this.getiden();
         }
+      });
     },
+
+    async confirmBank(item) {
+      const id = item._id;
+      this.$store.commit("setLoading", true);
+      await this.confirms.ConfirmBank(id).then(async (result) => {
+        if (result) {
+          this.loading = false;
+          this.$toast.add({
+            severity: "success",
+            summary: "สำเร็จ",
+            detail: "อัพเดตรายการสำเร็จ",
+            life: 3000,
+          });
+          this.getbank();
+        }
+      });
+    },
+  },
 };
 </script>
-  
+
 <style>
-.p-datatable .p-datatable-thead>tr>th {
-    background-color: #FFFDE3 !important;
-    color: #C21010;
-    border-bottom: 1px solid #CFE8A9;
+.p-datatable .p-datatable-thead > tr > th {
+  background-color: #fffde3 !important;
+  color: #c21010;
+  border-bottom: 1px solid #cfe8a9;
 }
 
-.p-datatable .p-datatable-tbody>tr>td {
-    margin-bottom: 1.5rem;
+.p-datatable .p-datatable-tbody > tr > td {
+  margin-bottom: 1.5rem;
 }
 
 .p-datatable .p-datatable-footer {
-    background-color: #FFE6F7 !important;
-    border: none;
+  background-color: #ffe6f7 !important;
+  border: none;
 }
 
 .p-paginator {
-    padding: 0;
-    margin-top: 1.5rem;
-    border-radius: 40px;
+  padding: 0;
+  margin-top: 1.5rem;
+  border-radius: 40px;
 }
 
 .dialog-change .p-dialog-content {
-    background: #FFFDE3;
+  background: #fffde3;
 }
 
 .dialog-change .p-dialog-header {
-    background-color: #FFFDE3;
-    color: #C21010;
-    /* เปลี่ยนสีตัวหนังสือที่นี่ */
-    padding: 0.7rem;
-    /* สีเส้นขอบล่าง */
+  background-color: #fffde3;
+  color: #c21010;
+  /* เปลี่ยนสีตัวหนังสือที่นี่ */
+  padding: 0.7rem;
+  /* สีเส้นขอบล่าง */
 }
 
 .dialog-change .p-dialog-footer {
-    background-color: #FFFDE3;
-    color: #C21010;
-    /* เปลี่ยนสีตัวหนังสือที่นี่ */
-    padding: 0.7rem;
-    /* สีเส้นขอบล่าง */
+  background-color: #fffde3;
+  color: #c21010;
+  /* เปลี่ยนสีตัวหนังสือที่นี่ */
+  padding: 0.7rem;
+  /* สีเส้นขอบล่าง */
 }
 </style>
-  
-  

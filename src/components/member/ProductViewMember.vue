@@ -56,8 +56,9 @@
     </template>
   </Dialog>
 
-  <Dialog v-model:visible="DialogChooseProduct" :modal="true" header="สินค้าของเรา" style="width: 100vh">
-    <div class="grid">
+  <Dialog v-model:visible="DialogChooseProduct" :modal="true" header="สินค้าของเรา" :breakpoints="{ '960px': '75vw', '640px': '90vw' }"
+            :style="{ width: '700px' }">
+    <div class="grid flex justify-content-center">
       <div class="md:col-4 col-12 flex justify-content-center">
         <Image alt="Image" preview>
           <template #indicatoricon>
@@ -74,7 +75,7 @@
       </div>
     </div>
     <div class="card-head">
-      <p class="text-red-500 text-xl" style="-webkit-text-stroke: 1px">
+      <p class="text-red-500 text-xl text-center" style="-webkit-text-stroke: 1px">
         {{ productMember.name }}
       </p>
       <small class="text-600" style="font-size: 14px; -webkit-text-stroke: 1px">หมวดหมู่: {{

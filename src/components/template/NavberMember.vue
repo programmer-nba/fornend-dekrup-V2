@@ -40,6 +40,11 @@ export default {
                     to: "/member/product",
                 },
                 {
+                    label: "รายการสั่งซื้อ",
+                    icon: "pi pi-shopping-cart",
+                    to: "/member/order/order",
+                },
+                {
                     label: "รายได้ค่าคอมมิชชั่น",
                     icon: "pi pi-money-bill",
                     to: "/member/commission/register/day"
