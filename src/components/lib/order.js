@@ -8,27 +8,27 @@ export class ConfirmOrder {
 
     }
 
-    async GetOrder(){
-        let data;
-        const config = {
-            method:'get',
-            headers: {
-                'token':this.#token
-            },
-            url:`${this.#baseUrl}/order/list`
-        }
+    // async GetOrder(){
+    //     let data;
+    //     const config = {
+    //         method:'get',
+    //         headers: {
+    //             'token':this.#token
+    //         },
+    //         url:`${this.#baseUrl}/order/list`
+    //     }
 
-        await axios(config).then(result => {
-            if(result){
-                data = result.data
-            }
-        })
-        .catch(error => {
-            data = error;
-        })
+    //     await axios(config).then(result => {
+    //         if(result){
+    //             data = result.data
+    //         }
+    //     })
+    //     .catch(error => {
+    //         data = error;
+    //     })
 
-        return data;
-    }
+    //     return data;
+    // }
 
     async ConfirmOrder(_id){
         let data;

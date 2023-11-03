@@ -1,7 +1,7 @@
 <template>
   <div class="flex justify-content-center align-items-center">
     <Button
-      @click="print()"
+      @click="printorder()"
       class="border-none h-12"
       :label="title"
       :loading="loading"
@@ -18,11 +18,11 @@
           d="M408 112H106a58 58 0 0 0-58 58v158a56 56 0 0 0 56 56h8v39.68A40.32 40.32 0 0 0 152.32 464h207.36A40.32 40.32 0 0 0 400 423.68V384h8a56 56 0 0 0 56-56V168a56 56 0 0 0-56-56Zm-40 311.68a8.35 8.35 0 0 1-8.32 8.32H152.32a8.35 8.35 0 0 1-8.32-8.32V264.32a8.35 8.35 0 0 1 8.32-8.32h207.36a8.35 8.35 0 0 1 8.32 8.32Zm26-215.76a24 24 0 1 1 22-22a24 24 0 0 1-22 22ZM344 48H168a56.09 56.09 0 0 0-55.42 48h286.84A56.09 56.09 0 0 0 344 48Z"
         />
       </svg>
-      <label class="ml-2">ใบเสร็จรับเงิน</label>
+      <label class="ml-2"> ใบออเดอร์ </label>
     </Button>
   </div>
   <!-- Print -->
-  <div id="printMe" style="display: none">
+  <div id="printOrder" style="display: none">
     <div>
       <!-- หัวกระดาษ -->
       <div style="margin: 0; padding: 0">
@@ -37,14 +37,23 @@
             padding-top: 10px;
           "
         >
-          ใบเสร็จรับเงิน(ชั่นคราว)
+          ใบออเดอร์
         </p>
         <p class="print-p" style="margin: 0; text-align: center">
           บริษัท ดีครับ คอมเมิร์ช จำกัด <br />
-          สำนักงานใหญ่ เลขที่ 30/479 ซอยนวมินทร์ 80 แขวงนวลจันทร์ เขตบึงกุ่ม
-          กรุงเทพมหานคร 10230
         </p>
-
+        <p class="print-p" style="text-align: center">
+          ใบเสร็จเลขที่ {{ this.order.receiptnumber }}
+        </p>
+        <p class="print-p" style="text-align: center">
+          ชื่อผู้สั่ง : {{ this.order.customer_name }}
+        </p>
+        <p class="print-p" style="text-align: center">
+          ที่อยู่ในการจัดส่ง : {{ this.order.customer_address }}
+        </p>
+        <p class="print-p" style="text-align: center">
+          เบอร์โทร {{ this.order.customer_tel }}
+        </p>
         <br />
       </div>
 
@@ -57,7 +66,7 @@
           </tr>
         </table>
         <table border="0" style="width: 100%" class="print-table">
-          <tr v-for="item in productDetail" :key="item">
+          <tr v-for="(item, index) in order.product_detail" :key="index">
             <td>
               <p>{{ item.quantity }}</p>
             </td>
@@ -69,7 +78,7 @@
         </table>
         <hr class="print-hr" />
         <table border="0" style="width: 100%" class="print-table">
-          <tr v-for="item in productDetail" :key="item">
+          <tr v-for="(item, index) in order.product_detail" :key="index">
             <td style="text-align: left">VAT:0.00%</td>
             <td style="text-align: right">0</td>
           </tr>
@@ -98,8 +107,8 @@ export default {
     console.log(this.productDetail); // ใช้ console.log เพื่อตรวจสอบข้อมูลที่ถูกส่งมา
   },
   methods: {
-    print() {
-      const divContents = document.getElementById("printMe").innerHTML;
+    printorder() {
+      const divContents = document.getElementById("printOrder").innerHTML;
       const a = window.open();
       const css = `<style>
       *{font-family:"Sarabun";}

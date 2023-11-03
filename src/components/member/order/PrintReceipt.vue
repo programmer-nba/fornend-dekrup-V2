@@ -41,47 +41,12 @@
         </p>
         <p class="print-p" style="margin: 0; text-align: center">
           บริษัท ดีครับ คอมเมิร์ช จำกัด <br />
+
           สำนักงานใหญ่ เลขที่ 30/479 ซอยนวมินทร์ 80 แขวงนวลจันทร์ เขตบึงกุ่ม
           กรุงเทพมหานคร 10230
         </p>
 
         <br />
-      </div>
-
-      <div width="500">
-        <!-- รายการ -->
-        <br />
-        <table border="0" style="width: 100%" class="print-table">
-          <tr>
-            <th style="text-align: right">ราคา</th>
-          </tr>
-        </table>
-        <table border="0" style="width: 100%" class="print-table">
-          <tr v-for="item in productDetail" :key="item">
-            <td>
-              <p>{{ item.quantity }}</p>
-            </td>
-            <td>
-              <p>{{ item.product_name }}</p>
-            </td>
-            <td style="text-align: right">{{ item.price }}</td>
-          </tr>
-        </table>
-        <hr class="print-hr" />
-        <table border="0" style="width: 100%" class="print-table">
-          <tr v-for="item in productDetail" :key="item">
-            <td style="text-align: left">VAT:0.00%</td>
-            <td style="text-align: right">0</td>
-          </tr>
-        </table>
-        <!-- ยอดสุดธิ  -->
-        <hr class="print-hr" />
-        <table border="0" style="width: 100%" class="print-table">
-          <tr>
-            <th style="text-align: left">ยอดสุทธิ :</th>
-            <th style="text-align: right">{{ order.totalprice }}</th>
-          </tr>
-        </table>
       </div>
     </div>
   </div>
@@ -92,10 +57,6 @@ export default {
   props: {
     order: Object,
     className: String,
-    productDetail: Object,
-  },
-  mounted() {
-    console.log(this.productDetail); // ใช้ console.log เพื่อตรวจสอบข้อมูลที่ถูกส่งมา
   },
   methods: {
     print() {

@@ -13,9 +13,9 @@ routes = [
     component: () => import("../components/member/MenuProductMember.vue"),
   },
   {
-    path: "/member/order/order",
+    path: "/member/order/OrderMember",
     name: "member-order",
-    component: () => import("../components/member/order/Order.vue"),
+    component: () => import("../components/member/order/OrderMember.vue"),
   },
   {
     path: "/member/profile",

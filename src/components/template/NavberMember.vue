@@ -42,7 +42,7 @@ export default {
                 {
                     label: "รายการสั่งซื้อ",
                     icon: "pi pi-shopping-cart",
-                    to: "/member/order/order",
+                    to: "/member/order/OrderMember",
                 },
                 {
                     label: "รายได้ค่าคอมมิชชั่น",

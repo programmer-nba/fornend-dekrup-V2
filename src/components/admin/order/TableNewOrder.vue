@@ -86,7 +86,7 @@
                                 v-if="getLastStatus(item.data.status) === 'รอตรวจสอบ'" />
                             <Button v-if="getLastStatus(item.data.status) === 'รอตรวจสอบ'" class="p-button-danger mt-2"
                                 icon="pi pi-times" @click="cancelOrder(item.data)" />
-                                <PrintReceipt title="ใบออเดอร์" :order_id="item.data._id" :order="item.data"
+                                <PrintReceipt title="ใบเสร็จรับเงิน" :order_id="item.data._id" :order="item.data" :productDetail="item.data.product_detail"
                             :categoty="item.data.servicename" v-if="getLastStatus(item.data.status) === 'ยืนยันออเดอร์'" />
                         </div>
                     </template>
@@ -116,21 +116,20 @@
 <script>
 import { ConfirmService } from '@/components/lib/OrderService';
 import { datetimeFormat, numberDigitFormat, numberFormat } from '../../lib/function';
-import Order from './Order.vue';
 import OrderDetail from './OrderDetail.vue';
 import PrintReceipt from './PrintReceipt.vue';
+import OrderReceipt from './OrderReceipt.vue';
 
 import dayjs from "dayjs";
 import "dayjs/locale/th";
-// import Swal from 'sweetalert2';
-// import { ref } from "vue";
+
 import axios from 'axios';
 import * as XLSX from "xlsx";
 export default {
     components: {
         OrderDetail,
-        Order,
-        PrintReceipt
+        PrintReceipt,
+        OrderReceipt
     },
     created() {
         document.title = "Order Product | Dekrub Shop";
@@ -165,7 +164,7 @@ export default {
     },
     methods: {
         async getOrder() {
-            await axios.get(`${process.env.VUE_APP_DEKRUP}/order/list`, {
+            await axios.get(`${process.env.VUE_APP_DEKRUP}/order/admin/list`, {
                 headers: {
                     'token': `${localStorage.getItem('token')}`
                 }
