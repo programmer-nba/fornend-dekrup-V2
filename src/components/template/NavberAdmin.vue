@@ -3,9 +3,8 @@
         position: sticky;
         top:0;
         z-index: 100;
-        "
-        >
-        <div class="lg:col-10 md:col-2 col-2  lg:px-8" >
+        ">
+        <div class="lg:col-10 md:col-2 col-2  lg:px-8">
             <Menubar :model="item_manu"
                 class="custom-menu  border-round-3xl p-0 mt-2 w-auto hover:border-2 hover:border-purple-900 flex align-items-center justify-content-center bg-white">
             </Menubar>
@@ -119,7 +118,7 @@ export default {
                             icon: 'pi pi-user',
                             to: "/admin/member",
                         },
-                  
+
                         {
                             label: "ยืนยันตัวตน",
                             icon: 'pi pi-user',
@@ -146,11 +145,11 @@ export default {
                             icon: 'pi pi-plus',
                             to: "/admin/admin/add",
                         },
-                        // {
-                        //     label: "ฟังก์ฺชั่นเพิ่มเติม",
-                        //     icon: 'pi pi-cog',
-                        //     to: "/admin/function",
-                        // },
+                        {
+                            label: "ฟังก์ฺชั่นเพิ่มเติม",
+                            icon: 'pi pi-cog',
+                            to: "/admin/function",
+                        },
                     ],
                 },
             ];
@@ -177,7 +176,6 @@ export default {
 </script>
 
 <style>
-
 .p-menubar .p-submenu-list {
     display: none;
     position: absolute;
@@ -187,12 +185,13 @@ export default {
 
 @media only screen and (max-width:976px) {
     .p-menubar .p-submenu-list {
-    display: none;
-    position: absolute;
-    z-index: 150;
+        display: none;
+        position: absolute;
+        z-index: 150;
+    }
 }
-}
-.p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-content .p-menuitem-link .p-menuitem-text {
+
+.p-menubar .p-menubar-root-list>.p-menuitem>.p-menuitem-content .p-menuitem-link .p-menuitem-text {
     margin-left: 4px;
 }
 </style>

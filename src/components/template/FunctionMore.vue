@@ -4,11 +4,11 @@
             <h1>การจัดการฟังก์ชั่นเพิ่มเติม</h1>
         </div>
     </div>
-    <div class="grid">
+    <!-- <div class="grid">
         <div class="col-12 text-center">
             <Button @click="displayAdd = true">เพิ่มฟังก์ชั่น</Button>
         </div>
-    </div>
+    </div> -->
     <div class="grid">
         <div class="col-12 lg:col-4" v-for="item in item_function" :key="item">
             <div class="surface-section shadow-2 p-5 mt-2">
@@ -378,6 +378,12 @@ export default {
                         detail: "ลบรูปภาพสำเร็จ",
                         life: 3000,
                     });
+                    const data = {
+                        func_detail: this.detail_function.func_detail
+                    }
+                    this.functions.UpdateFunction(data, this.id).then(result => {
+                        console.log(result);
+                    })
                 })
                 .catch((err) => {
                     this.$store.commit("setLoading", false);

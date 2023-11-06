@@ -57,7 +57,7 @@
 
             <div class="col-12 lg:col-6 xl:col-3">
                 <Panel header="ท่านยังไม่ได้ยืนยันสมุดบัญชีธนาคาร" class="custom-header-panel font-profile"
-                    v-if="status_bank === ''">
+                    v-if="status_bank === '-'">
                     <div class="col-12">
                         <Message><strong>เวลาทำการ : </strong> เวลาทำการตรวจสอบ ทุกวัน เวลา 9.00 น. ถึง 18.00 น.
                             หากนอกเวลาทำการจะทำการตรวจสอบในเวลาทำการของวันถัดไป</Message>
@@ -109,7 +109,7 @@
             </div>
             <div class="col-12 lg:col-6 xl:col-3 ">
                 <Panel header="ท่านยังไม่ได้ยืนยันบัตรประชาชน" class="custom-header-panel font-profile"
-                    v-if="status_iden === ''">
+                    v-if="status_iden === '-'">
                     <div class="col-12">
                         <Message><strong>เวลาทำการ : </strong> เวลาทำการตรวจสอบ ทุกวัน เวลา 9.00 น. ถึง 18.00 น.
                             หากนอกเวลาทำการจะทำการตรวจสอบในเวลาทำการของวันถัดไป</Message>
@@ -214,7 +214,6 @@ export default ({
                 };
                 this.$store.commit("setLogin", data_login);
                 this.$store.commit('setLoading', false);
-                console.log(data_login);
                 this.username = data_login.username;
                 this.member_number = data_login.member_number;
                 this.tel = data_login.tel;

@@ -24,24 +24,32 @@
                             <DataView :value="item_product">
                                 <template #list="slotProps">
                                     <div class="col-6  lg:col-12 xl:col-6 mt-5 px-1">
-                                    <div class="background-product" style="padding: 5%;">
-                                        <img :src="`https://drive.google.com/uc?export=view&id=` + slotProps.data.picture" class="img-productCon" />
-                                        <div>
-                                        <h3 style="-webkit-text-stroke:1px;padding-bottom: 30px;">{{ slotProps.data.name }}</h3>
-                                        <Button icon="pi pi-shopping-cart" style="padding: 5px;" class="mb-1 p-button-danger z-0 w-full" label="ใส่ตระกร้า" @click="addprice(slotProps.data)" />
-                                        <Button label="รายละเอียด" severity="warning" style="padding: 5px;" @click="showDetailDialog(slotProps.data)" class="w-full" />
-                                        <Dialog :visible="slotProps.data.showDetail" modal header="รายละเอียดสินค้า" class="size-dialog">
-                                            <img :src="`https://drive.google.com/uc?export=view&id=` + slotProps.data.picture" class="img-productConDialog" />
-                                            <h2>{{ slotProps.data.name }}</h2>
-                                            <p>
-                                            {{ slotProps.data.detail }}
-                                            </p>
-                                            <template #footer>
-                                            <Button label="ปิด" icon="pi pi-times" @click="closeDetailDialog(slotProps.data)" text />
-                                            </template>
-                                        </Dialog>
+                                        <div class="background-product" style="padding: 5%;">
+                                            <img :src="`https://drive.google.com/uc?export=view&id=` + slotProps.data.picture"
+                                                class="img-productCon" />
+                                            <div>
+                                                <h3 style="-webkit-text-stroke:1px;padding-bottom: 30px;">{{
+                                                    slotProps.data.name }}</h3>
+                                                <Button icon="pi pi-shopping-cart" style="padding: 5px;"
+                                                    class="mb-1 p-button-danger z-0 w-full" label="ใส่ตระกร้า"
+                                                    @click="addprice(slotProps.data)" />
+                                                <Button label="รายละเอียด" severity="warning" style="padding: 5px;"
+                                                    @click="showDetailDialog(slotProps.data)" class="w-full" />
+                                                <Dialog :visible="slotProps.data.showDetail" modal header="รายละเอียดสินค้า"
+                                                    class="size-dialog">
+                                                    <img :src="`https://drive.google.com/uc?export=view&id=` + slotProps.data.picture"
+                                                        class="img-productConDialog" />
+                                                    <h2>{{ slotProps.data.name }}</h2>
+                                                    <p>
+                                                        {{ slotProps.data.detail }}
+                                                    </p>
+                                                    <template #footer>
+                                                        <Button label="ปิด" icon="pi pi-times"
+                                                            @click="closeDetailDialog(slotProps.data)" text />
+                                                    </template>
+                                                </Dialog>
+                                            </div>
                                         </div>
-                                    </div>
                                     </div>
                                 </template>
                             </DataView>
@@ -49,7 +57,8 @@
                         <div v-else>
                             <Message><strong>หมายเหตุ : </strong>กรุณาแสกน QR Code ด้านล่างเพื่อชำระเงิน พร้อมแนบสลิป
                             </Message>
-                            <Image :src="require('../../../assets/QRdekrub.jpg')" :preview="true" imageClass="w-full" />
+                            <!-- <Image :src="require('../../../assets/QRdekrub.jpg')" :preview="true" imageClass="w-full" /> -->
+                            <img :src="getImage(images)" width="300" />
                         </div>
                     </div>
                 </Panel>
@@ -59,6 +68,7 @@
                     <div class="grid">
                         <div class="col-12">
                             <!-- <Image :src="require('@/assets/img/scb_bank.jpg')" :preview="true" imageClass="w-full" /> -->
+                            <!-- <img :src="getImage(images)" width="300" /> -->
                         </div>
                     </div>
                     <div class="col-12">
@@ -104,7 +114,7 @@
                 <Panel header="STEP 4 : แจ้งชำระเงิน">
                     <div class="grid">
                         <div class="col-12">
-                            <Checkbox v-model="checked" :binary="true" /> ยอมรับเงื่อนไขการใช้งานและข้อความแจ้งเตือนข้างต้น 
+                            <Checkbox v-model="checked" :binary="true" /> ยอมรับเงื่อนไขการใช้งานและข้อความแจ้งเตือนข้างต้น
                         </div>
                         <div class="col-12">
                             <Button label="ส่งข้อมูลแจ้งชำระเงิน" icon="pi pi-send" @click="confirm()" />
@@ -132,7 +142,7 @@ export default {
     created() {
         document.title = "Order New Member | Dekrub Shop";
     },
-    
+
     data: () => ({
         visible: false,
 
@@ -144,15 +154,19 @@ export default {
         checked: false,
         item_product: [],
 
+        images: null,
     }),
 
     async mounted() {
         await this.getProduct();
-        console.log(localStorage.getItem("token"));
+        const id = "image_qrcode";
+        await axios.get(`${process.env.VUE_APP_DEKRUP}/more/function_more/${id}`,)
+            .then((res) => {
+                this.images = res.data.data.func_detail.reverse();
+            })
     },
 
     methods: {
-        
         async getProduct() {
             this.$store.commit('setLoading', true);
             await this.members.GetProduct().then(result => {
@@ -179,10 +193,10 @@ export default {
 
         chooseImage(event) {
             if (event.files[0].size > 1048576) {
-        // Check if the image size exceeds 1 MB
-        Swal.fire("แจ้งเตือน", "ขนาดรูปภาพเกิน 1 MB", "error");
-        return; // Don't set the image if it exceeds the size limit
-      }
+                // Check if the image size exceeds 1 MB
+                Swal.fire("แจ้งเตือน", "ขนาดรูปภาพเกิน 1 MB", "error");
+                return; // Don't set the image if it exceeds the size limit
+            }
             this.slip_img = event.files[0];
             this.img_preview = event.files[0].objectURL;
         },
@@ -239,7 +253,7 @@ export default {
                 }
             });
         },
-        
+
         showDetailDialog(item) {
             item.showDetail = true;
         },
@@ -272,7 +286,7 @@ export default {
 
 
 <style>
-.background-product{
+.background-product {
     width: 100%;
     margin-left: auto;
     margin-right: auto;
@@ -283,27 +297,28 @@ export default {
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 
-.img-productCon{
+.img-productCon {
     width: 100%;
     margin-left: auto;
     margin-right: auto;
 
 }
 
-.img-productConDialog{
+.img-productConDialog {
     width: 50%;
     margin-right: auto;
     margin-left: auto;
     display: block;
 }
-.size-dialog{
+
+.size-dialog {
     width: 50vw;
 }
 
-@media only screen and (max-width:768px){
-    .size-dialog{
-    width: 80vw;
-}
-    
+@media only screen and (max-width:768px) {
+    .size-dialog {
+        width: 80vw;
+    }
+
 }
 </style>

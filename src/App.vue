@@ -12,6 +12,8 @@
     </div>
     <LoginView v-else />
   </div>
+  <Toast />
+  <ConfirmDialog />
 </template>
 
 <script>
