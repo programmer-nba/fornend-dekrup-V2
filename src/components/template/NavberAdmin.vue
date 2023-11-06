@@ -65,7 +65,7 @@ export default {
                     ],
                 },
                 {
-                    label: "รายการสมาชิกใหม่",
+                    label: "ออเดอร์จากสมาชิกใหม่",
                     icon: 'pi pi-users',
                     to: "/admin/new_member",
                 },
@@ -75,7 +75,7 @@ export default {
                 //     to: "/admin/order",
                 // },
                 {
-                    label: "Order Dekrub",
+                    label: "ออเดอร์จากการซื้อซ้ำ",
                     icon: 'pi pi-shopping-cart',
                     to: "/admin/ordernew",
                 },
@@ -84,28 +84,28 @@ export default {
                     icon: 'pi pi-dollar',
                     items: [
                         {
-                            label: "Commission Register Day",
-                            icon: 'pi pi-user',
+                            label: "ค่าคอมมิชชั่นรายวัน",
+                            icon: 'pi pi-dollar',
                             to: "/admin/commission/register",
                         },
                         {
-                            label: "Commission Register Week",
-                            icon: 'pi pi-user',
+                            label: "ค่าคอมมิชชั่นรายสัปดาห์",
+                            icon: 'pi pi-dollar',
                             to: "/admin/commission/register/week",
                         },
                         {
-                            label: "Commission Adminnister",
-                            icon: 'pi pi-plus',
+                            label: "ค่าคอมมิชชั่นจากการซื้อซ้ำ",
+                            icon: 'pi pi-dollar',
                             to: "/admin/commission/administer",
                         },
                         {
-                            label: "Commission",
-                            icon: 'pi pi-plus',
+                            label: "ค่าคอมมิชชั่นรวม",
+                            icon: 'pi pi-dollar',
                             to: "/admin/commission",
                         },
                         {
-                            label: "จัดการ Percent Commission",
-                            icon: 'pi pi-plus',
+                            label: "จัดการส่วนแบ่งค่าคอมมิชชั่น",
+                            icon: 'pi pi-dollar',
                             to: "/admin/commission/percent",
                         },
                     ],

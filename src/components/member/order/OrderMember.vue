@@ -54,28 +54,21 @@
                         {{ datetimeFormat(item.data.timestamp) }}
                     </template>
                 </Column>
-                <Column header="ใบสั่งสินค้า">
-                    <template #body="item">
-                    
-                    </template>
-                </Column>
                 <Column header="เพิ่มเติม">
                     <template #body="item">
-                        <div class="mt-1 ">
-                    
-                        </div>
+                        <OrderDetail title="รายละเอียด" :order_id="item.data._id" :order="item.data"
+                            :categoty="item.data.servicename" />
                     </template>
                 </Column>
             </DataTable>
         </div>
     </div>
- 
 </template>
 
 <script>
 import { datetimeFormat, numberDigitFormat, numberFormat } from '../../lib/function';
-
-import { OrderMember } from '@/service/order.member';
+import OrderDetail from "@/components/member/order/OrderDetail.vue"
+import { Order } from '@/service/order.member';
 import dayjs from "dayjs";
 import "dayjs/locale/th";
 
@@ -83,19 +76,20 @@ import axios from 'axios';
 
 export default {
     components: {
+        OrderDetail,
     },
     created() {
         document.title = "Order Product | Dekrub Shop";
     },
     setup() {
-        const Order = new OrderMember();
+        const order = new Order();
 
         return {
             isCancelling: false,
             datetimeFormat,
             numberDigitFormat,
             numberFormat,
-            Order,
+            order,
         }
     },
     data: () => ({
@@ -122,30 +116,37 @@ export default {
                 headers: {
                     'token': `${localStorage.getItem('token')}`
                 }
-                
-            }).then((res) => {
+
+            }).then(async (res) => {
                 const order = res.data.data;
-                this.item_order = order.reverse();
+                await this.order.getMe().then(async result => {
+                    this.member_number = result.data.member_number;
+                    const order_product = order.filter(
+                        (item) => item.member_number === this.member_number
+                    )
+                    this.item_order = order_product.reverse();
+                })
             })
         },
 
         async getCommissionWeek() {
-      this.$store.commit('setLoading', true);
-      await this.Order.getMe().then(async result => {
-        this.member_number = result.data.member_number;
-        await this.Order.getOrder().then(result => {
-          const order = result.data;
-          const id = this.member_number;
-          const order_list = order.filter(
-            (item) => item.data[0].member_number === id
-          )
-          this.item_commission = order_list.reverse();
-        })
-      }).catch((err) => {
-        this.$store.commit('setLoading', false);
-        this.$toast.add({ severity: 'error', summary: 'ผิดพลาด', detail: err.response.data.message, life: 3000 })
-      })
-    },
+            this.$store.commit('setLoading', true);
+            await this.order.getMe().then(async result => {
+                this.member_number = result.data.member_number;
+                console.log(this.member_number);
+                await this.order.getOrder().then(result => {
+                    const order = result.data;
+                    const id = this.member_number;
+                    const order_list = order.filter(
+                        (item) => item.data[0].member_number === id
+                    )
+                    this.item_commission = order_list.reverse();
+                })
+            }).catch((err) => {
+                this.$store.commit('setLoading', false);
+                this.$toast.add({ severity: 'error', summary: 'ผิดพลาด', detail: err.response.data.message, life: 3000 })
+            })
+        },
 
         getImage(item) {
             return "https://drive.google.com/uc?export=view&id=" + item;
@@ -209,7 +210,7 @@ export default {
             }
         },
 
-     
+
         filterproduct() {
             if (this.product_id !== "") {
                 const id = this.getCodeProduct(this.product_id);

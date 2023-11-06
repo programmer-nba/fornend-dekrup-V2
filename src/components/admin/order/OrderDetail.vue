@@ -31,7 +31,7 @@
                 </div>
                 <div class="col-12 lg:col-3 " >
 
-                <OrderReceipt title="ใบออเดอร์" :order="order" :productDetail="productDetail"/>
+                <!-- <OrderReceipt title="ใบออเดอร์" :order="order" :productDetail="productDetail"/> -->
             </div> 
         </div>
         
@@ -71,12 +71,12 @@
 </template>
 
 <script>
-import OrderReceipt from './OrderReceipt.vue';
+// import OrderReceipt from './OrderReceipt.vue';
 
 import { datetimeFormat, numberDigitFormat, numberFormat, getImage } from '../../lib/function';
 export default {
     components: {
-        OrderReceipt
+        // OrderReceipt
     },
     setup() {
         return { datetimeFormat, numberDigitFormat, numberFormat, getImage }

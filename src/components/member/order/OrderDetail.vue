@@ -76,12 +76,12 @@
 </template>
 
 <script>
-import Order from './Order.vue';
+// import Order from './Order.vue';
 
 import { datetimeFormat, numberDigitFormat, numberFormat, getImage } from '../../lib/function';
 export default {
     components: {
-        Order
+        // Order
     },
     setup() {
         return { datetimeFormat, numberDigitFormat, numberFormat, getImage }

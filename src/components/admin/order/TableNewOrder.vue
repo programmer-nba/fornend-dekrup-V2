@@ -23,7 +23,8 @@
             <Button label="Clear All" class="p-button-text p-button-plain" @click="clear"></Button>
         </div>
         <div class="col-12 lg:col-1 ">
-            <Button icon="pi pi-file-export" label="Export" @click="exportCSV()" class="mr-2 border-red-600" style="background-color: #c21010"></Button>
+            <Button icon="pi pi-file-export" label="Export" @click="exportCSV()" class="mr-2 border-red-600"
+                style="background-color: #c21010"></Button>
         </div>
     </div>
     <div class="grid mt-2">
@@ -75,8 +76,8 @@
                 </Column>
                 <Column header="ใบสั่งสินค้า">
                     <template #body="item">
-                        <OrderDetail title="รายละเอียด" :order_id="item.data._id" :order="item.data"
-                            :categoty="item.data.servicename" v-if="getLastStatus(item.data.status) === 'ยืนยันออเดอร์'" />
+                        <OrderDetail title="รายละเอียด" :order="item.data"
+                            v-if="getLastStatus(item.data.status) === 'ยืนยันออเดอร์'" />
                     </template>
                 </Column>
                 <Column header="เพิ่มเติม">
@@ -86,8 +87,8 @@
                                 v-if="getLastStatus(item.data.status) === 'รอตรวจสอบ'" />
                             <Button v-if="getLastStatus(item.data.status) === 'รอตรวจสอบ'" class="p-button-danger mt-2"
                                 icon="pi pi-times" @click="cancelOrder(item.data)" />
-                                <PrintReceipt title="ใบเสร็จรับเงิน" :order_id="item.data._id" :order="item.data" :productDetail="item.data.product_detail"
-                            :categoty="item.data.servicename" v-if="getLastStatus(item.data.status) === 'ยืนยันออเดอร์'" />
+                            <PrintReceipt title="ใบเสร็จรับเงิน" :order="item.data"
+                                v-if="getLastStatus(item.data.status) === 'ยืนยันออเดอร์'" />
                         </div>
                     </template>
                 </Column>
@@ -168,7 +169,7 @@ export default {
                 headers: {
                     'token': `${localStorage.getItem('token')}`
                 }
-                
+
             }).then((res) => {
                 const order = res.data.data;
                 this.item_order = order.reverse();

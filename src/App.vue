@@ -10,7 +10,7 @@
     <div v-if="$route.path === '/register' || $route.path === '/forgetpassword'">
       <router-view />
     </div>
-    <LoginView v-else/>
+    <LoginView v-else />
   </div>
 </template>
 
@@ -59,19 +59,19 @@ export default {
             }
           }
           if (this.$store.getters.position === 'admin') {
-              this.$router.push("/admin");
-            }
-              })
-              .catch(() => {
-                localStorage.clear();
-                this.$store.commit('setLoading', false);
-                this.$store.commit("setDefaultLogin");
-                this.$router.push("/login");
-              });
-        } else {
+            this.$router.push("/admin");
+          }
+        })
+        .catch(() => {
           localStorage.clear();
+          this.$store.commit('setLoading', false);
+          this.$store.commit("setDefaultLogin");
           this.$router.push("/login");
-        }
-      },
+        });
+    } else {
+      localStorage.clear();
+      this.$router.push("/login");
     }
+  },
+}
 </script>

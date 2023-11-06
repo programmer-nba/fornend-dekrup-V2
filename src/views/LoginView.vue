@@ -8,14 +8,15 @@
           <InputText id="username" v-model="value" placeholder="ชื่อผู้ใช้งาน"  aria-describedby="username-help" />
         </div> -->
         <span class="p-float-label w-full">
-          <InputText v-model="username" type="text" placeholder="ชื่อผู้ใช้งาน"  @keyup.enter="checklogin()" />
+          <InputText v-model="username" type="text" placeholder="ชื่อผู้ใช้งาน" @keyup.enter="checklogin()" />
           <label for="username">กรุณากรอกยูสเซอร์เนม</label>
         </span>
       </div>
       <div class="flex justify-content-center mb-1">
-        
+
         <span class="p-float-label">
-          <Password v-model="password" :feedback="false" placeholder="กรุณากรอกรหัสผ่าน" inputId="password"  class="w-full" @keyup.enter="checklogin()"/>
+          <Password v-model="password" :feedback="false" placeholder="กรุณากรอกรหัสผ่าน" inputId="password" class="w-full"
+            @keyup.enter="checklogin()" />
           <!-- <InputText v-model="password" type="text" placeholer="รหัสผ่าน" /> -->
           <!-- <InputText v-model="password" inputId="password" :feedback="false" class="w-full" togleMask /> -->
           <label for="password">กรุณากรอกรหัสผ่าน</label>
@@ -26,7 +27,7 @@
           <p @click="$router.push('/register')" class="cursor">สมัครสมาชิก</p>
         </div>
         <div class="font-color">
-          <p  @click="$router.push('/forgetpassword')" class="cursor">ลืมรหัสผ่าน</p>
+          <p @click="$router.push('/forgetpassword')" class="cursor">ลืมรหัสผ่าน</p>
         </div>
       </div>
       <div class="flex justify-content-center">
@@ -91,16 +92,20 @@ export default {
 </script>
     
 <style>
-.p-input-icon-left, .p-input-icon-right {
-    position: initial !important;
-    display: inline-block;
+.p-input-icon-left,
+.p-input-icon-right {
+  position: initial !important;
+  display: inline-block;
 }
-.cursor{
+
+.cursor {
   cursor: pointer;
 }
-.cursor:hover{
+
+.cursor:hover {
   color: rgb(255, 196, 0);
 }
+
 .img-login {
   width: 100%;
   background: url("../assets/img/backgrond.jpg");
@@ -168,5 +173,4 @@ export default {
   .font-color {
     color: #db0000;
   }
-}
-</style>
+}</style>

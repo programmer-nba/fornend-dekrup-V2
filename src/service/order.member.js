@@ -28,9 +28,6 @@ export class Order {
     return data;
   }
 
-
-
-
   //get me
   async getMe() {
     let data;

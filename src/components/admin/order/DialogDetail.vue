@@ -1,18 +1,8 @@
 <template>
-  <Button
-    label="รายละเอียด"
-    class="p-button-outlined p-button-sm p-button-info text-sm mr-2"
-    icon="pi pi-search"
-    @click="(displayDetail = true), open_display()"
-  />
-  <Dialog
-    header="ลายละเอียด"
-    v-model:visible="displayDetail"
-    :breakpoints="{ '960px': '75vw', '640px': '90vw' }"
-    :style="{ width: '45vw' }"
-    :modal="true"
-    :closeOnEscape="true"
-  >
+  <Button label="รายละเอียด" class="p-button-outlined p-button-sm p-button-info text-sm mr-2" icon="pi pi-search"
+    @click="(displayDetail = true), open_display()" />
+  <Dialog header="ลายละเอียด" v-model:visible="displayDetail" :breakpoints="{ '960px': '75vw', '640px': '90vw' }"
+    :style="{ width: '45vw' }" :modal="true" :closeOnEscape="true">
     <div class="loading" v-if="isLoading === true">
       <div class="spinner"></div>
     </div>
@@ -26,12 +16,8 @@
           <td class="font-medium text-base text-600">ร้านค้า</td>
           <td>
             <div class="flex align-items-center">
-              <img
-                :src="logo + get_img(order.shop_id)"
-                alt="Image"
-                class="inline mr-2"
-                style="height: 1.5rem; width: 1.5rem"
-              />
+              <img :src="logo + get_img(order.shop_id)" alt="Image" class="inline mr-2"
+                style="height: 1.5rem; width: 1.5rem" />
               <span class="font-medium text-base text-900">
                 {{ get_Shopname(order.shop_id) }}
               </span>
@@ -48,10 +34,7 @@
         <tr style="height: 2.5rem">
           <td class="font-medium text-base text-600">สถานะ</td>
           <td>
-            <Tag
-              :class="status(order.status_now)"
-              :value="order.status_now"
-            ></Tag>
+            <Tag :class="status(order.status_now)" :value="order.status_now"></Tag>
           </td>
         </tr>
         <tr style="height: 2.5rem" v-if="order.tracking_code !== 'ไม่มี'">
@@ -94,57 +77,26 @@
       </table>
       <Divider />
     </div>
-    <template
-      #footer
-      v-if="
-        order.status_now !== 'ระหว่างจัดส่ง' &&
-        order.status_now !== 'นำเข้าสต๊อก'
-      "
-    >
-      <Button
-        label="No"
-        icon="pi pi-times"
-        @click="displayDetail = false"
-        class="p-button-text"
-      />
-      <Button
-        label="ยืนยันการส่งของ"
-        icon="pi pi-check"
-        @click="open_displayTraking"
-        autofocus
-      />
+    <template #footer v-if="order.status_now !== 'ระหว่างจัดส่ง' &&
+      order.status_now !== 'นำเข้าสต๊อก'
+      ">
+      <Button label="No" icon="pi pi-times" @click="displayDetail = false" class="p-button-text" />
+      <Button label="ยืนยันการส่งของ" icon="pi pi-check" @click="open_displayTraking" autofocus />
     </template>
   </Dialog>
 
   <!-- เพิ่ม Traking -->
 
-  <Dialog
-    header="ยืนยันการส่งของ"
-    v-model:visible="displayTracking"
-    :breakpoints="{ '960px': '75vw', '640px': '90vw' }"
-    :style="{ width: '25vw' }"
-  >
+  <Dialog header="ยืนยันการส่งของ" v-model:visible="displayTracking" :breakpoints="{ '960px': '75vw', '640px': '90vw' }"
+    :style="{ width: '25vw' }">
     <div class="field">
       <label for="tracking_code">Tracking Code</label>
-      <Dropdown
-        id="tracking_code"
-        v-model="tracking_code"
-        :options="courier"
-        optionLabel="name"
-        optionValue="code"
-        :editable="true"
-        class="w-full"
-        :filter="true"
-      />
+      <Dropdown id="tracking_code" v-model="tracking_code" :options="courier" optionLabel="name" optionValue="code"
+        :editable="true" class="w-full" :filter="true" />
     </div>
     <div class="field">
       <label for="tracking_number">Tracking Number</label>
-      <InputText
-        id="tracking_number"
-        type="text"
-        v-model="tracking_number"
-        class="w-full"
-      />
+      <InputText id="tracking_number" type="text" v-model="tracking_number" class="w-full" />
     </div>
     <template #footer>
       <Button label="ตกลง" @click="confirmOrder" />
@@ -319,6 +271,7 @@ const numberFormat = (number) => {
   justify-content: center;
   height: 100vh;
 }
+
 .spinner {
   border: 4px solid #f3f3f3;
   border-top: 4px solid #3498db;
@@ -332,6 +285,7 @@ const numberFormat = (number) => {
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
@@ -344,11 +298,13 @@ const numberFormat = (number) => {
   padding: 10px;
   border-radius: 5px;
 }
+
 th,
 td {
   padding: 5px;
   text-align: left;
 }
+
 th {
   background-color: #960e8f;
   font-weight: bold;
