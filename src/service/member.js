@@ -68,23 +68,25 @@ export class Member {
 
   //reset password
   async ResetPassword(packageData) {
-    let data;
+    // let data;
+    let response;
+    let err;
     const config = {
       method: "post",
-      url: `${this.#baseUrl}/reset_password`,
+      url: `${this.#baseUrl}/forgot_password`,
       data: packageData,
     };
     await axios(config)
       .then((result) => {
         if (result) {
-          data = result.data;
+          response = result.data;
         }
       })
       .catch((error) => {
-        data = error;
+        err = error;
       });
 
-    return data;
+    return err, response;
   }
 
   //set password

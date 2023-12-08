@@ -17,23 +17,25 @@
                 <dic class="col-12 lg:col-6">
                     <Card class="border-1 shadow-none">
                         <template #content>
-                            <p><strong>ชื่อลูกค้า : </strong>{{ order.customer_name }}</p>
-                            <p><strong>เบอร์โทร : </strong>{{ order.customer_tel }}</p>
-                            <p><strong>ที่อยู่จัดส่ง : </strong>{{ order.customer_address }}</p>
+                            <p><strong>ชื่อลูกค้า : </strong>{{ member.name }}</p>
+                            <p><strong>เบอร์โทร : </strong>{{ member.tel }}</p>
+                            <p><strong>ที่อยู่จัดส่ง : </strong>{{ member.address }}, {{ member.subdistrict }}, {{
+                                member.district }}, {{ member.province }}, {{ member.postcode }}</p>
                         </template>
                     </Card>
                 </dic>
                 <div class="col-12 lg:col-3">
                     <Card class="pb-0 border-1 border-blue-500 bg-blue-500 text-white text-center">
-                        <template #title>{{ numberFormat(order.totalprice) }}
+                        <template #title>{{ numberDigitFormat(order.amount) }}
                             <small>บาท</small></template>
                         <template #content>ยอดรวมในใบเสร็จ</template>
                     </Card>
                 </div>
                 <div class="col-12 lg:col-3 ">
-                    <PrintReceipt title="ใบเสร็จรับเงิน" :order="order" :productDetail="productDetail"/>
+                    <OrderReceipt title="ใบเสร็จรับเงิน" :order="order" />
                 </div>
             </div>
+
             <div class="grid">
                 <div class="col-12">
                     <DataTable :value="order.product_detail" :paginator="true" :rows="10">
@@ -70,18 +72,18 @@
 </template>
 
 <script>
-import PrintReceipt from './PrintReceipt.vue';
-
+import OrderReceipt from './OrderReceipt.vue';
 import { datetimeFormat, numberDigitFormat, numberFormat, getImage } from '../../lib/function';
+import axios from 'axios';
 export default {
     components: {
-        PrintReceipt,
+        OrderReceipt
     },
     setup() {
         return { datetimeFormat, numberDigitFormat, numberFormat, getImage }
     },
     props: {
-        order_id: String,
+        member_number: String,
         order: Object,
         title: String,
     },
@@ -89,11 +91,33 @@ export default {
     data: () => ({
         sidebar: false,
         loading: false,
+
+        member: "",
     }),
     methods: {
         async getOrder() {
             this.loading = false;
             this.sidebar = true;
+            console.log(this.order.member_number)
+            await axios.get(`${process.env.VUE_APP_DEKRUP}/member`,
+                {
+                    headers: {
+                        'token': localStorage.getItem('token'),
+                    },
+                }).then(async (res) => {
+                    const data = res.data.data;
+                    const members = data.filter(
+                        (item) => item.member_number === this.member_number
+                    )
+                    await axios.get(`${process.env.VUE_APP_DEKRUP}/member/${members[0]._id}`, {
+                        headers: {
+                            'token': localStorage.getItem('token'),
+                        },
+                    }).then(res => {
+                        this.member = res.data.data;
+                        console.log(this.member)
+                    })
+                })
         },
 
         getLastStatus(item) {

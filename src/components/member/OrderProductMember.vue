@@ -231,7 +231,7 @@
                 <div class="field">
                   <!-- <Image :src="require('../../assets/QRdekrub.jpg')" :preview="true" width="300"
                     v-if="img_preview === null" /> -->
-                  <img :src="getImage(images)" width="300" v-if="img_preview === null"  />
+                  <img :src="getImage(images)" width="300" v-if="img_preview === null" />
                   <!-- <label v-if="!img_preview" class="file-input-label">
                     <FileUpload mode="basic" :auto="true" chooseLabel="แนบรูปภาพหลักฐานการโอน" uploadIcon="pi pi-paperclip"
                     class="input-image" @change="SetImage"/>
@@ -261,18 +261,43 @@
       </div>
     </div>
   </div>
+
+  <!--dialog แสดงเงินทอน-->
+  <Dialog :aria-current="true" v-model:visible="dialogChange" :modal="true" :closable="false"
+    :style="{ width: '25vw' }" :breakpoints="{ '960px': '75vw', '640px': '100vw' }">
+    <div class="grid">
+      <div class="col-12">
+        <div class="grid">
+          <div class="col-12 mt-2">
+            <PrintReceipt :order="res.data" className="w-full" />
+          </div>
+        </div>
+        <div class="grid">
+          <div class="col-12 lg:col-6">
+            <Button label="ทำรายการต่อ" icon="pi pi-sync" class="p-button-secondary p-button-outlined w-full"
+              @click="again()" />
+          </div>
+          <div class="col-12 lg:col-6">
+            <Button label="หน้าหลัก" class="p-button-outlined w-full" icon="pi pi-home" @click="$router.push('/')" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </Dialog>
 </template>
 
 <script>
 import axios from "axios";
 import Dialog from "primevue/dialog";
 import Swal from "sweetalert2";
+import PrintReceipt from "./PrintReceipt/PrintceiptOrder.vue"
 import { useToast } from "vue-toastification";
 import { Product } from "../../service/product";
 
 export default {
   components: {
     Dialog,
+    PrintReceipt
   },
   setup() {
     const toast = useToast();
@@ -281,6 +306,7 @@ export default {
   },
   data: () => ({
     loadingMoneySlip: false,
+    dialogChange: false,
 
     visible: false,
     isDisabled: false,
@@ -619,7 +645,9 @@ export default {
             showConfirmButton: false, // ไม่แสดงปุ่ม "OK"
             timer: 1500,
           }).then(() => {
-            window.location.reload();
+            console.log(this.res);
+            this.dialogChange = true;
+            // window.location.reload();
           });
         } catch (error) {
           this.loadingMoneySlip = false; // ปิดการโหลดในกรณีที่มีข้อผิดพลาด
@@ -631,6 +659,10 @@ export default {
     clearCart() {
       window.location.reload();
     },
+
+    again() {
+      window.location.reload();
+    }
   },
 };
 </script>

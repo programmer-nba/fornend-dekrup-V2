@@ -47,15 +47,15 @@
         <table border="0" style="width:100%" class="print-table">
           <tr>
             <td style="text-align:left">ราคาก่อนหักภาษี :</td>
-            <td style="text-align:right">{{ numberDigitFormat(order.totalprice) }}</td>
+            <td style="text-align:right">{{ numberDigitFormat(order.amount) }}</td>
           </tr>
           <tr>
             <td style="text-align:left">VAT:0.00%</td>
-            <td style="text-align:right;">{{ numberDigitFormat((order.totalprice * 0) / 107) }}</td>
+            <td style="text-align:right;">{{ numberDigitFormat((order.amount * 0) / 107) }}</td>
           </tr>
           <tr>
             <th style="text-align:left">ยอดสุทธิ :</th>
-            <th style="text-align:right">{{ numberDigitFormat(order.totalprice) }}</th>
+            <th style="text-align:right">{{ numberDigitFormat(order.amount) }}</th>
           </tr>
         </table>
       </div>
@@ -71,12 +71,11 @@ export default {
     LogoImg
   },
   props: {
-    order: Object,
-    className: String,
-    productDetail: Object,
+    order: Object
   },
   mounted() {
-    console.log(this.productDetail); // ใช้ console.log เพื่อตรวจสอบข้อมูลที่ถูกส่งมา
+    // console.log(this.order);
+    // console.log(this.productDetail);
   },
   methods: {
     datetimeFormat(date) {
@@ -91,6 +90,7 @@ export default {
     },
 
     print() {
+      console.log(this.order);
       const divContents = document.getElementById("printMe").innerHTML;
       const a = window.open();
       const css = `<style>
@@ -105,6 +105,7 @@ export default {
         "<link href='https://fonts.googleapis.com/css?family=Sarabun' rel='stylesheet'>"
       );
       a.document.write(css);
+      a.document.write(`<title>ใบเสร็จเลขที่ ${this.order.receiptnumber}</title>`);
       a.document.write("<body>");
       a.document.write('<div class="page">');
       a.document.write(divContents);

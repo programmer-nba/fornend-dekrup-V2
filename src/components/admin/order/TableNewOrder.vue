@@ -74,12 +74,6 @@
                         {{ datetimeFormat(item.data.timestamp) }}
                     </template>
                 </Column>
-                <Column header="ใบสั่งสินค้า">
-                    <template #body="item">
-                        <OrderDetail title="รายละเอียด" :order="item.data"
-                            v-if="getLastStatus(item.data.status) === 'ยืนยันออเดอร์'" />
-                    </template>
-                </Column>
                 <Column header="เพิ่มเติม">
                     <template #body="item">
                         <div class="mt-1 ">
@@ -87,7 +81,7 @@
                                 v-if="getLastStatus(item.data.status) === 'รอตรวจสอบ'" />
                             <Button v-if="getLastStatus(item.data.status) === 'รอตรวจสอบ'" class="p-button-danger mt-2"
                                 icon="pi pi-times" @click="cancelOrder(item.data)" />
-                            <PrintReceipt title="ใบเสร็จรับเงิน" :order="item.data"
+                            <OrderDetail title="รายละเอียด" :order="item.data"
                                 v-if="getLastStatus(item.data.status) === 'ยืนยันออเดอร์'" />
                         </div>
                     </template>
@@ -118,8 +112,6 @@
 import { ConfirmService } from '@/components/lib/OrderService';
 import { datetimeFormat, numberDigitFormat, numberFormat } from '../../lib/function';
 import OrderDetail from './OrderDetail.vue';
-import PrintReceipt from './PrintReceipt.vue';
-import OrderReceipt from './OrderReceipt.vue';
 
 import dayjs from "dayjs";
 import "dayjs/locale/th";
@@ -129,8 +121,6 @@ import * as XLSX from "xlsx";
 export default {
     components: {
         OrderDetail,
-        PrintReceipt,
-        OrderReceipt
     },
     created() {
         document.title = "Order Product | Dekrub Shop";

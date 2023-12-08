@@ -124,15 +124,33 @@
             </div>
         </div>
     </div>
+
+    <!--dialog แสดงเงินทอน-->
+    <Dialog :aria-current="true" v-model:visible="dialogChange" header="ทำรายการเสร็จสิ้น" :modal="true" :closable="false" :style="{ width: '25vw' }"
+        :breakpoints="{ '960px': '75vw', '640px': '100vw' }">
+        <div class="grid">
+            <div class="col-12">
+                <div class="grid mt-2">
+                    <div class="col-6">
+                        <PrintReceipt :order="res" className="w-full" />
+                    </div>
+                    <div class="col-6">
+                        <Button class="p-button-danger z-0" label="ออกจากระบบ" icon="pi pi-power-off" @click="logout()" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </Dialog>
 </template>
 
 <script>
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { Member } from "../../../service/member";
+import PrintReceipt from "../PrintReceipt/PrintReceiptMember.vue"
 export default {
     components: {
-        Member,
+        PrintReceipt
     },
     setup() {
         const members = new Member();
@@ -145,6 +163,7 @@ export default {
 
     data: () => ({
         visible: false,
+        dialogChange: false,
 
         member_number: '',
         amount: 0,
@@ -155,6 +174,8 @@ export default {
         item_product: [],
 
         images: null,
+
+        res: '',
     }),
 
     async mounted() {
@@ -238,18 +259,20 @@ export default {
 
             await this.members.orderNewMember(formData).then(async (result) => {
                 if (result) {
-                    console.log(result);
                     this.loading = false;
-                    this.$store.commit('setLoginDefault');
+                    this.res = result.data;
+                    this.dialogChange = true;
+                    // this.$store.commit('setLoginDefault');
 
-                    Swal.fire({
-                        title: 'แจ้งชำระเงินเรียบร้อย',
-                        text:
-                            'รอการตรวจสอบจากส่วนกลางในวันเวลาทำการภายใน 10-15 นาที',
-                        showConfirmButton: true,
-                    }).then(() => {
-                        window.location.reload('/');
-                    });
+                    // Swal.fire({
+                    //     title: 'แจ้งชำระเงินเรียบร้อย',
+                    //     text:
+                    //         'รอการตรวจสอบจากส่วนกลางในวันเวลาทำการภายใน 10-15 นาที',
+                    //     showConfirmButton: true,
+                    // }).then(() => {
+                    //     window.location.reload('/');
+
+                    // });
                 }
             });
         },

@@ -58,6 +58,7 @@
           {{ datetimeFormat(Props.data.timestamp) }}
         </template>
       </Column>
+
       <Column header="ตัวเลือก" style="width: 15%">
         <template #body="item">
           <Button class="p-button-rounded icon-confirm  p-button-icon mr-2" @click="confirmOrder(item.data)"
@@ -86,6 +87,11 @@
 
         </template>
       </Column>
+      <Column header="ใบสั่งสินค้า">
+        <template #body="item">
+          <OrderDetail title="รายละเอียด" :member_number="item.data.member_number" :order="item.data" v-if="getLastStatus(item.data.status) === 'ยืนยันออเดอร์'" />
+        </template>
+      </Column>
     </DataTable>
 
     <Dialog v-model:visible="displayOrderDetail" :breakpoints="{ '960px': '75vw', '640px': '90vw' }"
@@ -94,19 +100,14 @@
         <div v-for="(product, index) in selectedOrder.product_detail" :key="index">
           <p class="text-center product-name">{{ product.product_name }}</p>
           <p class="text-center product-detail">รายละเอียด </p>
-
           <p class="text-center description">{{ product.product_detail }}</p>
-
-
           <ul style="list-style-type: none; padding: 0;">
             <li><strong class="description">จำนวน:</strong> {{ product.quantity }}</li>
             <li><strong class="description">ราคา:</strong> {{ product.price }}</li>
             <li><strong class="description">รวม:</strong> {{ product.totalprice }}</li>
           </ul>
         </div>
-
       </div>
-
       <template #footer>
         <Button label="ปิด" class="border-red-600 close" @click="closeOrderDetailDialog" />
       </template>
@@ -119,14 +120,14 @@
 import { ConfirmService } from '@/components/lib/OrderService';
 import axios from 'axios';
 import dayjs from "dayjs";
-import "dayjs/locale/th";
 import Swal from 'sweetalert2';
-import { ref } from "vue";
+import OrderDetail from "./OrderDetail.vue"
 import * as XLSX from "xlsx";
 export default {
+  components: {
+    OrderDetail,
+  },
   setup() {
-    const isLoading = ref(false);
-
     const OrderService = new ConfirmService();
     return {
       OrderService,
@@ -630,5 +631,6 @@ export default {
   align-items: center;
   padding: 0px;
   /* ปรับระยะขอบต่าง ๆ ตามที่คุณต้องการ */
-}</style>
+}
+</style>
 
