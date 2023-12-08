@@ -66,6 +66,9 @@ export default createStore({
     setLoading(state, item){
       state.isLoading = item;
     },
+    setToken(state, item){
+      state.token = item;
+    },
     setLogin(state,item){
       (state.logedIn = item.logedIn),
       (state.name = item.name),

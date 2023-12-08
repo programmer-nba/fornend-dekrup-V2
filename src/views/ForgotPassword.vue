@@ -80,13 +80,15 @@ export default {
           life: 3000,
         })
       }
+      const data = {
+        member_number: this.member_number,
+        phone: this.phone,
+        password: this.password,
+      }
       await axios
-        .post(`${process.env.VUE_APP_DEKRUP}/forgot_password`, {
-          member_number: this.member_number,
-          phone: this.phone,
-          password: this.password,
-        })
-        .then(() => {
+        .post(`${process.env.VUE_APP_DEKRUP}/forgot_password`, data)
+        .then((res) => {
+          console.log(res)
           this.isLoading = false;
           this.$toast.add({
             severity: "success",
@@ -96,7 +98,8 @@ export default {
           })
           window.location.reload('/');
         })
-        .catch(() => {
+        .catch((err) => {
+          console.log(err)
           this.isLoading = false;
           this.$toast.add({
             severity: "warn",

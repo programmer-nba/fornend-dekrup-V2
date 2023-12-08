@@ -112,7 +112,7 @@
 import { ConfirmService } from '@/components/lib/OrderService';
 import { datetimeFormat, numberDigitFormat, numberFormat } from '../../lib/function';
 import OrderDetail from './OrderDetail.vue';
-
+import jwtDecode from "jwt-decode";
 import dayjs from "dayjs";
 import "dayjs/locale/th";
 
@@ -264,18 +264,19 @@ export default {
                 return false
             }
             await axios
-                .put(`${process.env.VUE_APP_DEKRUP}/order/confirm/${id}`, {
+                .put(`${process.env.VUE_APP_DEKRUP}/order/confirm/${id}`, null, {
                     headers: {
-                        'token': `${localStorage.getItem('token')}`
+                        'token': `${this.$store.getters.token}`
                     },
                 })
-                .then(() => {
+                .then(async () => {
                     this.$toast.add({
                         severity: "success",
                         summary: "สำเร็จ",
                         detail: "ยืนยันการรับออเดอร์สำเร็จ",
                         life: 3000,
                     });
+                    await this.getOrder();
                 })
                 .catch(() => {
                     this.$toast.add({
@@ -295,6 +296,7 @@ export default {
                 this.$toast.add({ severity: 'error', summary: 'ผิดพลาด', detail: 'รายการนี้ถูกดำเนินการเรียบร้อยแล้ว', life: 3000 })
                 return false
             }
+            
             await axios
                 .put(`${process.env.VUE_APP_DEKRUP}/order/cancel/${id}`, {
                     headers: {

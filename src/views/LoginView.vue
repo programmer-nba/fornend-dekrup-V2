@@ -78,6 +78,7 @@ export default {
           this.isLoading = false;
           this.toast.success("ยินดีต้อนรับเข้าสู่ DKRUB");
           localStorage.setItem("token", res.data.token);
+          this.$store.commit("setLogin", res.data.tolken);
           window.location.reload('/');
         })
         .catch(() => {
