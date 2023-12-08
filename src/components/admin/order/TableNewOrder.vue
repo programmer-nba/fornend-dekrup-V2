@@ -287,7 +287,6 @@ export default {
                 });
         },
 
-        //รับออเดอร์
         async cancelOrder(item) {
             const id = item._id;
             const status = this.getLastStatus(item.status);
@@ -296,16 +295,28 @@ export default {
                 this.$toast.add({ severity: 'error', summary: 'ผิดพลาด', detail: 'รายการนี้ถูกดำเนินการเรียบร้อยแล้ว', life: 3000 })
                 return false
             }
-            await this.OrderService.cancelOrder(id).then(async (result) => {
-                await this.getOrder();
-                console.log(result)
-                this.$toast.add({
-                    severity: "success",
-                    summary: "สำเร็จ",
-                    detail: "ยืนยันการยกเลิกออเดอร์สำเร็จ",
-                    life: 3000,
+            await axios
+                .put(`${process.env.VUE_APP_DEKRUP}/order/cancel/${id}`, {
+                    headers: {
+                        'token': localStorage.getItem('token'),
+                    },
+                })
+                .then(() => {
+                    this.$toast.add({
+                        severity: "success",
+                        summary: "สำเร็จ",
+                        detail: "ยกเลิกออเดอร์สำเร็จ",
+                        life: 3000,
+                    });
+                })
+                .catch(() => {
+                    this.$toast.add({
+                        severity: "danger",
+                        summary: "ไม่สำเร็จ",
+                        detail: "ยกเลิกออเดอร์ไม่สำเร็จ",
+                        life: 3000,
+                    });
                 });
-            })
         },
 
         clear() {
