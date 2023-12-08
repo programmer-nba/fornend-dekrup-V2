@@ -4,12 +4,17 @@
       <img class="img-logo" src="../assets/img/Deekrub.png">
       <h2 class="text-center font-reset mb-3">เปลี่ยนรหัสผ่านใหม่</h2>
       <div class="grid">
+        <div class="col-12 text-center">
+          <small><strong>หมายเหตุ :</strong> กรณีไม่ทราบ ไอดีสมาชิก หรือ ลืมเบอร์โทรศัพท์ที่สมัครกรุณาติดต่อแอดมิน</small>
+        </div>
+      </div>
+      <div class="grid">
         <div class=" col-12">
           <div class="p-inputgroup flex-1">
             <span class="p-inputgroup-addon">
               <i class="pi pi-user"></i>
             </span>
-            <InputText v-model="member_number" :feedback="false" placeholder="รหัสสมาชิก" class="style-font" />
+            <InputText v-model="username" :feedback="false" placeholder="ไอดีสมาชิก" class="style-font" />
           </div>
         </div>
         <div class=" col-12">
@@ -60,7 +65,7 @@ export default {
     return { members }
   },
   data: () => ({
-    member_number: '',
+    username: '',
     password: '',
     confirmpassword: '',
     phone: '',
@@ -81,7 +86,7 @@ export default {
         })
       }
       const data = {
-        member_number: this.member_number,
+        username: this.username,
         phone: this.phone,
         password: this.password,
       }
