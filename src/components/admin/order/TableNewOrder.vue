@@ -298,7 +298,7 @@ export default {
             await axios
                 .put(`${process.env.VUE_APP_DEKRUP}/order/cancel/${id}`, {
                     headers: {
-                        'token': localStorage.getItem('token'),
+                        'token': `${localStorage.getItem('token')}`
                     },
                 })
                 .then(() => {
