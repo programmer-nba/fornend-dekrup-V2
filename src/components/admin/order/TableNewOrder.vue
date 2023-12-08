@@ -279,7 +279,7 @@ export default {
                 })
                 .catch(() => {
                     this.$toast.add({
-                        severity: "danger",
+                        severity: "warn",
                         summary: "ไม่สำเร็จ",
                         detail: "ยืนยันการรับออเดอร์ไม่สำเร็จ",
                         life: 3000,
@@ -311,7 +311,7 @@ export default {
                 })
                 .catch(() => {
                     this.$toast.add({
-                        severity: "danger",
+                        severity: "warn",
                         summary: "ไม่สำเร็จ",
                         detail: "ยกเลิกออเดอร์ไม่สำเร็จ",
                         life: 3000,
