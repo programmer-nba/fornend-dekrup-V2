@@ -266,7 +266,7 @@ export default {
             await axios
                 .put(`${process.env.VUE_APP_DEKRUP}/order/confirm/${id}`, null, {
                     headers: {
-                        'token': `${this.$store.getters.token}`
+                        'token': `${localStorage.getItem('token')}`
                     },
                 })
                 .then(async () => {
