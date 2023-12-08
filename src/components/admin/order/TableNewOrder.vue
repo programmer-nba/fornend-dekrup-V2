@@ -263,16 +263,28 @@ export default {
                 this.$toast.add({ severity: 'error', summary: 'ผิดพลาด', detail: 'รายการนี้ถูกดำเนินการเรียบร้อยแล้ว', life: 3000 })
                 return false
             }
-            await this.OrderService.confirmOrder(id).then(async (result) => {
-                await this.getOrder();
-                console.log(result)
-                this.$toast.add({
-                    severity: "success",
-                    summary: "สำเร็จ",
-                    detail: "ยืนยันการรับออเดอร์สำเร็จ",
-                    life: 3000,
+            await axios
+                .put(`${process.env.VUE_APP_DEKRUP}/order/confirm/${id}`, {
+                    headers: {
+                        'token': localStorage.getItem('token'),
+                    },
+                })
+                .then(() => {
+                    this.$toast.add({
+                        severity: "success",
+                        summary: "สำเร็จ",
+                        detail: "ยืนยันการรับออเดอร์สำเร็จ",
+                        life: 3000,
+                    });
+                })
+                .catch(() => {
+                    this.$toast.add({
+                        severity: "danger",
+                        summary: "ไม่สำเร็จ",
+                        detail: "ยืนยันการรับออเดอร์ไม่สำเร็จ",
+                        life: 3000,
+                    });
                 });
-            })
         },
 
         //รับออเดอร์
