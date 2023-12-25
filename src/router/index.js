@@ -18,6 +18,11 @@ routes = [
     component: () => import("../views/RegisterView.vue"),
   },
   {
+    path: "/register/:member_number",
+    name: "register-introduce",
+    component: () => import("../views/RegisterIntroduce.vue"),
+  },
+  {
     path: "/forgetpassword",
     name: "forget_password",
     component: () => import("../views/ForgotPassword.vue"),

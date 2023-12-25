@@ -10,8 +10,7 @@
                             <i class="pi pi-user"></i>
                         </span>
                         <InputText v-model="member.member_ref" label="รหัสผู้แนะนำ" variant="outlined" density="comfortable"
-                            placeholder="รหัสผู้แนะนำขึ้นต้น DK" :disabled="ref_status" hide-details="auto"
-                            :append-inner-icon="(ref_status ? 'mdi-check' : '')" @change="checkRefMember" />
+                            placeholder="รหัสผู้แนะนำขึ้นต้น DK" hide-details="auto" @change="checkRefMember" disabled />
                     </div>
                 </div>
                 <div class="sm:col-6 col-12">
@@ -35,7 +34,8 @@
                         <span class="p-inputgroup-addon">
                             <i class="pi pi-user-edit"></i>
                         </span>
-                        <InputText v-model="member.username" placeholder="ยูสเซอร์เนม ใช้ภาษาอังกฤษ/ตัวเลข" class="style-font" />
+                        <InputText v-model="member.username" placeholder="ยูสเซอร์เนม ใช้ภาษาอังกฤษ/ตัวเลข"
+                            class="style-font" />
                     </div>
                 </div>
                 <div class="sm:col-6 col-12">
@@ -126,6 +126,7 @@ export default {
         document.title = "สมัครสมาชิก | Dekrub Shop";
     },
     async mounted() {
+        this.member.member_ref = this.$route.params.member_number;
         this.$store.commit('setLoading', true);
         await axios.get(`${process.env.VUE_APP_THAILAND}thailand/province`, {
             headers: {
@@ -187,7 +188,7 @@ export default {
     methods: {
         async checkRefMember() {
             if (this.member.member_ref !== '') {
-                await axios.get(`${process.env.VUE_APP_DEKRUP}/public/member/check/${this.member.member_ref}`,null, {
+                await axios.get(`${process.env.VUE_APP_DEKRUP}/public/member/check/${this.member.member_ref}`, null, {
                 }).then((res) => {
                     this.$toast.add({ severity: 'success', summary: res.data.data.name, detail: `${res.data.data.address}, ${res.data.data.subdistrict} ${res.data.data.district} ${res.data.data.province} ${res.data.data.postcode}`, life: 7000 })
                 }).catch((err) => {
@@ -419,4 +420,5 @@ export default {
         width: 80%;
         margin-top: 5%;
     }
-}</style>
+}
+</style>

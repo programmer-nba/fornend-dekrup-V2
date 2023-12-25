@@ -7,7 +7,7 @@
     <router-view />
   </div>
   <div v-else>
-    <div v-if="$route.path === '/register' || $route.path === '/forgetpassword'">
+    <div v-if="$route.path === '/register' || $route.path === '/forgetpassword' || $route.path === '/register/:member_number'">
       <router-view />
     </div>
     <LoginView v-else />

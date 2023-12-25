@@ -24,7 +24,6 @@
                     กรุงเทพมหานคร 10230
                 </p>
                 <br />
-                {{ order }}
                 <p class="print-p" style="text-align: center;">ใบเสร็จเลขที่ {{ order.receiptnumber }}</p>
                 <p class="print-p" style="text-align: center;">วันที่ {{ datetimeFormat(order.timestamp) }}</p>
             </div>

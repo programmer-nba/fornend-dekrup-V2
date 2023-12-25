@@ -2,10 +2,10 @@
   <div class="img-login">
     <div class="background-login">
       <img class="img-logo" src="../assets/img/Deekrub.png">
-      <h2 class="text-center font-reset mb-3">เปลี่ยนรหัสผ่านใหม่</h2>
+      <h1 class="text-center font-reset mb-3">เปลี่ยนรหัสผ่านใหม่</h1>
       <div class="grid">
         <div class="col-12 text-center">
-          <small><strong>หมายเหตุ :</strong> กรณีไม่ทราบ ไอดีสมาชิก หรือ ลืมเบอร์โทรศัพท์ที่สมัครกรุณาติดต่อแอดมิน</small>
+          <p class="font-reset">หมายเหตุ : กรณีไม่ทราบ ไอดีสมาชิก หรือ ลืมเบอร์โทรศัพท์ที่สมัครกรุณาติดต่อแอดมิน</p>
         </div>
       </div>
       <div class="grid">
